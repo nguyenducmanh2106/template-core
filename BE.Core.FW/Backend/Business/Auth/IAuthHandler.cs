@@ -1,4 +1,5 @@
-﻿using Backend.Infrastructure.Utils;
+﻿using Backend.Business.User;
+using Backend.Infrastructure.Utils;
 
 namespace Backend.Business.Auth
 {
@@ -7,5 +8,7 @@ namespace Backend.Business.Auth
         Task<bool> CheckAuthWso2(string accessToken);
         Task<ResponseData> GetToken(string code);
         Task<ResponseData> GetNavigation();
+        Task<TokenResponse> GetTokenAPI(UserModel model, string ipAddress);
+
     }
 }

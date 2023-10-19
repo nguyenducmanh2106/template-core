@@ -1,6 +1,7 @@
 ﻿using Backend.Business.Auth;
 using Backend.Business.Blacklist;
 using Backend.Business.Navigation;
+using Backend.Business.User;
 using Backend.Infrastructure.Utils;
 using Microsoft.AspNetCore.Mvc;
 
@@ -39,5 +40,22 @@ namespace Backend.Controllers
         {
             return await _handler.GetNavigation();
         }
+
+        /// <summary>
+        /// Lấy danh sách quyền theo userId đang đăng nhập
+        /// </summary>
+        /// <returns></returns>
+        //[Authorize]
+        [HttpPost("whoiam")]
+        public async Task<TokenResponse> GetTokenAPI([FromBody] UserModel model)
+        {
+            string ipAddress = GetIpAddress();
+            return await _handler.GetTokenAPI(model, ipAddress);
+        }
+
+        private string GetIpAddress() =>
+       Request.Headers.ContainsKey("X-Forwarded-For")
+           ? Request.Headers["X-Forwarded-For"]
+           : HttpContext.Connection.RemoteIpAddress?.MapToIPv4().ToString() ?? "N/A";
     }
 }

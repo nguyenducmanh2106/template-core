@@ -61,7 +61,7 @@ namespace Backend.Infrastructure.Utils
 
                 return dt;
             }
-            catch (Exception ex)
+            catch (System.Exception ex)
             {
                 Console.WriteLine(ex.Message);
                 throw;

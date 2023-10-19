@@ -232,7 +232,7 @@ namespace Backend.Infrastructure.Utils
 
                 return Tuple.Create(DateResult, strDate);
             }
-            catch (Exception)
+            catch (System.Exception)
             {
                 strDate = "False";
                 return Tuple.Create(DateResult, strDate);
@@ -340,7 +340,7 @@ namespace Backend.Infrastructure.Utils
                         {
                             property.SetValue(item, _level, null);
                         }
-                        catch (Exception)
+                        catch (System.Exception)
                         {
                             break;
                         }
@@ -359,7 +359,7 @@ namespace Backend.Infrastructure.Utils
                         {
                             info2.SetValue(item, _level, null);
                         }
-                        catch (Exception)
+                        catch (System.Exception)
                         {
                             break;
                         }
@@ -508,7 +508,7 @@ namespace Backend.Infrastructure.Utils
                 //put a breakpoint here and check datatable
                 return dataTable;
             }
-            catch (Exception ex)
+            catch (System.Exception ex)
             {
                 throw ex;
             }

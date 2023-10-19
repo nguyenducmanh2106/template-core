@@ -8,6 +8,8 @@ import {
   useRequest,
   UseRequestOption,
 } from "../core/request";
+import { UserModel } from "../models/UserModel";
+import { TokenResponse } from "../models/TokenResponse";
 
 /**
  * @param tenant
@@ -43,5 +45,25 @@ export const getToken = (
     query: {
       code: code,
     },
+  });
+};
+/**
+ * @param tenant
+ * @param requestBody
+ * @returns TokenResponse Success
+ * @throws ApiError
+ */
+export const postAuth = (
+  tenant?: string,
+  requestBody?: UserModel
+): CancelablePromise<TokenResponse> => {
+  return __request({
+    method: "POST",
+    path: `/Auth/whoiam`,
+    headers: {
+      Tenant: tenant,
+    },
+    body: requestBody,
+    mediaType: "application/json",
   });
 };

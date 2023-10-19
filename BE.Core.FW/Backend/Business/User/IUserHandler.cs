@@ -15,8 +15,5 @@ namespace Backend.Business.User
         ResponseData AsignRole(Guid userId, UserModel model);
         ResponseData ChangePassword(Guid userId, UserChangePassword model);
         Task<bool> HasPermissionAsync(Guid userId, string permissionBit);
-        bool InsertAttribute(string email, string url);
-        bool DeleteAttribute(string email);
-        bool SelectAttribute(string email);
     }
 }

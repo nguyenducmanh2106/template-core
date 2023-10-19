@@ -1,15 +1,23 @@
 ﻿using AutoMapper;
 using Backend.Business.Navigation;
+using Backend.Business.User;
 using Backend.Infrastructure.EntityFramework.Datatables;
 using Backend.Infrastructure.EntityFramework.Repositories;
+using Backend.Infrastructure.Exception;
+using Backend.Infrastructure.Middleware.Auth.Jwt;
+using Backend.Infrastructure.Middleware.Permissions;
 using Backend.Infrastructure.Utils;
 using Backend.Model;
 using DocumentFormat.OpenXml.EMMA;
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using NetCasbin;
 using Newtonsoft.Json;
 using Serilog;
+using System.IdentityModel.Tokens.Jwt;
 using System.Reflection.Metadata;
+using System.Security.Claims;
 using System.Text;
 using Constant = Backend.Infrastructure.Utils.Constant;
 
@@ -23,11 +31,15 @@ namespace Backend.Business.Auth
         private static readonly string RedirectUri = Utils.GetConfig("Authentication:WSO2:Admin:RedirectUri");
         private static readonly string Secret = Utils.GetConfig("Authentication:WSO2:Admin:Secret");
         private static readonly string Clientid = Utils.GetConfig("Authentication:WSO2:Admin:Clientid");
+        private readonly JwtSettings _jwtSettings;
 
-        public AuthHandler(IMapper mapper, IHttpContextAccessor httpContextAccessor)
+
+        public AuthHandler(IMapper mapper, IHttpContextAccessor httpContextAccessor, IOptions<JwtSettings> jwtSettings)
         {
             _mapper = mapper;
             _httpContextAccessor = httpContextAccessor;
+            _jwtSettings = jwtSettings.Value;
+
         }
 
         public async Task<bool> CheckAuthWso2(string accessToken)
@@ -115,6 +127,67 @@ namespace Backend.Business.Auth
                 }
             }
             return result;
+        }
+
+        public async Task<TokenResponse> GetTokenAPI(UserModel model, string ipAddress)
+        {
+            using UnitOfWork unitOfWork = new(_httpContextAccessor);
+            var existUser = unitOfWork.Repository<SysUser>().Get(g => g.Username == model.Username)?.FirstOrDefault();
+            if (existUser == null)
+            {
+                throw new UnauthorizedException("Unauthorized");
+            }
+            var token = await GenerateTokensAndUpdateUser(model, ipAddress);
+            return token;
+        }
+        private async Task<TokenResponse> GenerateTokensAndUpdateUser(UserModel user, string ipAddress)
+        {
+            string token = GenerateJwt(user, ipAddress);
+
+            //user.RefreshToken = GenerateRefreshToken();
+            //user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(_jwtSettings.RefreshTokenExpirationInDays);
+
+            //await _userManager.UpdateAsync(user);
+
+            //return new TokenResponse(token, user.RefreshToken, user.RefreshTokenExpiryTime);
+            return new TokenResponse(token, "", DateTime.Now);
+        }
+
+        private string GenerateJwt(UserModel user, string ipAddress) =>
+        GenerateEncryptedToken(GetSigningCredentials(), GetClaims(user, ipAddress));
+
+        private IEnumerable<Claim> GetClaims(UserModel user, string ipAddress) =>
+            new List<Claim>
+            {
+            new(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new(ClaimTypes.Email, user.Email),
+            new(FSHClaims.Fullname, $"{user.Fullname}"),
+            new(ClaimTypes.Name, user.Username ?? string.Empty),
+            //new(ClaimTypes.Surname, user.LastName ?? string.Empty),
+            //new(FSHClaims.IpAddress, ipAddress),
+            //new(FSHClaims.Tenant, _currentTenant!.Id),
+            //new(FSHClaims.ImageUrl, user.ImageUrl ?? string.Empty),
+            //new(ClaimTypes.MobilePhone, user.PhoneNumber ?? string.Empty)
+            };
+        private string GenerateEncryptedToken(SigningCredentials signingCredentials, IEnumerable<Claim> claims)
+        {
+            var token = new JwtSecurityToken(
+               claims: claims,
+               expires: DateTime.UtcNow.AddMinutes(_jwtSettings.TokenExpirationInMinutes),
+               signingCredentials: signingCredentials);
+            var tokenHandler = new JwtSecurityTokenHandler();
+            return tokenHandler.WriteToken(token);
+        }
+
+        private SigningCredentials GetSigningCredentials()
+        {
+            if (string.IsNullOrEmpty(_jwtSettings.Key))
+            {
+                throw new InvalidOperationException("No Key defined in JwtSettings config.");
+            }
+
+            byte[] secret = Encoding.UTF8.GetBytes(_jwtSettings.Key);
+            return new SigningCredentials(new SymmetricSecurityKey(secret), SecurityAlgorithms.HmacSha256);
         }
     }
 }

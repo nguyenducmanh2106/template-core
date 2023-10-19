@@ -44,7 +44,7 @@ namespace Backend.Infrastructure.Utils
                     result.EnsureSuccessStatusCode();
                     return JsonConvert.DeserializeObject<T>(await result.Content.ReadAsStringAsync());
                 }
-                catch (Exception ex)
+                catch (System.Exception ex)
                 {
                     Log.Error(ex.Message, ex.Message);
                     return default;
@@ -86,7 +86,7 @@ namespace Backend.Infrastructure.Utils
                     return resultContent;
                 }
             }
-            catch (Exception ex)
+            catch (System.Exception ex)
             {
                 Log.Error(ex.Message, ex.Message);
                 var mes = ex.Message;
@@ -129,7 +129,7 @@ namespace Backend.Infrastructure.Utils
                     return false;
                 }
             }
-            catch (Exception ex)
+            catch (System.Exception ex)
             {
                 return false;
             }
@@ -159,7 +159,7 @@ namespace Backend.Infrastructure.Utils
                 }
                 return string.Empty;
             }
-            catch (Exception ex)
+            catch (System.Exception ex)
             {
                 var mes = ex.Message;
                 return ex.Message;

@@ -1,4 +1,4 @@
-using Backend.Business;
+﻿using Backend.Business;
 using Backend.Business.Auth;
 using Backend.Business.Blacklist;
 using Backend.Business.DividingRoom;
@@ -52,6 +52,9 @@ using Backend.Business.TimeReciveApplication;
 using Backend.Business.ManageRegisteredCandidateAP;
 using Backend.HoldPosition;
 using Backend.Business.ManageRegisteredCandidateIT;
+using Backend.Infrastructure.Middleware.Request;
+using Backend.Infrastructure.Middleware.Auth.Jwt;
+using Backend.Infrastructure.Middleware.Permissions;
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 var builder = WebApplication.CreateBuilder(args);
@@ -93,7 +96,7 @@ AppSettings.Instance.SetConfiguration(builder.Configuration);
 builder.Services.AddCachingProcessServices();
 builder.Services.AddDataProcessServices();
 // Add services to the container.
-
+builder.Services.Configure<MiddlewareSettings>(builder.Configuration.GetSection($"MiddlewareSettings"));
 builder.Services.AddControllers();
 builder.Services.AddLocalization(builder.Configuration);
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("MailSettings"));
@@ -162,56 +165,27 @@ builder.Services.AddHangfireServer(options =>
         Environment.MachineName,
         Guid.NewGuid().ToString());
 });
+
+
+//add middleware
+builder.Services.AddExceptionMiddleware();
+builder.Services.AddRequestLogging(builder.Configuration);
+builder.Services.AddJwtAuth(builder.Configuration);
+
 builder.Services.AddServices();
 builder.Services
     .AddScoped<IUserHandler, UserHandler>()
     .AddScoped<INavigationHandler, NavigationHandler>()
     .AddScoped<IPolicyHandler, PolicyHandler>()
     .AddScoped<IRoleHandler, RoleHandler>()
-    .AddScoped<ITimeFrameHandler, TimeFrameHandler>()
-    .AddScoped<ITimeFrameInDayHandler, TimeFrameInDayHandler>()
-    .AddScoped<IManageApplicationTimeHandler, ManageApplicationTimeHandler>()
-    .AddScoped<ITestScoreHandler, TestScoreHandler>()
     .AddScoped<IUploadFileHandler, UploadFileHandler>()
-    .AddScoped<IBlacklistHandler, BlacklistHandler>()
-    .AddScoped<IResonBlacklistHandler, ResonBlacklistHandler>()
-    .AddScoped<IDecisionBlacklistHandler, DecisionBlacklistHandler>()
-    .AddScoped<IExamFeeInformationHandler, ExamFeeInformationHandler>()
-    .AddScoped<IManageRegisteredCandidatesHandler, ManageRegisteredCandidatesHandler>()
-    .AddScoped<IManageRegisteredCandidateTopikHandler, ManageRegisteredCandidateTopikHandler>()
-    .AddScoped<IExamCalendarHandler, ExamCalendarHandler>()
     .AddScoped<IUserHandler, UserHandler>()
     .AddScoped<IEmailTemplateHandler, EmailTemplateHandler>()
-    .AddScoped<IBlacklistHandler, BlacklistHandler>()
-    .AddScoped<IExamScheduleTopikHandler, ExamScheduleTopikHandler>()
     .AddScoped<IDividingRoomHandler, DividingRoomHandler>()
     .AddScoped<IEmailHandler, EmailHandler>()
-    .AddScoped<IAuthHandler, AuthHandler>()
-    .AddScoped<IStockListHandler, StockListHandler>()
-    .AddScoped<ISupplierHandler, SupplierHandler>()
-    .AddScoped<ICustomerHandler, CustomerHandler>()
-    .AddScoped<ISuppliesGroupHandler, SuppliesGroupHandler>()
-    .AddScoped<IManagerCandidateInvalidTopikHandler, ManagerCandidateInvalidTopikHandler>()
-    .AddScoped<IPayment, PaymentHandler>()
-    .AddScoped<ISuppliesCategoryHandler, SuppliesCategoryHandler>()
-    .AddScoped<ISuppliesKindHandler, SuppliesKindHandler>()
-    .AddScoped<ISuppliesHandler, SuppliesHandler>()
-    .AddScoped<IImportStockProposalHandler, ImportStockProposalHandler>()
-    .AddScoped<IUserManageStockHandler, UserManageStockHandler>()
-    .AddScoped<IImportStockReceiptHandler, ImportStockReceiptHandler>()
-    .AddScoped<IExamPeriodHandler, ExamPeriodHandler>()
-    .AddScoped<IBlacklistTopikHandler, BlacklistTopikHandler>()
-    .AddScoped<IFaqHandler, FaqHandler>()
-    .AddScoped<IExamPeriodAPHandler, ExamPeriodAPHandler>()
-    .AddScoped<IExamScheduleAPHandler, ExamScheduleAPHandler>()
-    .AddScoped<ITimeReciveApplicationHandler, TimeReciveApplicationHandler>()
-    .AddScoped<IManageRegisteredCandidateAPHandler, ManageRegisteredCandidateAPHandler>()
-    .AddScoped<IHoldPositionHandler, HoldPositionHandler>()
-    .AddScoped<IPaymentAp, PaymentApHandler>()
-    .AddScoped<IPaymentIT, PaymentITHandler>()
-    .AddScoped<IManageRegisteredCandidateITHandler, ManageRegisteredCandidateITHandler>()
-    .AddScoped<IOldData, OldDataHandler>()
-    .AddScoped<IUserReceiveEmailHandler, UserReceiveEmailHandler>();
+    .AddScoped<IAuthHandler, AuthHandler>();
+
+
 
 builder.Services.AddScoped(container => new IpSafeListFilter(builder.Configuration["VnPayConfig:IpPaymentAllowList"]));
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
@@ -220,13 +194,14 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
     options.KnownNetworks.Clear();
     options.KnownProxies.Clear();
 });
-builder.Services.AddAuthentication(option =>
-{
-    option.DefaultAuthenticateScheme = "Custom Scheme";
-    option.DefaultChallengeScheme = "Custom Scheme";
-}).AddScheme<CustomAuthenticationOptions, CustomAuthenticationHandler>("Custom Scheme", "Custom Auth", options => { });
 
-//builder.Services.AddSingleton<IAuthorizationHandler, CustomAuthorizationHandler>();
+//Authen với ws02
+//builder.Services.AddAuthentication(option =>
+//{
+//    option.DefaultAuthenticateScheme = "Custom Scheme";
+//    option.DefaultChallengeScheme = "Custom Scheme";
+//}).AddScheme<CustomAuthenticationOptions, CustomAuthenticationHandler>("Custom Scheme", "Custom Auth", options => { });
+
 builder.Services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>()
     .AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
 builder.Services.AddDbContext<CoreFrameworkContext>();
@@ -275,6 +250,9 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseExceptionMiddleware();
+app.UseRequestLogging(builder.Configuration);
+
 
 app.MapControllers();
 using (var scope = app.Services.CreateScope())

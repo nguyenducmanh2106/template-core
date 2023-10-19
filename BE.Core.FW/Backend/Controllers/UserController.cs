@@ -119,22 +119,6 @@ namespace Backend.Controllers
             return _handler.ChangePassword(syncId, model);
         }
 
-        [HttpGet("InsertAttribute")]
-        public bool InsertAttribute(string email, string url)
-        {
-            return _handler.InsertAttribute(email, url);
-        }
-
-        [HttpGet("DeleteAttribute")]
-        public bool DeleteAttribute(string email)
-        {
-            return _handler.DeleteAttribute(email);
-        }
-
-        [HttpGet("SelectAttribute")]
-        public bool SelectAttribute(string email)
-        {
-            return _handler.SelectAttribute(email);
-        }
+        
     }
 }

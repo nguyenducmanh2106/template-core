@@ -7,8 +7,12 @@ using Backend.Infrastructure.Middleware;
 using Backend.Infrastructure.Utils;
 using Backend.Model;
 using DocumentFormat.OpenXml.Office2010.Excel;
+using DocumentFormat.OpenXml.Spreadsheet;
 using DocumentFormat.OpenXml.VariantTypes;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.Office.Core;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -16,7 +20,9 @@ using Serilog;
 using Shared.Caching.Interface;
 using System;
 using System.Dynamic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.AccessControl;
+using System.Security.Claims;
 using System.Text;
 using static Backend.Infrastructure.Utils.Constant;
 
@@ -706,79 +712,6 @@ namespace Backend.Business.User
             {
                 Log.Error(exception, exception.Message);
                 return new ResponseDataError(Code.ServerError, exception.Message);
-            }
-        }
-
-        public bool InsertAttribute(string email, string value)
-        {
-            try
-            {
-                var connectionString = Utils.GetConfig("ConnectionStrings:Core.Framework");
-                using (SqlConnection connection = new SqlConnection(connectionString))
-                {
-                    connection.Open();
-
-                    string insertQuery = $"insert into [WSO2_USER_DB].[dbo].[UM_USER_ATTRIBUTE] values('rpwf', '{value}','default',(select UM_ID from [WSO2_USER_DB].[dbo].[UM_USER] where UM_USER_NAME = '{email}'), 1)";
-
-                    using SqlCommand cmd = new SqlCommand(insertQuery, connection);
-                    cmd.ExecuteNonQuery();
-                    connection.Close();
-                }
-                return false;
-            }
-            catch (Exception exception)
-            {
-                return false;
-            }
-        }
-
-        public bool DeleteAttribute(string email)
-        {
-            try
-            {
-                var connectionString = Utils.GetConfig("ConnectionStrings:Core.Framework");
-                using (SqlConnection connection = new SqlConnection(connectionString))
-                {
-                    connection.Open();
-                    string deleteQuery = $"delete from [WSO2_USER_DB].[dbo].[UM_USER_ATTRIBUTE] where UM_USER_ID = (select UM_ID from [WSO2_USER_DB].[dbo].[UM_USER] where UM_USER_NAME = '{email}') and UM_ATTR_NAME = 'rpwf'";
-                    using SqlCommand cmd = new SqlCommand(deleteQuery, connection);
-                    cmd.ExecuteNonQuery();
-                    connection.Close();
-                }
-                return false;
-            }
-            catch (Exception exception)
-            {
-                return false;
-            }
-        }
-
-        public bool SelectAttribute(string email)
-        {
-            try
-            {
-                var connectionString = Utils.GetConfig("ConnectionStrings:Core.Framework");
-                using (SqlConnection connection = new SqlConnection(connectionString))
-                {
-                    connection.Open();
-                    string selectQuery = $"SELECT * FROM [WSO2_USER_DB].[dbo].[UM_USER_ATTRIBUTE] where UM_ATTR_NAME = 'givenName' and UM_ATTR_VALUE = 'lkjwpopdASC' and UM_USER_ID = (SELECT [UM_ID] FROM [WSO2_USER_DB].[dbo].[UM_USER] where UM_USER_NAME = '{email}')";
-                    using SqlCommand cmd = new SqlCommand(selectQuery, connection);
-                    using (SqlDataReader reader = cmd.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            int id = (int)reader["UM_ID"];
-                            if (id != 0)
-                                return true;
-                        }
-                    }
-                    connection.Close();
-                    return false;
-                }
-            }
-            catch (Exception exception)
-            {
-                return false;
             }
         }
     }
