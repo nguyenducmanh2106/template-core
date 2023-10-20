@@ -232,9 +232,9 @@ app.UseLocalization(builder.Configuration);
 app.UseCors(MyAllowSpecificOrigins);
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+app.UseExceptionMiddleware();
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseExceptionMiddleware();
 app.UseRequestLogging(builder.Configuration);
 app.UseCurrentUser();
 

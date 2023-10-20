@@ -22,18 +22,6 @@ function App() {
   });
   const getList = async (current: number, pageSize: number = 10): Promise<void> => {
     setLoading(true);
-
-    // const response: ResponseData = await getNavigation();
-    // navs = (mapRouter(response.data as NavigationModelCustom[]) || []) as NavigationModelCustom[];
-    // setList((navs || []) as NavigationModelCustom[]);
-    // setPagination({
-    //   ...pagination,
-    //   current,
-    //   total: response.totalCount || 0,
-    //   pageSize: pageSize,
-    // });
-
-    // setLoading(false);
   };
   useEffect(() => {
     getList(1);
