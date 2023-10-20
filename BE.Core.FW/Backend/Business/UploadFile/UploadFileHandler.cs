@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Backend.Business.Blacklist;
 using Backend.Infrastructure.EntityFramework.Datatables;
 using Backend.Infrastructure.EntityFramework.Repositories;
 using Backend.Infrastructure.Utils;

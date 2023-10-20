@@ -1,5 +1,4 @@
 ﻿using Backend.Business.Auth;
-using Backend.Business.Blacklist;
 using Backend.Business.Navigation;
 using Backend.Business.User;
 using Backend.Infrastructure.Utils;
@@ -19,20 +18,22 @@ namespace Backend.Controllers
             _handler = handler;
         }
 
-        [HttpGet]
-        public async Task<bool> CheckAuthWSO2()
-        {
-            string accessToken = Request.Headers["authorization"].ToString();
-            accessToken = accessToken.Replace("Bearer", "").Trim();
-            return await _handler.CheckAuthWso2(accessToken);
-        }
+        //#region dành cho wso2
+        //[HttpGet]
+        //public async Task<bool> CheckAuthWSO2()
+        //{
+        //    string accessToken = Request.Headers["authorization"].ToString();
+        //    accessToken = accessToken.Replace("Bearer", "").Trim();
+        //    return await _handler.CheckAuthWso2(accessToken);
+        //}
 
-        [HttpGet]
-        [Route("GetToken")]
-        public async Task<ResponseData> GetToken(string code)
-        {
-            return await _handler.GetToken(code);
-        }
+        //[HttpGet]
+        //[Route("GetToken")]
+        //public async Task<ResponseData> GetToken(string code)
+        //{
+        //    return await _handler.GetToken(code);
+        //}
+        //#endregion
 
         [HttpGet]
         [Route("GetNavigation")]

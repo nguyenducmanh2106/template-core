@@ -23,16 +23,17 @@ export default memo(() => {
     //   ...user,
     //   ...initialState,
     // });
-    const token = getIdToken();
+    // const token = getIdToken();
     removeToken();
+    window.location.href = "/"
 
-    window.location.href =
-      import.meta.env.VITE_HOST_WSO2 + import.meta.env.VITE_HOST_TENANT_IIG +
-      '/oidc/logout?id_token_hint=' +
-      token +
-      '&post_logout_redirect_uri=' +
-      import.meta.env.VITE_REDIRECT_LOGOUT_WSO2 +
-      '&state=1';
+    // window.location.href =
+    //   import.meta.env.VITE_HOST_WSO2 + import.meta.env.VITE_HOST_TENANT_IIG +
+    //   '/oidc/logout?id_token_hint=' +
+    //   token +
+    //   '&post_logout_redirect_uri=' +
+    //   import.meta.env.VITE_REDIRECT_LOGOUT_WSO2 +
+    //   '&state=1';
   };
   const { Title } = Typography;
   const items: MenuProps['items'] = [

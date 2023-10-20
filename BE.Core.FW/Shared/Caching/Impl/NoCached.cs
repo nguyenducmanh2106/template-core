@@ -67,12 +67,12 @@ namespace Shared.Caching.Impl
 
         public bool CheckKeyExist(string key)
         {
-            throw new System.NotImplementedException();
+            return false;
         }
 
-        public Task<bool> CheckKeyExistAsync(string key)
+        public async Task<bool> CheckKeyExistAsync(string key)
         {
-            throw new System.NotImplementedException();
+            return await Task.FromResult(false);
         }
     }
 }

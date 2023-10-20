@@ -137,7 +137,7 @@ namespace Backend.Business.Auth
             {
                 throw new UnauthorizedException("Unauthorized");
             }
-            var token = await GenerateTokensAndUpdateUser(model, ipAddress);
+            var token = await GenerateTokensAndUpdateUser(_mapper.Map<UserModel>(existUser), ipAddress);
             return token;
         }
         private async Task<TokenResponse> GenerateTokensAndUpdateUser(UserModel user, string ipAddress)
@@ -164,10 +164,10 @@ namespace Backend.Business.Auth
             new(FSHClaims.Fullname, $"{user.Fullname}"),
             new(ClaimTypes.Name, user.Username ?? string.Empty),
             //new(ClaimTypes.Surname, user.LastName ?? string.Empty),
-            //new(FSHClaims.IpAddress, ipAddress),
+            new(FSHClaims.IpAddress, ipAddress),
             //new(FSHClaims.Tenant, _currentTenant!.Id),
             //new(FSHClaims.ImageUrl, user.ImageUrl ?? string.Empty),
-            //new(ClaimTypes.MobilePhone, user.PhoneNumber ?? string.Empty)
+            new(ClaimTypes.MobilePhone, user.Phone ?? string.Empty)
             };
         private string GenerateEncryptedToken(SigningCredentials signingCredentials, IEnumerable<Claim> claims)
         {

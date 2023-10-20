@@ -7,6 +7,7 @@ namespace Backend.Business.User
         Task<ResponseData> Get(string? name, string access_token = "", int pageIndex = 1, int pageSize = 10);
         ResponseData GetById(Guid id);
         ResponseData GetBySyncId(Guid syncId);
+        ResponseData GetUserInforById(Guid Id);
         ResponseData Create(UserModel model);
         ResponseData Update(Guid id, UserModel model);
         ResponseData Delete(Guid id);

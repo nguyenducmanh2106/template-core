@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Backend.Business.Policy;
 using Backend.Business.Role;
+using Backend.Infrastructure.Common.Interfaces;
 using Backend.Infrastructure.EntityFramework.Datatables;
 using Backend.Infrastructure.EntityFramework.Repositories;
 using Backend.Infrastructure.Middleware;
@@ -16,6 +17,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.Office.Core;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using Org.BouncyCastle.Ocsp;
 using Serilog;
 using Shared.Caching.Interface;
 using System;
@@ -71,85 +73,94 @@ namespace Backend.Business.User
                     return new ResponseDataError(Code.BadRequest, "Username already exists");
                 if (unitOfWork.Repository<SysUser>().FirstOrDefault(x => x.Email.ToLower() == model.Email.ToLower()) != null)
                     return new ResponseDataError(Code.BadRequest, "Email already exists");
-                #region wso2
-                var handler = new HttpClientHandler
-                {
-                    ClientCertificateOptions = ClientCertificateOption.Manual,
-                    ServerCertificateCustomValidationCallback = (httpRequestMessage, cert, cetChain, policyErrors) =>
-                    {
-                        return true;
-                    }
-                };
-                var httpClient = new HttpClient(handler);
-                string endPoint = new(_wso2uri + _tenant + "/scim2/Users");
-                httpClient.DefaultRequestHeaders.Add("Accept", "application/scim+json");
-                httpClient.DefaultRequestHeaders.Add("Authorization", "Basic " + Convert.ToBase64String(Encoding.UTF8.GetBytes(_username + ":" + _password)));
 
-                var wso2UserObj = new Dictionary<string, object>()
-                {
-                    { "Schemas",new string[] {"urn:ietf:params:scim:schemas:core:2.0:User","urn:ietf:params:scim:schemas:extension:enterprise:2.0:User","urn:scim:wso2:schema"}},
-                    {"UserName",model.Username },
-                    {"Password","12345678" },
-                    {"Active",true },
-                    {"Emails", new List<dynamic>() {
-                            //new
-                            //{
-                            //    Type = "work",
-                            //    Value = model.Email,
-                            //    Primary = true
-                            //},
-                            //new
-                            //{
-                            //    Type = "home",
-                            //    Value = model.Email,
-                            //},
-                             model.Email } },
-                    {"Meta",new
-                    {
-                        ResourceType = "User"
-                    } },
-                    {"Name",new
-                    {
-                        GivenName = givenName,// tên
-                        FamilyName = familyName,//họ
-                        Formatted = model.Fullname,
-                    } },
-                    //{"PhoneNumbers", new List<dynamic>()
-                    //{
-                    //    new {
-                    //        Type= "mobile",
-                    //        Value= model.Phone
-                    //        }
-                    //} },
-                    //{"urn:ietf:params:scim:schemas:extension:enterprise:2.0:User",new
-                    //{
-                    //    Country = "Vietnam",
-                    //    DateOfBirth= model.DOB.ToString("yyyy-MM-dd")
-                    //}},
-                    {"Roles",new List<ExpandoObject>() },
-                };
+                // insert db
+                model.Id = Guid.NewGuid();
+                var user = _mapper.Map<SysUser>(model);
+                user.SyncId = Guid.Empty;
 
-                var json = JsonConvert.SerializeObject(wso2UserObj, new JsonSerializerSettings() { ContractResolver = new CamelCasePropertyNamesContractResolver() });
-                var data = new StringContent(json, Encoding.UTF8, "application/scim+json");
-                HttpResponseMessage response = httpClient.PostAsync(endPoint, data).Result;
-                #endregion
-                if ((int)response.StatusCode == StatusCodes.Status201Created)
-                {
-                    var resp = response.Content.ReadAsStringAsync().Result;
-                    dynamic? respData = JsonConvert.DeserializeObject<ExpandoObject>(resp);
-                    if (!((IDictionary<String, object>)respData!).ContainsKey("Id"))
-                    {
-                        // insert db
-                        model.Id = Guid.NewGuid();
-                        var user = _mapper.Map<SysUser>(model);
-                        user.SyncId = Guid.Parse((string)respData!.id);
+                unitOfWork.Repository<SysUser>().Insert(user);
+                unitOfWork.Save();
+                return new ResponseData(Code.Success, "");
+                //#region wso2
+                //var handler = new HttpClientHandler
+                //{
+                //    ClientCertificateOptions = ClientCertificateOption.Manual,
+                //    ServerCertificateCustomValidationCallback = (httpRequestMessage, cert, cetChain, policyErrors) =>
+                //    {
+                //        return true;
+                //    }
+                //};
+                //var httpClient = new HttpClient(handler);
+                //string endPoint = new(_wso2uri + _tenant + "/scim2/Users");
+                //httpClient.DefaultRequestHeaders.Add("Accept", "application/scim+json");
+                //httpClient.DefaultRequestHeaders.Add("Authorization", "Basic " + Convert.ToBase64String(Encoding.UTF8.GetBytes(_username + ":" + _password)));
 
-                        unitOfWork.Repository<SysUser>().Insert(user);
-                        unitOfWork.Save();
-                        return new ResponseData(Code.Success, "");
-                    }
-                }
-                return new ResponseDataError(Code.BadRequest, "Syn WSO2 fail");
+                //var wso2UserObj = new Dictionary<string, object>()
+                //{
+                //    { "Schemas",new string[] {"urn:ietf:params:scim:schemas:core:2.0:User","urn:ietf:params:scim:schemas:extension:enterprise:2.0:User","urn:scim:wso2:schema"}},
+                //    {"UserName",model.Username },
+                //    {"Password","12345678" },
+                //    {"Active",true },
+                //    {"Emails", new List<dynamic>() {
+                //            //new
+                //            //{
+                //            //    Type = "work",
+                //            //    Value = model.Email,
+                //            //    Primary = true
+                //            //},
+                //            //new
+                //            //{
+                //            //    Type = "home",
+                //            //    Value = model.Email,
+                //            //},
+                //             model.Email } },
+                //    {"Meta",new
+                //    {
+                //        ResourceType = "User"
+                //    } },
+                //    {"Name",new
+                //    {
+                //        GivenName = givenName,// tên
+                //        FamilyName = familyName,//họ
+                //        Formatted = model.Fullname,
+                //    } },
+                //    //{"PhoneNumbers", new List<dynamic>()
+                //    //{
+                //    //    new {
+                //    //        Type= "mobile",
+                //    //        Value= model.Phone
+                //    //        }
+                //    //} },
+                //    //{"urn:ietf:params:scim:schemas:extension:enterprise:2.0:User",new
+                //    //{
+                //    //    Country = "Vietnam",
+                //    //    DateOfBirth= model.DOB.ToString("yyyy-MM-dd")
+                //    //}},
+                //    {"Roles",new List<ExpandoObject>() },
+                //};
+
+                //var json = JsonConvert.SerializeObject(wso2UserObj, new JsonSerializerSettings() { ContractResolver = new CamelCasePropertyNamesContractResolver() });
+                //var data = new StringContent(json, Encoding.UTF8, "application/scim+json");
+                //HttpResponseMessage response = httpClient.PostAsync(endPoint, data).Result;
+                //#endregion
+                //if ((int)response.StatusCode == StatusCodes.Status201Created)
+                //{
+                //    var resp = response.Content.ReadAsStringAsync().Result;
+                //    dynamic? respData = JsonConvert.DeserializeObject<ExpandoObject>(resp);
+                //    if (!((IDictionary<String, object>)respData!).ContainsKey("Id"))
+                //    {
+                //        // insert db
+                //        model.Id = Guid.NewGuid();
+                //        var user = _mapper.Map<SysUser>(model);
+                //        user.SyncId = Guid.Parse((string)respData!.id);
+
+                //        unitOfWork.Repository<SysUser>().Insert(user);
+                //        unitOfWork.Save();
+                //        return new ResponseData(Code.Success, "");
+                //    }
+                //}
+                //return new ResponseDataError(Code.BadRequest, "Syn WSO2 fail");
             }
             catch (Exception exception)
             {
@@ -172,31 +183,34 @@ namespace Backend.Business.User
                 {
                     _cached.Remove(keyCache);
                 }
-                #region wso2
-                var handler = new HttpClientHandler
-                {
-                    ClientCertificateOptions = ClientCertificateOption.Manual,
-                    ServerCertificateCustomValidationCallback = (httpRequestMessage, cert, cetChain, policyErrors) =>
-                    {
-                        return true;
-                    }
-                };
-                var httpClient = new HttpClient(handler);
-                string endPoint = new(_wso2uri + _tenant + $"/scim2/Users/{user.SyncId}");
-                httpClient.DefaultRequestHeaders.Add("Accept", "application/scim+json");
-                httpClient.DefaultRequestHeaders.Add("Authorization", "Basic " + Convert.ToBase64String(Encoding.UTF8.GetBytes(_username + ":" + _password)));
-
-                HttpResponseMessage response = httpClient.DeleteAsync(endPoint).Result;
-                #endregion
-                if ((int)response.StatusCode == StatusCodes.Status204NoContent)
-                {
-                    unitOfWork.Repository<SysUser>().Delete(user);
-                    unitOfWork.Save();
-                    return new ResponseData(Code.Success, "");
-                }
-
-
+                unitOfWork.Repository<SysUser>().Delete(user);
+                unitOfWork.Save();
                 return new ResponseData(Code.Success, "");
+                //#region wso2
+                //var handler = new HttpClientHandler
+                //{
+                //    ClientCertificateOptions = ClientCertificateOption.Manual,
+                //    ServerCertificateCustomValidationCallback = (httpRequestMessage, cert, cetChain, policyErrors) =>
+                //    {
+                //        return true;
+                //    }
+                //};
+                //var httpClient = new HttpClient(handler);
+                //string endPoint = new(_wso2uri + _tenant + $"/scim2/Users/{user.SyncId}");
+                //httpClient.DefaultRequestHeaders.Add("Accept", "application/scim+json");
+                //httpClient.DefaultRequestHeaders.Add("Authorization", "Basic " + Convert.ToBase64String(Encoding.UTF8.GetBytes(_username + ":" + _password)));
+
+                //HttpResponseMessage response = httpClient.DeleteAsync(endPoint).Result;
+                //#endregion
+                //if ((int)response.StatusCode == StatusCodes.Status204NoContent)
+                //{
+                //    unitOfWork.Repository<SysUser>().Delete(user);
+                //    unitOfWork.Save();
+                //    return new ResponseData(Code.Success, "");
+                //}
+
+
+                //return new ResponseData(Code.Success, "");
             }
             catch (Exception exception)
             {
@@ -246,49 +260,54 @@ namespace Backend.Business.User
                 {
                     _cached.Remove(keyCache);
                 }
-                // sync wso2
-                #region wso2
-                var handler = new HttpClientHandler
-                {
-                    ClientCertificateOptions = ClientCertificateOption.Manual,
-                    ServerCertificateCustomValidationCallback = (httpRequestMessage, cert, cetChain, policyErrors) =>
-                    {
-                        return true;
-                    }
-                };
-                var httpClient = new HttpClient(handler);
-                string endPoint = new(_wso2uri + _tenant + $"/scim2/Users/{existData.SyncId}");
-                httpClient.DefaultRequestHeaders.Add("Accept", "application/scim+json");
-                httpClient.DefaultRequestHeaders.Add("Authorization", "Basic " + Convert.ToBase64String(Encoding.UTF8.GetBytes(_username + ":" + _password)));
+                // update db
+                existData.IsDisabled = !status;
+                unitOfWork.Repository<SysUser>().Update(existData);
+                unitOfWork.Save();
+                return new ResponseData(Code.Success, "Thay đổi thành công");
+                //// sync wso2
+                //#region wso2
+                //var handler = new HttpClientHandler
+                //{
+                //    ClientCertificateOptions = ClientCertificateOption.Manual,
+                //    ServerCertificateCustomValidationCallback = (httpRequestMessage, cert, cetChain, policyErrors) =>
+                //    {
+                //        return true;
+                //    }
+                //};
+                //var httpClient = new HttpClient(handler);
+                //string endPoint = new(_wso2uri + _tenant + $"/scim2/Users/{existData.SyncId}");
+                //httpClient.DefaultRequestHeaders.Add("Accept", "application/scim+json");
+                //httpClient.DefaultRequestHeaders.Add("Authorization", "Basic " + Convert.ToBase64String(Encoding.UTF8.GetBytes(_username + ":" + _password)));
 
-                var wso2UserObj = new Dictionary<string, object>()
-                {
-                    { "Schemas",new string[] {"urn:ietf:params:scim:api:messages:2.0:PatchOp"}},
-                    {"Operations",new List<dynamic>(){
-                        new
-                        {
-                            op = "Replace",
-                            path = "urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:accountLocked",
-                            value = !status
-                        }
-                    } }
-                };
+                //var wso2UserObj = new Dictionary<string, object>()
+                //{
+                //    { "Schemas",new string[] {"urn:ietf:params:scim:api:messages:2.0:PatchOp"}},
+                //    {"Operations",new List<dynamic>(){
+                //        new
+                //        {
+                //            op = "Replace",
+                //            path = "urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:accountLocked",
+                //            value = !status
+                //        }
+                //    } }
+                //};
 
-                //var json = JsonConvert.SerializeObject(wso2UserObj, new JsonSerializerSettings() { ContractResolver = new CamelCasePropertyNamesContractResolver() });
-                var json = JsonConvert.SerializeObject(wso2UserObj);
-                var data = new StringContent(json, Encoding.UTF8, "application/scim+json");
-                HttpResponseMessage response = httpClient.PatchAsync(endPoint, data).Result;
-                #endregion
-                if ((int)response.StatusCode == StatusCodes.Status200OK)
-                {
-                    // update db
-                    existData.IsDisabled = !status;
-                    unitOfWork.Repository<SysUser>().Update(existData);
-                    unitOfWork.Save();
-                    return new ResponseData(Code.Success, "Thay đổi thành công");
-                }
+                ////var json = JsonConvert.SerializeObject(wso2UserObj, new JsonSerializerSettings() { ContractResolver = new CamelCasePropertyNamesContractResolver() });
+                //var json = JsonConvert.SerializeObject(wso2UserObj);
+                //var data = new StringContent(json, Encoding.UTF8, "application/scim+json");
+                //HttpResponseMessage response = httpClient.PatchAsync(endPoint, data).Result;
+                //#endregion
+                //if ((int)response.StatusCode == StatusCodes.Status200OK)
+                //{
+                //    // update db
+                //    existData.IsDisabled = !status;
+                //    unitOfWork.Repository<SysUser>().Update(existData);
+                //    unitOfWork.Save();
+                //    return new ResponseData(Code.Success, "Thay đổi thành công");
+                //}
 
-                return new ResponseData(Code.BadRequest, "Thay đổi thất bại");
+                //return new ResponseData(Code.BadRequest, "Thay đổi thất bại");
             }
             catch (Exception exception)
             {
@@ -448,6 +467,60 @@ namespace Backend.Business.User
             }
         }
 
+        public ResponseData GetUserInforById(Guid userId)
+        {
+            try
+            {
+                string keyCache = $"{nameof(UserLoginInfo)}:{userId}";
+                var checkKeyExist = _cached.CheckKeyExist(keyCache);
+                if (checkKeyExist)
+                {
+                    var dataFromRedis = _cached.Get<UserLoginInfo>(keyCache);
+                    if (dataFromRedis != null)
+                    {
+                        return new ResponseDataObject<UserLoginInfo>(dataFromRedis, Code.Success, "Success From Redis");
+                    }
+                }
+
+                using UnitOfWork unitOfWork = new(_httpContextAccessor);
+                //var existData = unitOfWork.Repository<SysUser>().Get(g => g.SyncId == syncId)?.FirstOrDefault();
+                var existData = (from user in unitOfWork.Repository<SysUser>().dbSet
+                                 join role in unitOfWork.Repository<SysRole>().dbSet on user.RoleId equals role.Id into roleTable
+                                 from roleDefault in roleTable.DefaultIfEmpty()
+                                 where user.Id == userId
+                                 select new UserLoginInfo()
+                                 {
+                                     Id = user.Id,
+                                     RoleId = user.RoleId,
+                                     RoleName = roleDefault != null ? roleDefault.Name : "",
+                                     SyncId = user.SyncId,
+                                     IIGDepartmentId = user.IIGDepartmentId,
+                                     Fullname = user.Fullname,
+                                     Username = user.Username,
+                                     DOB = user.DOB,
+                                 })?.FirstOrDefault();
+                if (existData == null)
+                    return new ResponseDataError(Code.BadRequest, "SyncId not found");
+
+                var permissions = unitOfWork.Repository<SysPolicy>().Get(g => g.RoleId == existData.RoleId);
+                if (permissions != null)
+                {
+                    existData.Permissions = _mapper.Map<List<PolicyModel>>(permissions);
+                }
+
+                var getRole = unitOfWork.Repository<SysRole>().FirstOrDefault(p => p.Id == existData.RoleId);
+                existData.AccessDataHeaderQuater = !string.IsNullOrEmpty(getRole?.AccessDataHeaderQuater) ? getRole.AccessDataHeaderQuater.Split(",").Select(p => new Guid(p)).ToList() : new List<Guid>();
+
+                _cached.Add(keyCache, existData, 30);
+                return new ResponseDataObject<UserLoginInfo>(existData, Code.Success, "");
+            }
+            catch (Exception exception)
+            {
+                Log.Error(exception, exception.Message);
+                return new ResponseDataError(Code.ServerError, exception.Message);
+            }
+        }
+
         public async Task<bool> HasPermissionAsync(Guid userId, string permissionBit)
         {
             List<SysPolicy> permissions = new List<SysPolicy>();
@@ -546,84 +619,93 @@ namespace Backend.Business.User
                 {
                     _cached.Remove(keyCache);
                 }
+                // update db
+                existUser.DOB = model.DOB;
+                existUser.Fullname = model.Fullname;
+                existUser.Email = model.Email;
+                existUser.Phone = model.Phone;
+                existUser.IIGDepartmentId = model.IIGDepartmentId;
+                unitOfWork.Repository<SysUser>().Update(existUser);
+                unitOfWork.Save();
+                return new ResponseData(Code.Success, "Thay đổi thành công");
 
-                // sync wso2
-                #region wso2
-                var handler = new HttpClientHandler
-                {
-                    ClientCertificateOptions = ClientCertificateOption.Manual,
-                    ServerCertificateCustomValidationCallback = (httpRequestMessage, cert, cetChain, policyErrors) =>
-                    {
-                        return true;
-                    }
-                };
-                var httpClient = new HttpClient(handler);
-                string endPoint = new(_wso2uri + _tenant + $"/scim2/Users/{existUser.SyncId}");
-                httpClient.DefaultRequestHeaders.Add("Accept", "application/scim+json");
-                httpClient.DefaultRequestHeaders.Add("Authorization", "Basic " + Convert.ToBase64String(Encoding.UTF8.GetBytes(_username + ":" + _password)));
+                //// sync wso2
+                //#region wso2
+                //var handler = new HttpClientHandler
+                //{
+                //    ClientCertificateOptions = ClientCertificateOption.Manual,
+                //    ServerCertificateCustomValidationCallback = (httpRequestMessage, cert, cetChain, policyErrors) =>
+                //    {
+                //        return true;
+                //    }
+                //};
+                //var httpClient = new HttpClient(handler);
+                //string endPoint = new(_wso2uri + _tenant + $"/scim2/Users/{existUser.SyncId}");
+                //httpClient.DefaultRequestHeaders.Add("Accept", "application/scim+json");
+                //httpClient.DefaultRequestHeaders.Add("Authorization", "Basic " + Convert.ToBase64String(Encoding.UTF8.GetBytes(_username + ":" + _password)));
 
-                var wso2UserObj = new Dictionary<string, object>()
-                {
-                    { "Schemas",new string[] {"urn:ietf:params:scim:api:messages:2.0:PatchOp"}},
-                    {"Operations",new List<dynamic>(){
-                        new
-                        {
-                            op = "Replace",
-                            //path = "urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:accountLocked",
-                            value = new Dictionary<string,object>() {
-                                { "urn:ietf:params:scim:schemas:extension:enterprise:2.0:User", new  { verifyEmail= "true" }  },
-                                { "emails", new List<object>()
-                                        {
-                                            new  { primary=true,value=model.Email }
-                                        }
-                                }
-                            }
-                        },
-                         new
-                        {
-                            op = "Replace",
-                            path = "name.familyName",
-                            value =familyName
-                        },
-                        //  new
-                        //{
-                        //    op = "Replace",
-                        //    path = "urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:dateOfBirth",
-                        //    value =model.DOB.ToString("yyyy-MM-dd")
-                        //},
-                            new
-                        {
-                            op = "Replace",
-                            path = "name.givenName",
-                            value =givenName
-                        },
-                        //       new
-                        //{
-                        //    op = "Replace",
-                        //    path = "phoneNumbers[type eq \"mobile\"].value",
-                        //    value =model.Phone
-                        //}
+                //var wso2UserObj = new Dictionary<string, object>()
+                //{
+                //    { "Schemas",new string[] {"urn:ietf:params:scim:api:messages:2.0:PatchOp"}},
+                //    {"Operations",new List<dynamic>(){
+                //        new
+                //        {
+                //            op = "Replace",
+                //            //path = "urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:accountLocked",
+                //            value = new Dictionary<string,object>() {
+                //                { "urn:ietf:params:scim:schemas:extension:enterprise:2.0:User", new  { verifyEmail= "true" }  },
+                //                { "emails", new List<object>()
+                //                        {
+                //                            new  { primary=true,value=model.Email }
+                //                        }
+                //                }
+                //            }
+                //        },
+                //         new
+                //        {
+                //            op = "Replace",
+                //            path = "name.familyName",
+                //            value =familyName
+                //        },
+                //        //  new
+                //        //{
+                //        //    op = "Replace",
+                //        //    path = "urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:dateOfBirth",
+                //        //    value =model.DOB.ToString("yyyy-MM-dd")
+                //        //},
+                //            new
+                //        {
+                //            op = "Replace",
+                //            path = "name.givenName",
+                //            value =givenName
+                //        },
+                //        //       new
+                //        //{
+                //        //    op = "Replace",
+                //        //    path = "phoneNumbers[type eq \"mobile\"].value",
+                //        //    value =model.Phone
+                //        //}
 
-                    } }
-                };
+                //    } }
+                //};
 
-                //var json = JsonConvert.SerializeObject(wso2UserObj, new JsonSerializerSettings() { ContractResolver = new CamelCasePropertyNamesContractResolver() });
-                var json = JsonConvert.SerializeObject(wso2UserObj);
-                var data = new StringContent(json, Encoding.UTF8, "application/scim+json");
-                HttpResponseMessage response = httpClient.PatchAsync(endPoint, data).Result;
-                #endregion
-                if ((int)response.StatusCode == StatusCodes.Status200OK)
-                {
-                    // update db
-                    existUser.DOB = model.DOB;
-                    existUser.Fullname = model.Fullname;
-                    existUser.Email = model.Email;
-                    existUser.Phone = model.Phone;
-                    existUser.IIGDepartmentId = model.IIGDepartmentId;
-                    unitOfWork.Repository<SysUser>().Update(existUser);
-                    unitOfWork.Save();
-                    return new ResponseData(Code.Success, "Thay đổi thành công");
-                }
+                ////var json = JsonConvert.SerializeObject(wso2UserObj, new JsonSerializerSettings() { ContractResolver = new CamelCasePropertyNamesContractResolver() });
+                //var json = JsonConvert.SerializeObject(wso2UserObj);
+                //var data = new StringContent(json, Encoding.UTF8, "application/scim+json");
+                //HttpResponseMessage response = httpClient.PatchAsync(endPoint, data).Result;
+                //#endregion
+                //if ((int)response.StatusCode == StatusCodes.Status200OK)
+                //{
+                //    // update db
+                //    existUser.DOB = model.DOB;
+                //    existUser.Fullname = model.Fullname;
+                //    existUser.Email = model.Email;
+                //    existUser.Phone = model.Phone;
+                //    existUser.IIGDepartmentId = model.IIGDepartmentId;
+                //    unitOfWork.Repository<SysUser>().Update(existUser);
+                //    unitOfWork.Save();
+                //    return new ResponseData(Code.Success, "Thay đổi thành công");
+                //}
 
                 //var existMetadata = unitOfWork.Repository<SysUserMetadata>().Get(x => x.UserId == id);
                 //foreach (var metadata in model.Metadata)
@@ -656,7 +738,7 @@ namespace Backend.Business.User
             }
         }
 
-        public ResponseData ChangePassword(Guid syncId, UserChangePassword model)
+        public ResponseData ChangePassword(Guid userId, UserChangePassword model)
         {
             try
             {
@@ -665,48 +747,48 @@ namespace Backend.Business.User
                     return new ResponseDataError(Code.BadRequest, "Xác nhận mật khẩu mới chưa khớp!");
                 }
                 using UnitOfWork unitOfWork = new(_httpContextAccessor);
-                var existUser = unitOfWork.Repository<SysUser>().Get(g => g.SyncId == syncId)?.FirstOrDefault();
+                var existUser = unitOfWork.Repository<SysUser>().Get(g => g.Id == userId)?.FirstOrDefault();
                 if (existUser == null)
                     return new ResponseDataError(Code.BadRequest, "Id not found");
 
-                #region wso2
-                var handler = new HttpClientHandler
-                {
-                    ClientCertificateOptions = ClientCertificateOption.Manual,
-                    ServerCertificateCustomValidationCallback = (httpRequestMessage, cert, cetChain, policyErrors) =>
-                    {
-                        return true;
-                    }
-                };
-                var httpClient = new HttpClient(handler);
-                string endPoint = new(_wso2uri + _tenant + $"/scim2/Users/{syncId}");
-                httpClient.DefaultRequestHeaders.Add("Accept", "application/scim+json");
-                httpClient.DefaultRequestHeaders.Add("Authorization", "Basic " + Convert.ToBase64String(Encoding.UTF8.GetBytes(_username + ":" + _password)));
+                //#region wso2
+                //var handler = new HttpClientHandler
+                //{
+                //    ClientCertificateOptions = ClientCertificateOption.Manual,
+                //    ServerCertificateCustomValidationCallback = (httpRequestMessage, cert, cetChain, policyErrors) =>
+                //    {
+                //        return true;
+                //    }
+                //};
+                //var httpClient = new HttpClient(handler);
+                //string endPoint = new(_wso2uri + _tenant + $"/scim2/Users/{syncId}");
+                //httpClient.DefaultRequestHeaders.Add("Accept", "application/scim+json");
+                //httpClient.DefaultRequestHeaders.Add("Authorization", "Basic " + Convert.ToBase64String(Encoding.UTF8.GetBytes(_username + ":" + _password)));
 
-                var wso2UserObj = new Dictionary<string, object>()
-                {
-                    { "Schemas",new string[] {"urn:ietf:params:scim:api:messages:2.0:PatchOp"}},
-                    {"Operations",new List<dynamic>(){
-                        new
-                        {
-                            op = "Replace",
-                            path = "password",
-                            value = model.NewPassword
-                        }
-                    } }
-                };
+                //var wso2UserObj = new Dictionary<string, object>()
+                //{
+                //    { "Schemas",new string[] {"urn:ietf:params:scim:api:messages:2.0:PatchOp"}},
+                //    {"Operations",new List<dynamic>(){
+                //        new
+                //        {
+                //            op = "Replace",
+                //            path = "password",
+                //            value = model.NewPassword
+                //        }
+                //    } }
+                //};
 
-                //var json = JsonConvert.SerializeObject(wso2UserObj, new JsonSerializerSettings() { ContractResolver = new CamelCasePropertyNamesContractResolver() });
-                var json = JsonConvert.SerializeObject(wso2UserObj);
-                var data = new StringContent(json, Encoding.UTF8, "application/scim+json");
-                HttpResponseMessage response = httpClient.PatchAsync(endPoint, data).Result;
-                #endregion
-                if ((int)response.StatusCode == StatusCodes.Status200OK)
-                {
-                    return new ResponseData(Code.Success, "Thay đổi mật khẩu thành công");
-                }
+                ////var json = JsonConvert.SerializeObject(wso2UserObj, new JsonSerializerSettings() { ContractResolver = new CamelCasePropertyNamesContractResolver() });
+                //var json = JsonConvert.SerializeObject(wso2UserObj);
+                //var data = new StringContent(json, Encoding.UTF8, "application/scim+json");
+                //HttpResponseMessage response = httpClient.PatchAsync(endPoint, data).Result;
+                //#endregion
+                //if ((int)response.StatusCode == StatusCodes.Status200OK)
+                //{
+                //    return new ResponseData(Code.Success, "Thay đổi mật khẩu thành công");
+                //}
 
-                return new ResponseData(Code.BadRequest, "Thay đổi mật khẩu thất bại");
+                return new ResponseData(Code.Success, "Thay đổi mật khẩu thành công");
             }
             catch (Exception exception)
             {

@@ -1,21 +1,11 @@
 ﻿using Backend.Business;
 using Backend.Business.Auth;
-using Backend.Business.Blacklist;
 using Backend.Business.DividingRoom;
-using Backend.Business.ExamCalendar;
-using Backend.Business.ExamFeeInformation;
-using Backend.Business.ExamScheduleTopik;
 using Backend.Business.Mailing;
-using Backend.Business.ManageApplicationTime;
-using Backend.Business.ManageRegisteredCandidates;
-using Backend.Business.ManageRegisteredCandidateTopik;
 using Backend.Business.Navigation;
-using Backend.Business.Payment;
 using Backend.Business.Policy;
 using Backend.Business.Role;
-using Backend.Business.TestScore;
-using Backend.Business.TimeFrame;
-using Backend.Business.TimeFrameInDay;
+
 using Backend.Business.UploadFile;
 using Backend.Business.User;
 using Backend.Infrastructure.EntityFramework;
@@ -28,7 +18,6 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using WebAPI.Infrastructure.Localization;
-using Backend.Business.ManagerCandidateInvalidTopik;
 using Serilog.Sinks.Elasticsearch;
 using Backend.Business.UserReceiveEmail;
 using Shared.Caching.Ioc;
@@ -46,15 +35,10 @@ using Microsoft.EntityFrameworkCore.Storage;
 using Shared.Caching.Common;
 using Serilog.Events;
 using IIG.Core.Framework.ICom.Infrastructure.Dapper.IOC;
-using Backend.Business.ResonBlacklist;
-using Backend.Business.DecisionBlacklist;
-using Backend.Business.TimeReciveApplication;
-using Backend.Business.ManageRegisteredCandidateAP;
-using Backend.HoldPosition;
-using Backend.Business.ManageRegisteredCandidateIT;
 using Backend.Infrastructure.Middleware.Request;
 using Backend.Infrastructure.Middleware.Auth.Jwt;
 using Backend.Infrastructure.Middleware.Permissions;
+using Backend.Infrastructure.Middleware.Auth;
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 var builder = WebApplication.CreateBuilder(args);
@@ -170,7 +154,8 @@ builder.Services.AddHangfireServer(options =>
 //add middleware
 builder.Services.AddExceptionMiddleware();
 builder.Services.AddRequestLogging(builder.Configuration);
-builder.Services.AddJwtAuth(builder.Configuration);
+//builder.Services.AddJwtAuth(builder.Configuration);
+builder.Services.AddAuth(builder.Configuration);
 
 builder.Services.AddServices();
 builder.Services
@@ -187,7 +172,6 @@ builder.Services
 
 
 
-builder.Services.AddScoped(container => new IpSafeListFilter(builder.Configuration["VnPayConfig:IpPaymentAllowList"]));
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
     options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
@@ -252,6 +236,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.UseExceptionMiddleware();
 app.UseRequestLogging(builder.Configuration);
+app.UseCurrentUser();
 
 
 app.MapControllers();

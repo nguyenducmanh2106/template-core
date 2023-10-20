@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
 using Backend.Business.DividingRoom;
-using Backend.Business.ExamScheduleTopik;
 using Backend.Business.Mailing;
-using Backend.Business.ManageRegisteredCandidateTopik;
 using Backend.Infrastructure.EntityFramework.Datatables;
 using Backend.Infrastructure.EntityFramework.Repositories;
 using Backend.Infrastructure.Utils;
@@ -27,8 +25,6 @@ using Microsoft.Extensions.Localization;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-using Backend.Business.Payment;
-using DocumentFormat.OpenXml.Office2016.Excel;
 using Backend.Business.User;
 using System.Linq;
 using DocumentFormat.OpenXml.EMMA;

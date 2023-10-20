@@ -1,4 +1,6 @@
 ﻿using Backend.Business.User;
+using Backend.Infrastructure.Common.Interfaces;
+using Backend.Infrastructure.Middleware.Auth;
 using Backend.Infrastructure.Utils;
 using DocumentFormat.OpenXml.Office2010.Excel;
 using Microsoft.AspNetCore.Authorization;
@@ -15,11 +17,13 @@ namespace Backend.Controllers
     {
         private readonly IUserHandler _handler;
         private readonly IHttpContextAccessor _contextAccessor;
+        private readonly ICurrentUser _currentUser;
 
-        public UserController(IUserHandler handler, IHttpContextAccessor contextAccessor)
+        public UserController(IUserHandler handler, IHttpContextAccessor contextAccessor, ICurrentUser currentUser)
         {
             _handler = handler;
             _contextAccessor = contextAccessor;
+            _currentUser = currentUser;
         }
 
         [Authorize]
@@ -92,9 +96,11 @@ namespace Backend.Controllers
         [HttpGet("me")]
         public ResponseData GetPermission()
         {
-            string syncIdFromWSO2 = _contextAccessor?.HttpContext?.User.Claims.FirstOrDefault(g => g.Type == ClaimTypes.NameIdentifier)?.Value ?? "";
-            Guid.TryParse(syncIdFromWSO2, out Guid syncId);
-            return _handler.GetBySyncId(syncId);
+            //string syncIdFromWSO2 = _contextAccessor?.HttpContext?.User.Claims.FirstOrDefault(g => g.Type == ClaimTypes.NameIdentifier)?.Value ?? "";
+            //Guid.TryParse(syncIdFromWSO2, out Guid syncId);
+            var userId = _currentUser.GetUserId();
+            //return _handler.GetBySyncId(syncId);
+            return _handler.GetUserInforById(userId);
         }
 
         /// <summary>
@@ -114,11 +120,11 @@ namespace Backend.Controllers
         [Route("ChangePassword/{userId}")]
         public ResponseData ChangePassword(Guid userId, [FromBody] UserChangePassword model)
         {
-            string syncIdFromWSO2 = _contextAccessor?.HttpContext?.User.Claims.FirstOrDefault(g => g.Type == ClaimTypes.NameIdentifier)?.Value ?? "";
-            Guid.TryParse(syncIdFromWSO2, out Guid syncId);
-            return _handler.ChangePassword(syncId, model);
+            //string syncIdFromWSO2 = _contextAccessor?.HttpContext?.User.Claims.FirstOrDefault(g => g.Type == ClaimTypes.NameIdentifier)?.Value ?? "";
+            //Guid.TryParse(syncIdFromWSO2, out Guid syncId);
+            return _handler.ChangePassword(userId, model);
         }
 
-        
+
     }
 }
