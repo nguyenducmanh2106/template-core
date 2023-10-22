@@ -2,7 +2,7 @@
 
 namespace Backend.Business
 {
-    public class TicketModel
+    public class BranchModel
     {
         public bool AllowUsePersonalData { get; set; }
         public string SubmissionTime { get; set; } = string.Empty;
