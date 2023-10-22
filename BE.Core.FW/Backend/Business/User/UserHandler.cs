@@ -14,7 +14,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.Office.Core;
+//using Microsoft.Office.Core;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Org.BouncyCastle.Ocsp;
@@ -40,7 +40,7 @@ namespace Backend.Business.User
         private readonly string _username = Backend.Infrastructure.Utils.Utils.GetConfig("Authentication:WSO2:Admin:Username");
         private readonly string _password = Backend.Infrastructure.Utils.Utils.GetConfig("Authentication:WSO2:Admin:Password");
         private readonly string _tenant = Backend.Infrastructure.Utils.Utils.GetConfig("Authentication:WSO2:Tenants:iig");
-        private static readonly string apiBasicUriCatalog = Backend.Infrastructure.Utils.Utils.GetConfig("Catalog");
+        // private static readonly string apiBasicUriCatalog = Backend.Infrastructure.Utils.Utils.GetConfig("Catalog");
 
         public UserHandler(IMapper mapper, IHttpContextAccessor httpContextAccessor, ICached cached)
         {
@@ -57,17 +57,7 @@ namespace Backend.Business.User
                 model.Fullname = model.Fullname.Trim();
                 model.Email = model.Email.Trim();
                 model.IsDisabled = false;
-                string givenName = "";
-                string familyName = "";
-                if (!string.IsNullOrEmpty(model.Fullname))
-                {
-                    var nameParts = model.Fullname.Split(' ');
-                    givenName = nameParts[nameParts.Length - 1];
-                    if (nameParts.Length > 1)
-                    {
-                        familyName = string.Join(" ", nameParts.Take(nameParts.Length - 1));
-                    }
-                }
+                
                 using UnitOfWork unitOfWork = new(_httpContextAccessor);
                 if (unitOfWork.Repository<SysUser>().FirstOrDefault(x => x.Username.ToLower() == model.Username.ToLower()) != null)
                     return new ResponseDataError(Code.BadRequest, "Username already exists");
@@ -348,13 +338,10 @@ namespace Backend.Business.User
         {
             try
             {
-                List<DepartmentModel> iigDepartments = new List<DepartmentModel>();
-                var iigDepartmentQuery = await HttpHelper.Get<ResponseDataObject<List<DepartmentModel>>>(apiBasicUriCatalog, $"IIGDepartment?filter=%7B%7D", accessToken != null ? accessToken : string.Empty);
-                if (iigDepartmentQuery != null && iigDepartmentQuery.Code == Code.Success && iigDepartmentQuery.Data != null)
-                {
-                    iigDepartments = iigDepartmentQuery.Data;
-                }
                 using UnitOfWork unitOfWork = new(_httpContextAccessor);
+
+                var iigDepartmentQuery = unitOfWork.Repository<SysDepartment>().GetAll();
+               
                 var userData = unitOfWork.Repository<SysUser>().GetQueryable(
                     g => string.IsNullOrEmpty(name) || (!string.IsNullOrEmpty(name) && (g.Fullname.ToLower().Contains(name.Trim().ToLower()) || g.Username.ToLower().Contains(name.Trim().ToLower())))
                     ).OrderByDescending(g => g.CreatedOnDate).Skip((pageIndex - 1) * pageSize).Take(pageSize);
@@ -382,7 +369,7 @@ namespace Backend.Business.User
                 var pagination = new Pagination(pageIndex, pageSize, countTotal, totalPage);
                 foreach (var item in result)
                 {
-                    item.IIGDepartmentName = iigDepartments.FirstOrDefault(g => g.Id == item.IIGDepartmentId)?.Name;
+                    item.IIGDepartmentName = iigDepartmentQuery.FirstOrDefault(g => g.Id == item.IIGDepartmentId)?.Name;
                 }
                 return new PageableData<List<UserModel>>(result, pagination, Code.Success, "");
             }
@@ -598,17 +585,6 @@ namespace Backend.Business.User
                 if (unitOfWork.Repository<SysUser>().FirstOrDefault(x => x.Id != id && x.Email.ToLower() == model.Email.ToLower()) != null)
                     return new ResponseDataError(Code.BadRequest, "Email đã tồn tại");
 
-                string givenName = "";
-                string familyName = "";
-                if (!string.IsNullOrEmpty(model.Fullname))
-                {
-                    var nameParts = model.Fullname.Split(' ');
-                    givenName = nameParts[nameParts.Length - 1];
-                    if (nameParts.Length > 1)
-                    {
-                        familyName = string.Join(" ", nameParts.Take(nameParts.Length - 1));
-                    }
-                }
                 var existUser = unitOfWork.Repository<SysUser>().GetById(id);
                 if (existUser == null)
                     return new ResponseDataError(Code.BadRequest, "Id not found");

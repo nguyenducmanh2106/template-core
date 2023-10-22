@@ -1,4 +1,6 @@
-﻿using Backend.Business.Auth;
+﻿using Backend.Business;
+using Backend.Business.Auth;
+using Backend.Business.Branch;
 using Backend.Business.Department;
 using Backend.Business.Navigation;
 using Backend.Business.User;
@@ -13,54 +15,46 @@ namespace Backend.Controllers
     [ApiController]
     [Route("[controller]")]
     //[Authorize]
-    public class DepartmentController : ControllerBase
+    public class BranchController : ControllerBase
     {
-        private readonly IDepartmentHandler _iigDepartmentHandler;
+        private readonly IBranchHandler _handler;
 
-        public DepartmentController(IDepartmentHandler iigDepartmentHandler)
+        public BranchController(IBranchHandler handler)
         {
-            _iigDepartmentHandler = iigDepartmentHandler;
+            _handler = handler;
         }
 
         [HttpPost]
-        public ResponseData Create([FromBody] DepartmentModel model)
+        public ResponseData Create([FromBody] BranchModel model)
         {
-            return _iigDepartmentHandler.Create(model);
+            return _handler.Create(model);
         }
 
         [HttpDelete]
         [Route("id")]
         public ResponseData Delete(Guid id)
         {
-            return _iigDepartmentHandler.Delete(id);
+            return _handler.Delete(id);
         }
 
         [HttpGet]
         public ResponseData Get(string filter = "{}")
         {
-            return _iigDepartmentHandler.Get(filter);
+            return _handler.Get(filter);
         }
 
         [HttpGet]
         [Route("id")]
         public ResponseData GetById(Guid id)
         {
-            return _iigDepartmentHandler.GetById(id);
+            return _handler.GetById(id);
         }
-
-        [HttpGet]
-        [Route("tree")]
-        public ResponseData GetTree()
-        {
-            return _iigDepartmentHandler.GetTree();
-        }
-
 
         [HttpPut]
         [Route("id")]
-        public ResponseData Update(Guid id, DepartmentModel model)
+        public ResponseData Update(Guid id, BranchModel model)
         {
-            return _iigDepartmentHandler.Update(id, model);
+            return _handler.Update(id, model);
         }
     }
 }

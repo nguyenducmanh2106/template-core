@@ -8,7 +8,7 @@ namespace Backend.Business.Auth
         Task<bool> CheckAuthWso2(string accessToken);
         Task<ResponseData> GetToken(string code);
         Task<ResponseData> GetNavigation();
-        Task<TokenResponse> GetTokenAPI(UserModel model, string ipAddress);
+        Task<TokenResponse> GetTokenAPI(UserLogin model, string ipAddress);
 
     }
 }

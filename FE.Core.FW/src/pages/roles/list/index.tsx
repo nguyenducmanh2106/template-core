@@ -2,7 +2,6 @@ import { Card, Alert, Descriptions, Button, Divider, Space, Table, Collapse, Mod
 import { useNavigate } from 'react-router-dom';
 import React, { useEffect, useReducer, useState } from 'react';
 import { ResponseData, PaginationConfig } from '@/utils/request';
-import { deleteDividingRoom, getQueryList } from '@/apis/services/DividingExamPlaceService';
 import { ColumnsType } from 'antd/lib/table';
 import dayjs from 'dayjs';
 import { ClusterOutlined, DeleteOutlined, HddOutlined, PlusOutlined } from '@ant-design/icons';
@@ -132,17 +131,6 @@ function Role() {
     }
   };
 
-
-  const onHandleDeleteDividingRoom = async (id: string) => {
-    // console.log(id)
-    const response = await deleteDividingRoom(id);
-    if (response.code == Code._200) {
-      message.success(response.message || 'Xóa thành công');
-      searchFormSubmit(1, 10);
-    } else {
-      message.error(response.message || 'Xóa thất bại');
-    }
-  };
 
   const columns: ColumnsType<RoleModel> = [
     {

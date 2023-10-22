@@ -2,7 +2,7 @@
 
 namespace Backend.Infrastructure.EntityFramework.Datatables
 {
-    public class SysEmailHistory : BaseTable<SysCustomer>
+    public class SysEmailHistory : BaseTable<SysEmailHistory>
     {
         [Key]
         public Guid Id { get; set; }

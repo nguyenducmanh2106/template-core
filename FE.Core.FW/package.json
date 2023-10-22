@@ -14,11 +14,12 @@
   },
   "dependencies": {
     "@ant-design/icons": "^4.8.0",
+    "@ant-design/pro-components": "^2.6.31",
     "@ckeditor/ckeditor5-build-decoupled-document": "^35.0.1",
     "@ckeditor/ckeditor5-react": "^5.0.2",
     "@toast-ui/editor": "^3.2.0",
     "@vitejs/plugin-basic-ssl": "^0.1.2",
-    "antd": "^4.24.5",
+    "antd": "^5.10.2",
     "axios": "^0.27.2",
     "classnames": "^2.3.1",
     "dayjs": "1.11.6",

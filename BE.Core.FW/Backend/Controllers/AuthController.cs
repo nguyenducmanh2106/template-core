@@ -48,7 +48,7 @@ namespace Backend.Controllers
         /// <returns></returns>
         //[Authorize]
         [HttpPost("whoiam")]
-        public async Task<TokenResponse> GetTokenAPI([FromBody] UserModel model)
+        public async Task<TokenResponse> GetTokenAPI([FromBody] UserLogin model)
         {
             string ipAddress = GetIpAddress();
             return await _handler.GetTokenAPI(model, ipAddress);

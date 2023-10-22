@@ -4,7 +4,7 @@
 
 export type PolicyModel = {
   id?: string;
-  layoutCode?: string;
+  layoutCode?: string | null;
   roleId?: string;
   permission?: number;
 };

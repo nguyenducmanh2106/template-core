@@ -21,8 +21,10 @@ namespace Backend.Infrastructure.EntityFramework.Repositories
         {
             context.ChangeTracker.DetectChanges();
             var shortView = context.ChangeTracker.DebugView.ShortView;
-            var longView = context.ChangeTracker.DebugView.LongView.Split("\r\n").ToList();
-            var data = shortView.Split("\r\n").Where(x => x.Contains("Added") || x.Contains("Modified") || x.Contains("Deleted"));
+            // var longView = context.ChangeTracker.DebugView.LongView.Split("\r\n").ToList();
+            // var data = shortView.Split("\r\n").Where(x => x.Contains("Added") || x.Contains("Modified") || x.Contains("Deleted"));
+            var longView = context.ChangeTracker.DebugView.LongView.Split("\n").ToList();
+            var data = shortView.Split("\n").Where(x => x.Contains("Added") || x.Contains("Modified") || x.Contains("Deleted"));
             foreach (var item in data)
             {
                 if (item.Split('{').First().Trim() == "SysDeletedItem")

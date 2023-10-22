@@ -367,20 +367,3 @@ export const getExamType = (
     path: import.meta.env.VITE_BASE_CATALOG + `ExamType`,
   });
 };
-
-/**
- * @param tenant
- * @returns ResponseData Success
- * @throws ApiError
- */
-export const getTreeIigDepartment = (
-  tenant?: string
-): CancelablePromise<ResponseData> => {
-  return request({
-    method: "GET",
-    path: import.meta.env.VITE_BASE_CATALOG + `IIGDepartment/tree`,
-    headers: {
-      Tenant: tenant,
-    },
-  });
-};

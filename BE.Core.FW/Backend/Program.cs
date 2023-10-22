@@ -19,7 +19,6 @@ using Microsoft.OpenApi.Models;
 using Serilog;
 using WebAPI.Infrastructure.Localization;
 using Serilog.Sinks.Elasticsearch;
-using Backend.Business.UserReceiveEmail;
 using Shared.Caching.Ioc;
 using Shared.Core.Utils;
 using Microsoft.Extensions.Options;
@@ -158,17 +157,7 @@ builder.Services.AddRequestLogging(builder.Configuration);
 builder.Services.AddAuth(builder.Configuration);
 
 builder.Services.AddServices();
-builder.Services
-    .AddScoped<IUserHandler, UserHandler>()
-    .AddScoped<INavigationHandler, NavigationHandler>()
-    .AddScoped<IPolicyHandler, PolicyHandler>()
-    .AddScoped<IRoleHandler, RoleHandler>()
-    .AddScoped<IUploadFileHandler, UploadFileHandler>()
-    .AddScoped<IUserHandler, UserHandler>()
-    .AddScoped<IEmailTemplateHandler, EmailTemplateHandler>()
-    .AddScoped<IDividingRoomHandler, DividingRoomHandler>()
-    .AddScoped<IEmailHandler, EmailHandler>()
-    .AddScoped<IAuthHandler, AuthHandler>();
+builder.Services.AddInjectionBussiness();
 
 
 
@@ -243,6 +232,6 @@ app.MapControllers();
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<CoreFrameworkContext>();
-    //db.Database.Migrate();
+    db.Database.Migrate();
 }
 app.Run();

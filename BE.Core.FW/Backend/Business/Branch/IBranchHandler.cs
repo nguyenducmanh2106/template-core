@@ -1,14 +1,13 @@
 using Backend.Infrastructure.Utils;
 using Backend.Model;
 
-namespace Backend.Business.Department;
+namespace Backend.Business.Branch;
 
-public interface IDepartmentHandler
+public interface IBranchHandler
 {
     ResponseData Get(string filter);
-    ResponseData GetTree();
     ResponseData GetById(Guid id);
-    ResponseData Create(DepartmentModel model);
-    ResponseData Update(Guid id, DepartmentModel model);
+    ResponseData Create(BranchModel model);
+    ResponseData Update(Guid id, BranchModel model);
     ResponseData Delete(Guid id);
 }

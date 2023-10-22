@@ -1,62 +1,66 @@
 ﻿using Backend.Business.Auth;
+using Backend.Business.Department;
 using Backend.Business.Navigation;
 using Backend.Business.User;
 using Backend.Infrastructure.Utils;
+using Backend.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Controllers
 {
+    // [Authorize]
     [ApiController]
     [Route("[controller]")]
     //[Authorize]
-    public class AuthController : ControllerBase
+    public class DepartmentController : ControllerBase
     {
-        private readonly IAuthHandler _handler;
+        private readonly IDepartmentHandler _iigDepartmentHandler;
 
-        public AuthController(IAuthHandler handler)
+        public DepartmentController(IDepartmentHandler iigDepartmentHandler)
         {
-            _handler = handler;
+            _iigDepartmentHandler = iigDepartmentHandler;
         }
 
-        //#region dành cho wso2
-        //[HttpGet]
-        //public async Task<bool> CheckAuthWSO2()
-        //{
-        //    string accessToken = Request.Headers["authorization"].ToString();
-        //    accessToken = accessToken.Replace("Bearer", "").Trim();
-        //    return await _handler.CheckAuthWso2(accessToken);
-        //}
+        [HttpPost]
+        public ResponseData Create([FromBody] DepartmentModel model)
+        {
+            return _iigDepartmentHandler.Create(model);
+        }
 
-        //[HttpGet]
-        //[Route("GetToken")]
-        //public async Task<ResponseData> GetToken(string code)
-        //{
-        //    return await _handler.GetToken(code);
-        //}
-        //#endregion
+        [HttpDelete]
+        [Route("id")]
+        public ResponseData Delete(Guid id)
+        {
+            return _iigDepartmentHandler.Delete(id);
+        }
 
         [HttpGet]
-        [Route("GetNavigation")]
-        public async Task<ResponseData> GetNavigation()
+        public ResponseData Get(string filter = "{}")
         {
-            return await _handler.GetNavigation();
+            return _iigDepartmentHandler.Get(filter);
         }
 
-        /// <summary>
-        /// Lấy danh sách quyền theo userId đang đăng nhập
-        /// </summary>
-        /// <returns></returns>
-        //[Authorize]
-        [HttpPost("whoiam")]
-        public async Task<TokenResponse> GetTokenAPI([FromBody] UserLogin model)
+        [HttpGet]
+        [Route("id")]
+        public ResponseData GetById(Guid id)
         {
-            string ipAddress = GetIpAddress();
-            return await _handler.GetTokenAPI(model, ipAddress);
+            return _iigDepartmentHandler.GetById(id);
         }
 
-        private string GetIpAddress() =>
-       Request.Headers.ContainsKey("X-Forwarded-For")
-           ? Request.Headers["X-Forwarded-For"]
-           : HttpContext.Connection.RemoteIpAddress?.MapToIPv4().ToString() ?? "N/A";
+        [HttpGet]
+        [Route("tree")]
+        public ResponseData GetTree()
+        {
+            return _iigDepartmentHandler.GetTree();
+        }
+
+
+        [HttpPut]
+        [Route("id")]
+        public ResponseData Update(Guid id, DepartmentModel model)
+        {
+            return _iigDepartmentHandler.Update(id, model);
+        }
     }
 }

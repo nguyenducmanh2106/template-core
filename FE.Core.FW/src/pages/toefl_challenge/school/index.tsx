@@ -33,7 +33,7 @@ import {
 import { DeleteOutlined, EditOutlined, GatewayOutlined, PlusOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import SchoolCoordinator from './school-coordinator';
-import { getTreeIigDepartment } from '@/apis/services/PageService';
+import { getDepartment2 } from '@/apis/services/DepartmentService';
 function SchoolTFC() {
     const navigate = useNavigate();
     // Load
@@ -75,7 +75,7 @@ function SchoolTFC() {
             const responseProvinces: ResponseData = await getAministrativeDivisions();
             const responseDepartment: ResponseData = await getDepartment();
             // const responseIIGDepartment: ResponseData = await getIigDepartment2();
-            const responseIIGDepartment: ResponseData = await getTreeIigDepartment();
+            const responseIIGDepartment: ResponseData = await getDepartment2();
 
             const provinceOptions = ConvertOptionSelectModel(responseProvinces.data as ProvinceModel[]);
             const departmentOptions = ConvertOptionSelectModel(responseDepartment.data as OptionModel[]);

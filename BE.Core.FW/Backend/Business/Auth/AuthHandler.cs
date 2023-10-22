@@ -129,7 +129,7 @@ namespace Backend.Business.Auth
             return result;
         }
 
-        public async Task<TokenResponse> GetTokenAPI(UserModel model, string ipAddress)
+        public async Task<TokenResponse> GetTokenAPI(UserLogin model, string ipAddress)
         {
             using UnitOfWork unitOfWork = new(_httpContextAccessor);
             var existUser = unitOfWork.Repository<SysUser>().Get(g => g.Username == model.Username)?.FirstOrDefault();

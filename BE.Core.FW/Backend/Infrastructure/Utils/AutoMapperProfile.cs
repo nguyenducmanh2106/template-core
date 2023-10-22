@@ -6,6 +6,7 @@ using Backend.Business.Policy;
 using Backend.Business.Role;
 using Backend.Business.User;
 using Backend.Infrastructure.EntityFramework.Datatables;
+using Backend.Model;
 
 namespace Backend.Infrastructure.Utils
 {
@@ -17,11 +18,11 @@ namespace Backend.Infrastructure.Utils
             CreateMap<SysUserMetadata, UserMetadataModel>().ReverseMap();
             CreateMap<SysNavigation, NavigationModel>().ReverseMap();
             CreateMap<SysPolicy, PolicyModel>().ReverseMap();
-            CreateMap<SysExamRoomDivided, ExamRoomDividedModel>().ReverseMap();
             CreateMap<SysDividingExamPlace, DividingExamPlaceModel>().ReverseMap();
             CreateMap<SysRole, RoleModel>().ReverseMap();
             CreateMap<string, string>().ConvertUsing(s => string.IsNullOrEmpty(s) ? s : s.Trim());
-            CreateMap<SysUserReceiveEmailTest, UserReceiveEmailTestModel>().ReverseMap();
+            CreateMap<SysDepartment, DepartmentModel>().ReverseMap();
+            CreateMap<SysBranch, BranchModel>().ReverseMap();
         }
     }
 }

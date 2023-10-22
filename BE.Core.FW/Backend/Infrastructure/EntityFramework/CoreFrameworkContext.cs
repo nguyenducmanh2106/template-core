@@ -13,9 +13,9 @@ namespace Backend.Infrastructure.EntityFramework
         public DbSet<SysUser>? Users { get; set; }
         public DbSet<SysRole>? Roles { get; set; }
         public DbSet<SysUserMetadata>? UserMetadata { get; set; }
-
         public DbSet<SysEmailHistory>? EmailHistories { get; set; }
-
+        public DbSet<SysDepartment>? Departments { get; set; }
+        public DbSet<SysBranch> Branchs { get; set; }
 
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

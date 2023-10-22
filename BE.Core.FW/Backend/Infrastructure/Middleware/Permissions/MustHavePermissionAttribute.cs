@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.Office.Core;
+//using Microsoft.Office.Core;
 using NetCasbin.Model;
 
 namespace Backend.Infrastructure.Middleware.Permissions

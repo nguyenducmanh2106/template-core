@@ -5,7 +5,7 @@ using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
 using DocumentFormat.OpenXml.Office2019.Presentation;
 using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Office.Core;
+//using Microsoft.Office.Core;
 using Minio.DataModel.Replication;
 using static Backend.Infrastructure.Middleware.CustomAuthenticationHandler;
 using static Backend.Infrastructure.Utils.Constant;

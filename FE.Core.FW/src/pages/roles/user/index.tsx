@@ -17,7 +17,7 @@ import { useRecoilValue } from 'recoil';
 import { useUserState } from '@/store/user';
 import Permission from '@/components/Permission';
 import { layoutCode, PermissionAction } from '@/utils/constants';
-import { getTreeIigDepartment } from '@/apis/services/PageService';
+import { getDepartment2 } from '@/apis/services/DepartmentService';
 
 function User() {
 
@@ -89,7 +89,7 @@ function User() {
 
   const onHandleShowModelCreate = async () => {
     setShowLoadingCreate(true)
-    const responseIIGDepartment: ResponseData = await getTreeIigDepartment();
+    const responseIIGDepartment: ResponseData = await getDepartment2();
 
     if (responseIIGDepartment.code === Code._200) {
       const stateDispatcher = {
@@ -141,7 +141,7 @@ function User() {
   const getUserCurrentEdit = async (id: string): Promise<void> => {
     setInitLoadingModal(true)
     const response: ResponseData = await getUserById(id);
-    const responseIIGDepartment: ResponseData = await getTreeIigDepartment();
+    const responseIIGDepartment: ResponseData = await getDepartment2();
     if (response && response.code === Code._200) {
       const getUserCurrent = response.data as UserModel ?? {};
       const stateDispatcher = {

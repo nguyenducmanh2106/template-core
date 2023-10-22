@@ -6,30 +6,27 @@ using Backend.Model;
 using Newtonsoft.Json;
 using Serilog;
 
-namespace Backend.Business.Department;
+namespace Backend.Business.Branch;
 
-public class DepartmentHandler : IDepartmentHandler
+public class BranchHandler : IBranchHandler
     {
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public DepartmentHandler(IMapper mapper, IHttpContextAccessor httpContextAccessor)
+        public BranchHandler(IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
             _mapper = mapper;
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public ResponseData Create(DepartmentModel model)
+        public ResponseData Create(BranchModel model)
         {
             try
             {
                 using UnitOfWork unitOfWork = new(_httpContextAccessor);
                 model.Id = Guid.NewGuid();
-                if (model.ParentId.HasValue)
-                {
-                    model.Level = (unitOfWork.Repository<SysDepartment>().GetById(model.ParentId.Value)?.Level ?? 0) + 1;
-                }
-                unitOfWork.Repository<SysDepartment>().Insert(_mapper.Map<SysDepartment>(model));
+                
+                unitOfWork.Repository<SysBranch>().Insert(_mapper.Map<SysBranch>(model));
                 unitOfWork.Save();
                 return new ResponseData(Code.Success, "");
             }
@@ -45,12 +42,12 @@ public class DepartmentHandler : IDepartmentHandler
             try
             {
                 using var unitOfWork = new UnitOfWork(_httpContextAccessor);
-                var iigDepartmentData = unitOfWork.Repository<SysDepartment>().GetById(id);
+                var iigDepartmentData = unitOfWork.Repository<SysBranch>().GetById(id);
                 if (iigDepartmentData == null)
                 {
                     return new ResponseDataError(Code.NotFound, "Id not found");
                 }
-                unitOfWork.Repository<SysDepartment>().Delete(iigDepartmentData);
+                unitOfWork.Repository<SysBranch>().Delete(iigDepartmentData);
                 unitOfWork.Save();
                 return new ResponseData(Code.Success, "Xóa thành công");
             }
@@ -68,11 +65,11 @@ public class DepartmentHandler : IDepartmentHandler
                 int pageNumber = 0;
                 int pageSize = 20;
                 int totalCount = 0;
-                var filterModel = JsonConvert.DeserializeObject<DepartmentFilterModel>(filter);
+                var filterModel = JsonConvert.DeserializeObject<RequestData>(filter);
                 if (filterModel == null)
                     return new ResponseDataError(Code.BadRequest, "Filter invalid");
                 using var unitOfWork = new UnitOfWork(_httpContextAccessor);
-                var iigDepartmentData = unitOfWork.Repository<SysDepartment>().Get();
+                var iigDepartmentData = unitOfWork.Repository<SysBranch>().Get();
                 if (!string.IsNullOrEmpty(filterModel.TextSearch))
                     iigDepartmentData = iigDepartmentData.Where(x => x.Name.ToLower().Contains(filterModel.TextSearch.ToLower()));
                 totalCount = iigDepartmentData.Count();
@@ -82,11 +79,9 @@ public class DepartmentHandler : IDepartmentHandler
                     pageNumber = filterModel.Page.Value;
                     pageSize = filterModel.Size.Value;
                 }
-                var result = new List<DepartmentModel>();
-                foreach (var school in iigDepartmentData)
-                {
-                    result.Add(_mapper.Map<DepartmentModel>(school));
-                }
+
+                var result = _mapper.Map<List<BranchModel>>(iigDepartmentData);
+                
                 var pagination = new Pagination()
                 {
                     PageNumber = pageNumber,
@@ -94,7 +89,7 @@ public class DepartmentHandler : IDepartmentHandler
                     TotalCount = totalCount,
                     TotalPage = (int)Math.Ceiling((decimal)totalCount / pageSize)
                 };
-                return new PageableData<List<DepartmentModel>>(result, pagination, Code.Success, "");
+                return new PageableData<List<BranchModel>>(result, pagination, Code.Success, "");
             }
             catch (Exception exception)
             {
@@ -108,13 +103,13 @@ public class DepartmentHandler : IDepartmentHandler
             try
             {
                 using var unitOfWork = new UnitOfWork(_httpContextAccessor);
-                var iigDepartmentData = unitOfWork.Repository<SysDepartment>().GetById(id);
+                var iigDepartmentData = unitOfWork.Repository<SysBranch>().GetById(id);
                 if (iigDepartmentData == null)
                 {
                     return new ResponseDataError(Code.NotFound, "Id not found");
                 }
-                var result = _mapper.Map<DepartmentModel>(iigDepartmentData);
-                return new ResponseDataObject<DepartmentModel>(result, Code.Success, "");
+                var result = _mapper.Map<BranchModel>(iigDepartmentData);
+                return new ResponseDataObject<BranchModel>(result, Code.Success, "");
             }
             catch (Exception exception)
             {
@@ -122,89 +117,13 @@ public class DepartmentHandler : IDepartmentHandler
                 return new ResponseDataError(Code.ServerError, exception.Message);
             }
         }
-
-        public ResponseData GetTree()
+        
+        public ResponseData Update(Guid id, BranchModel model)
         {
             try
             {
                 using var unitOfWork = new UnitOfWork(_httpContextAccessor);
-                var root = unitOfWork.Repository<SysDepartment>().Get();
-                if (root == null)
-                {
-                    return new ResponseDataError(Code.NotFound, "Not found");
-                }
-                //var result = BuildDepartment(root);
-                var result = RecursiveDepartment(root?.ToList() ?? new List<SysDepartment>(), null);
-                return new ResponseDataObject<List<DepartmentTreeModel>>(result, Code.Success, "");
-            }
-            catch (Exception exception)
-            {
-                Log.Error(exception, exception.Message);
-                return new ResponseDataError(Code.ServerError, exception.Message);
-            }
-        }
-
-        private List<DepartmentTreeModel> RecursiveDepartment(List<SysDepartment> inputDepartments, Guid? parentId)
-        {
-            List<DepartmentTreeModel> departments = new List<DepartmentTreeModel>();
-            if (!parentId.HasValue)
-            {
-                foreach (var department in inputDepartments)
-                {
-                    if (!department.ParentId.HasValue || (department.ParentId.HasValue && department.ParentId.Value == Guid.Empty))
-                    {
-                        var convertDepartment = new DepartmentTreeModel()
-                        {
-                            Title = department.Name,
-                            Value = department.Id.ToString(),
-                            Key = department.Id.ToString(),
-                        };
-                        convertDepartment.Children = RecursiveDepartment(inputDepartments, department.Id);
-                        departments.Add(convertDepartment);
-                    }
-                }
-            }
-            else
-            {
-                foreach (var department in inputDepartments)
-                {
-                    if (department.ParentId == parentId)
-                    {
-                        var convertDepartment = new DepartmentTreeModel()
-                        {
-                            Title = department.Name,
-                            Value = department.Id.ToString(),
-                            Key = department.Id.ToString(),
-                        };
-                        convertDepartment.Children = RecursiveDepartment(inputDepartments, department.Id);
-                        departments.Add(convertDepartment);
-                    }
-                }
-            }
-            return departments;
-        }
-
-        // private DepartmentModel BuildDepartment(SysDepartment department)
-        // {
-        //     using var unitOfWork = new UnitOfWork(_httpContextAccessor);
-        //     DepartmentModel result = _mapper.Map<DepartmentModel>(department);
-        //     var children = unitOfWork.Repository<SysDepartment>().Get(x => x.ParentId == department.Id);
-        //     if (children.Any())
-        //     {
-        //         foreach (var item in children)
-        //         {
-        //             result.Children.Add(BuildDepartment(item));
-        //         }
-        //     }
-        //     return result;
-        // }
-
-        public ResponseData Update(Guid id, DepartmentModel model)
-        {
-            try
-            {
-                using var unitOfWork = new UnitOfWork(_httpContextAccessor);
-                var iigDepartmentData = unitOfWork.Repository<SysDepartment>().GetById(id);
+                var iigDepartmentData = unitOfWork.Repository<SysBranch>().GetById(id);
                 if (iigDepartmentData == null)
                 {
                     return new ResponseDataError(Code.NotFound, "Id not found");
@@ -213,15 +132,11 @@ public class DepartmentHandler : IDepartmentHandler
                     iigDepartmentData.Code = model.Code;
                 if (!string.IsNullOrEmpty(model.Name))
                     iigDepartmentData.Name = model.Name;
-                if (model.ParentId != Guid.Empty)
-                    iigDepartmentData.ParentId = model.ParentId;
+                
                 if (!string.IsNullOrEmpty(model.Description))
                     iigDepartmentData.Description = model.Description;
-                if (model.ParentId.HasValue)
-                {
-                    iigDepartmentData.Level = (unitOfWork.Repository<SysDepartment>().GetById(model.ParentId.Value)?.Level ?? 0) + 1;
-                }
-                unitOfWork.Repository<SysDepartment>().Update(iigDepartmentData);
+                
+                unitOfWork.Repository<SysBranch>().Update(iigDepartmentData);
 
                 unitOfWork.Save();
                 return new ResponseData(Code.Success, "");

@@ -7,7 +7,6 @@ import WebcamCapture from '@/components/Camera/Index';
 
 const ArticleChartCard = lazy(() => import('@/components/ArticleChartCard'));
 const WorksChartCard = lazy(() => import('@/components/WorksChartCard'));
-const TopicsChartCard = lazy(() => import('@/components/TopicsChartCard'));
 const LinksChartCard = lazy(() => import('@/components/LinksChartCard'));
 
 const HotSearchCard = lazy(() => import('@/components/HotSearchCard'));
@@ -40,11 +39,6 @@ function App() {
         <Col {...ChartColProps}>
           <Suspense fallback={<PageLoading />}>
             <WorksChartCard />
-          </Suspense>
-        </Col>
-        <Col {...ChartColProps}>
-          <Suspense fallback={<PageLoading />}>
-            <TopicsChartCard />
           </Suspense>
         </Col>
         <Col {...ChartColProps}>
