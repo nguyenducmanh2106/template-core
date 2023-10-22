@@ -317,7 +317,8 @@ const PermissionModule: React.FC<Props> = ({ module, role, permissions, getPermi
                 }
             }
             if (item.isShow) {
-                if (!item.children || (item && item?.children && item?.children?.length <= 0)) {
+                const checkChildrenIsShow = item?.children?.some((item: IRouter) => item.isShow)
+                if (!item.children || item?.children?.length <= 0 || !checkChildrenIsShow) {
                     return (
                         <Row gutter={16} key={item.code}>
                             <Col span={6} className='gutter-row' style={{ marginBottom: '8px' }}>

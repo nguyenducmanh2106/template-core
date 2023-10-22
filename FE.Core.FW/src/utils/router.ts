@@ -243,13 +243,18 @@ export const formatRoutes = (routes: IRouter[], parentPath = '/', parentPaths: s
     // children
     let children: IRouter[] | undefined;
     let pkChildren: IPathKeyRouter | undefined;
-    if (item.children) {
+    const checkChildrenIsShow = item?.children?.some((item: IRouter) => item.isShow)
+    if (item.children && checkChildrenIsShow) {
       const fRoutes = formatRoutes(item.children, path, [...pPaths, path]);
 
       children = fRoutes.router;
       newItem.children = children;
 
       pkChildren = fRoutes.pathKeyRouter;
+    }
+    else{
+      newItem.children = undefined
+      pkChildren = undefined
     }
 
     // item
@@ -259,7 +264,7 @@ export const formatRoutes = (routes: IRouter[], parentPath = '/', parentPaths: s
       jsonItems = merge(jsonItems, pkChildren);
     }
   }
-
+  console.log(items)
   return {
     router: items,
     pathKeyRouter: jsonItems,

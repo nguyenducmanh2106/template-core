@@ -1,4 +1,4 @@
-import { Code } from '@/apis';
+import { BranchModel, Code } from '@/apis';
 import { PaginationConfig, ResponseData } from '@/utils/request';
 import {
     Button,
@@ -6,45 +6,38 @@ import {
     Checkbox,
     Col,
     Collapse,
-    Dropdown,
     Form,
     Input,
     Modal,
     Row,
-    Select,
     Space,
-    Table,
     Typography,
     message
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { useEffect, useReducer, useRef, useState } from 'react';
 
-import { OptionModel } from '@/apis/models/data';
+import { OptionModel } from '@/@types/data';
+import { getBranch } from '@/apis/services/BranchService';
 import { deleteDivision, deleteManyDivision } from '@/apis/services/toefl-challenge/DivisionService';
 import Permission from '@/components/Permission';
 import { PermissionAction, layoutCode } from '@/utils/constants';
 import {
     ConvertOptionSelectModel
 } from '@/utils/convert';
-import { DeleteOutlined, DownOutlined, EditOutlined, EllipsisOutlined, PlusOutlined } from '@ant-design/icons';
-import { useNavigate } from 'react-router-dom';
-import { DepartmentModel } from '@/apis/models/DepartmentModel';
-import { getDepartment } from '@/apis/services/DepartmentService';
+import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import { ActionType, ProColumns, ProTable } from '@ant-design/pro-components';
-function DivisionTFC() {
+import { useNavigate } from 'react-router-dom';
+function Branch() {
     const navigate = useNavigate();
     // Load
     const { Panel } = Collapse;
     const initState = {
-        provinces: [],
-        districts: [],
-        departmentEdit: {},
         departments: [],
     };
     const [loading, setLoading] = useState<boolean>(false);
     const [loadingDelete, setLoadingDelete] = useState<boolean>(false);
-    const [list, setList] = useState<DepartmentModel[]>([]);
+    const [list, setList] = useState<BranchModel[]>([]);
     const [pagination, setPagination] = useState<PaginationConfig>({
         total: 0,
         current: 1,
@@ -138,7 +131,7 @@ function DivisionTFC() {
     const [buttonLoading, setButtonLoading] = useState<boolean>(false);
 
     const onHandleShowModelCreate = async () => {
-        navigate(`/toefl-challenge/division/create`)
+        navigate(`/catalog/branch/create`)
     };
 
     // searchForm
@@ -152,10 +145,10 @@ function DivisionTFC() {
                 size: pageSize,
                 textSearch: fieldsValue.TextSearch,
             }
-            const response: ResponseData = await getDepartment(
+            const response: ResponseData = await getBranch(
                 JSON.stringify(filter)
             );
-            setList((response.data || []) as DepartmentModel[]);
+            setList((response.data || []) as BranchModel[]);
             setPagination({
                 ...pagination,
                 current,
@@ -169,28 +162,8 @@ function DivisionTFC() {
         }
     };
 
-    const onChangeProvince = async () => {
 
-        const fieldsValue = await searchForm.validateFields();
-        const filter = {
-            provinceId: fieldsValue.ProvinceId ? fieldsValue.ProvinceId : undefined,
-        }
-        const response: ResponseData = await getDepartment(
-            JSON.stringify(filter)
-        );
-        const departmentOptions = ConvertOptionSelectModel(response.data as OptionModel[]);
-
-        const stateDispatcher = {
-            departments: [{
-                key: 'Default',
-                label: '-Chọn-',
-                value: '',
-            }].concat(departmentOptions),
-        }
-        dispatch(stateDispatcher)
-    };
-
-    const columns: ProColumns<DepartmentModel>[] = [
+    const columns: ProColumns<BranchModel>[] = [
         {
             title: 'STT',
             dataIndex: 'index',
@@ -198,19 +171,14 @@ function DivisionTFC() {
             render: (_, record, index) => <>{(pagination.current - 1) * pagination.pageSize + index + 1}</>,
         },
         {
-            title: 'Mã phòng ban',
+            title: 'Mã chi nhánh',
             dataIndex: 'code',
             render: (_, record) => <span>{record.code}</span>,
         },
         {
-            title: 'Tên phòng ban',
+            title: 'Tên chi nhánh',
             dataIndex: 'name',
             render: (_, record) => <span>{record.name}</span>,
-        },
-        {
-            title: 'Tính hoa hồng',
-            dataIndex: 'isCom',
-            render: (_, record) => <span> <Checkbox checked={record.isCom} disabled /></span>,
         },
         {
             title: 'Mô tả',
@@ -288,7 +256,7 @@ function DivisionTFC() {
                                                             allowClear />
                                                     </Form.Item>
                                                 </Col>
-                                                
+
 
                                                 <Col span={24}>
                                                     <Button type='primary' htmlType='submit' onClick={() => searchFormSubmit()}>
@@ -325,7 +293,7 @@ function DivisionTFC() {
                     }}
                 /> */}
 
-                <ProTable<DepartmentModel>
+                <ProTable<BranchModel>
                     dataSource={list}
                     rowKey="id"
                     loading={loading}
@@ -341,11 +309,11 @@ function DivisionTFC() {
                     headerTitle="Tiêu đề"
                     toolBarRender={() => [
                         <Permission noNode navigation={layoutCode.catalogDepartment as string} bitPermission={PermissionAction.Add}>
-                        <Button htmlType='button' type='default' onClick={() => onHandleShowModelCreate()}>
-                            <PlusOutlined />
-                            Tạo mới
-                        </Button>
-                    </Permission>
+                            <Button htmlType='button' type='default' onClick={() => onHandleShowModelCreate()}>
+                                <PlusOutlined />
+                                Tạo mới
+                            </Button>
+                        </Permission>
                     ]}
                 />
             </Card>
@@ -354,4 +322,4 @@ function DivisionTFC() {
     );
 }
 
-export default DivisionTFC;
+export default Branch;

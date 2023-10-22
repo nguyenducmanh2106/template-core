@@ -80,7 +80,10 @@ export const layoutCode = {
   toeflChallengeRegistrationCodeCreate:"toefl-challenge-registration-code__create",
   toeflChallengeRegistrationCodeEdit:"toefl-challenge-registration-code__edit",
   catalog: "catalog",
-  catalogDepartment: "catalog_department",
+  catalogBranch: "catalog-branch",
+  catalogBranchCreate: "catalog-department__create",
+  catalogBranchEdit: "catalog-department__edit",
+  catalogDepartment: "catalog-department",
 }
 export const routeArrays = [
   {
@@ -247,6 +250,18 @@ export const routeArrays = [
   {
     "Code": layoutCode.catalog,
     "ComponentPath": ""
+  },
+  {
+    "Code": layoutCode.catalogBranch,
+    "ComponentPath": lazy(() => import('../pages/catalog/branch'))
+  },
+  {
+    "Code": layoutCode.catalogBranchCreate,
+    "ComponentPath": lazy(() => import('../pages/catalog/branch/create'))
+  },
+  {
+    "Code": layoutCode.catalogBranchEdit,
+    "ComponentPath": lazy(() => import('../pages/catalog/branch/edit'))
   },
   {
     "Code": layoutCode.catalogDepartment,

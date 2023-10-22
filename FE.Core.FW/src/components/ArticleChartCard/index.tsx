@@ -4,9 +4,9 @@ import { Spin, Card, Divider, Row, Col, Tag } from 'antd';
 import IconSvg from '@/components/IconSvg';
 
 import styles from '@/assets/css/index.module.less';
-import { ArticleChartDataType } from '@/apis/models/data';
 import { ResponseData } from '@/utils/request';
 import { dailynewArticles } from '@/apis/services/PageService';
+import { ArticleChartDataType } from '@/@types/data';
 
 const ArticleChartCard: React.FC = () => {
 
