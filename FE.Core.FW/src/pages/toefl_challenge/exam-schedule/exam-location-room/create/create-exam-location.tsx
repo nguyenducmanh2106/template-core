@@ -1,18 +1,13 @@
+import { SelectOptionModel } from "@/@types/data";
 import { Code, ResponseData } from "@/apis";
-import { OptionModel, SelectOptionModel } from "@/apis/models/data";
 import { ExamLocationScheduleModel } from "@/apis/models/toefl-challenge/ExamLocationScheduleModel";
 import { ExamScheduleModel } from "@/apis/models/toefl-challenge/ExamScheduleModel";
-import { PICModel } from "@/apis/models/toefl-challenge/PICModel";
-import { ProvinceModel } from "@/apis/models/toefl-challenge/ProvinceModel";
 import { RegistrationRound } from "@/apis/models/toefl-challenge/RegistrationRound";
-import { getAministrativeDivisions1 } from "@/apis/services/toefl-challenge/AministrativeDivisionsService";
 import { getExamLocationSchedule } from "@/apis/services/toefl-challenge/ExamLocationService";
 import { examLocationMapScheduleState } from "@/store/exam-atom";
-import { ConvertOptionSelectModel } from "@/utils/convert";
 import { CheckOutlined, CloseOutlined, InfoCircleOutlined } from "@ant-design/icons";
-import { Input, InputNumber, Form, Row, Col, Select, FormInstance, Switch } from "antd";
-import React, { useImperativeHandle, useRef } from "react";
-import { useReducer } from "react";
+import { Col, Form, FormInstance, Input, InputNumber, Row, Select, Switch } from "antd";
+import React, { useReducer, useRef } from "react";
 import { useRecoilState } from "recoil";
 
 interface Props extends React.HTMLAttributes<HTMLElement> {

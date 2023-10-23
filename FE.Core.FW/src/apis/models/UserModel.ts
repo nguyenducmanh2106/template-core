@@ -21,5 +21,6 @@ export type UserModel = {
   iigDepartmentName?: string | null;
   permissions?: Array<PolicyModel> | null;
   createdOnDate?: string;
+  accessDataHeaderQuater?: Array<string> | null;
 };
 

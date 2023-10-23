@@ -1,4 +1,4 @@
-import { SelectOptionModel } from "@/apis/models/data";
+import { SelectOptionModel } from "@/@types/data";
 import { PICModel } from "@/apis/models/toefl-challenge/PICModel";
 import { Input, InputNumber, Form, TimePicker, Select } from "antd";
 

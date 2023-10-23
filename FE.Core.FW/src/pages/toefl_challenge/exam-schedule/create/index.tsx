@@ -17,7 +17,6 @@ import {
 import { useEffect, useReducer, useRef, useState } from 'react';
 
 import { Code } from '@/apis';
-import { OptionModel } from '@/apis/models/data';
 import { DivisionModel } from '@/apis/models/toefl-challenge/DivisionModel';
 import { RegistrationRound } from '@/apis/models/toefl-challenge/RegistrationRound';
 import { postExamSchedule } from '@/apis/services/toefl-challenge/ExamLocationService';
@@ -28,6 +27,7 @@ import {
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import { useNavigate } from 'react-router-dom';
+import { OptionModel } from '@/@types/data';
 
 
 
@@ -181,7 +181,7 @@ function ExamScheduleCreateTFC() {
                 }
                 extra={
                     <Space>
-                        <Button type="ghost" onClick={() => navigate('/toefl-challenge/exam-schedule')}>
+                        <Button type="dashed" onClick={() => navigate('/toefl-challenge/exam-schedule')}>
                             Hủy bỏ
                         </Button>
                         <Button disabled={buttonLoading} htmlType="submit" type='primary' onClick={handleOk}>

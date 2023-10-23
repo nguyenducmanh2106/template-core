@@ -20,7 +20,6 @@ import {
 import { ColumnsType } from 'antd/lib/table';
 import { useEffect, useReducer, useRef, useState } from 'react';
 
-import { OptionModel } from '@/apis/models/data';
 import { deleteDivision, deleteManyDivision } from '@/apis/services/toefl-challenge/DivisionService';
 import Permission from '@/components/Permission';
 import { PermissionAction, layoutCode } from '@/utils/constants';
@@ -32,6 +31,7 @@ import { useNavigate } from 'react-router-dom';
 import { DepartmentModel } from '@/apis/models/DepartmentModel';
 import { getDepartment } from '@/apis/services/DepartmentService';
 import { ActionType, ProColumns, ProTable } from '@ant-design/pro-components';
+import { OptionModel } from '@/@types/data';
 function DivisionTFC() {
     const navigate = useNavigate();
     // Load

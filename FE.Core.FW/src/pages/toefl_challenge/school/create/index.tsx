@@ -20,21 +20,20 @@ import {
 import { useEffect, useReducer, useRef, useState } from 'react';
 
 import { Code } from '@/apis';
-import { OptionModel } from '@/apis/models/data';
 import { DivisionModel } from '@/apis/models/toefl-challenge/DivisionModel';
 import { PICModel } from '@/apis/models/toefl-challenge/PICModel';
+import { ProvinceModel } from '@/apis/models/toefl-challenge/ProvinceModel';
+import { getAministrativeDivisions, getAministrativeDivisions1 } from '@/apis/services/toefl-challenge/AministrativeDivisionsService';
 import { getDepartment } from '@/apis/services/toefl-challenge/DepartmentService';
-import { getDivision, postDivisionCreate } from '@/apis/services/toefl-challenge/DivisionService';
+import { getDivision } from '@/apis/services/toefl-challenge/DivisionService';
+import { getSchool, postSchool } from '@/apis/services/toefl-challenge/SchoolService';
 import {
     ConvertOptionSelectModel
 } from '@/utils/convert';
 import { ArrowLeftOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import EditableCell from './create';
-import { getAministrativeDivisions, getAministrativeDivisions1 } from '@/apis/services/toefl-challenge/AministrativeDivisionsService';
-import { DistrictModel } from '@/apis/models/toefl-challenge/DistrictModel';
-import { ProvinceModel } from '@/apis/models/toefl-challenge/ProvinceModel';
-import { getSchool, postSchool } from '@/apis/services/toefl-challenge/SchoolService';
+import { OptionModel } from '@/@types/data';
 
 
 
@@ -403,7 +402,7 @@ function CreateSchoolTFC() {
                 return editable ? (
                     <Space>
                         <Typography.Link onClick={() => saveRow(record.id as string)} style={{ marginRight: 8 }}>
-                            <Button type='ghost'>Lưu</Button>
+                            <Button type='dashed'>Lưu</Button>
                         </Typography.Link>
                         <Popconfirm title="Những thay đổi bạn đã thực hiện có thể không được lưu" onConfirm={cancel}>
                             <Button type='text' danger>Hủy bỏ</Button>
@@ -474,7 +473,7 @@ function CreateSchoolTFC() {
                 }
                 extra={
                     <Space>
-                        <Button type="ghost" onClick={() => navigate('/toefl-challenge/school')}>
+                        <Button type="dashed" onClick={() => navigate('/toefl-challenge/school')}>
                             Hủy bỏ
                         </Button>
                         <Button disabled={buttonLoading} htmlType="submit" type='primary' onClick={handleOk}>

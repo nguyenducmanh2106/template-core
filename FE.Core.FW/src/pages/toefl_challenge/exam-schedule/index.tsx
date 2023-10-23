@@ -17,7 +17,6 @@ import {
 import { ColumnsType } from 'antd/lib/table';
 import { useEffect, useReducer, useState } from 'react';
 
-import { OptionModel } from '@/apis/models/data';
 import { ExamModel } from '@/apis/models/toefl-challenge/ExamModel';
 import { ExamScheduleModel } from '@/apis/models/toefl-challenge/ExamScheduleModel';
 import { RegistrationRound } from '@/apis/models/toefl-challenge/RegistrationRound';
@@ -31,6 +30,7 @@ import {
 } from '@/utils/convert';
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
+import { OptionModel } from '@/@types/data';
 function ExamScheduleTFC() {
     const navigate = useNavigate();
     // Load
@@ -213,7 +213,7 @@ function ExamScheduleTFC() {
             render: (_, record) => (
                 <Space>
                     <Permission noNode navigation={layoutCode.toeflChallengeCompetition as string} bitPermission={PermissionAction.Edit}>
-                        <Button type='ghost' title='Cập nhật' loading={false} onClick={() => navigate(`/toefl-challenge/exam-schedule/edit/${record.id}`)}>
+                        <Button type='dashed' title='Cập nhật' loading={false} onClick={() => navigate(`/toefl-challenge/exam-schedule/edit/${record.id}`)}>
                             <EditOutlined />
                         </Button>
                     </Permission>

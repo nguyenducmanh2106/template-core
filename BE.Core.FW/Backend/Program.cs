@@ -128,26 +128,26 @@ builder.Services.AddCors(options =>
                       });
 });
 
-builder.Services.AddHangfire(x =>
-{
-    var stringConnection = Backend.Infrastructure.Utils.Utils.GetConfig("Cache:Redis:Data");
-    var cacheDataConfig = AppSettings.Instance.Get<CachingConfigModel>("Cache:Redis:Data");
-    ConnectionMultiplexer Redis = ConnectionMultiplexer.Connect($"{cacheDataConfig.ServerList[0].Host}:{cacheDataConfig.ServerList[0].Port}");
-    x.UseRedisStorage(Redis, new RedisStorageOptions
-    {
-        Prefix = "{hangfire-job}:",
-        Db = cacheDataConfig.Database
-    });
-});
-builder.Services.AddHangfireServer(options =>
-{
-    options.Queues = new string[] { "notdefault", "default" };
-    options.WorkerCount = 30;
-    options.ServerName = String.Format(
-        "{0}.{1}",
-        Environment.MachineName,
-        Guid.NewGuid().ToString());
-});
+//builder.Services.AddHangfire(x =>
+//{
+//    var stringConnection = Backend.Infrastructure.Utils.Utils.GetConfig("Cache:Redis:Data");
+//    var cacheDataConfig = AppSettings.Instance.Get<CachingConfigModel>("Cache:Redis:Data");
+//    ConnectionMultiplexer Redis = ConnectionMultiplexer.Connect($"{cacheDataConfig.ServerList[0].Host}:{cacheDataConfig.ServerList[0].Port}");
+//    x.UseRedisStorage(Redis, new RedisStorageOptions
+//    {
+//        Prefix = "{hangfire-job}:",
+//        Db = cacheDataConfig.Database
+//    });
+//});
+//builder.Services.AddHangfireServer(options =>
+//{
+//    options.Queues = new string[] { "notdefault", "default" };
+//    options.WorkerCount = 30;
+//    options.ServerName = String.Format(
+//        "{0}.{1}",
+//        Environment.MachineName,
+//        Guid.NewGuid().ToString());
+//});
 
 
 //add middleware
@@ -182,19 +182,19 @@ var app = builder.Build();
 app.UseForwardedHeaders();
 // Configure the HTTP request pipeline.
 app.UseSwagger();
-app.UseHangfireDashboard("/tasks",
-    new DashboardOptions()
-    {
-        Authorization = new[]
-        {
-           new HangfireCustomBasicAuthenticationFilter
-           {
-                User = "admin",
-                Pass = "12345678@Abc"
-           }
-        },
-        DashboardTitle = "BackgroundJobs"
-    });
+//app.UseHangfireDashboard("/tasks",
+//    new DashboardOptions()
+//    {
+//        Authorization = new[]
+//        {
+//           new HangfireCustomBasicAuthenticationFilter
+//           {
+//                User = "admin",
+//                Pass = "12345678@Abc"
+//           }
+//        },
+//        DashboardTitle = "BackgroundJobs"
+//    });
 app.UseSwaggerUI(c =>
 {
     app.UseSwagger();

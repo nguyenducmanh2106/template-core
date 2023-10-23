@@ -18,12 +18,11 @@ import {
 import { ColumnsType } from 'antd/lib/table';
 import { useEffect, useReducer, useState } from 'react';
 
-import { OptionModel, ProvinceModel } from '@/apis/models/data';
 import { SchoolModel } from '@/apis/models/toefl-challenge/SchoolModel';
+import { getDepartment2 } from '@/apis/services/DepartmentService';
 import { getAministrativeDivisions } from '@/apis/services/toefl-challenge/AministrativeDivisionsService';
 import { getDepartment } from '@/apis/services/toefl-challenge/DepartmentService';
 import { deleteManyDivision } from '@/apis/services/toefl-challenge/DivisionService';
-import { getIigDepartment2 } from '@/apis/services/toefl-challenge/IigDepartmentService';
 import { deleteSchool, getSchool, getSchoolTree } from '@/apis/services/toefl-challenge/SchoolService';
 import Permission from '@/components/Permission';
 import { PermissionAction, layoutCode } from '@/utils/constants';
@@ -33,7 +32,7 @@ import {
 import { DeleteOutlined, EditOutlined, GatewayOutlined, PlusOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import SchoolCoordinator from './school-coordinator';
-import { getDepartment2 } from '@/apis/services/DepartmentService';
+import { OptionModel } from '@/@types/data';
 function SchoolTFC() {
     const navigate = useNavigate();
     // Load
@@ -77,7 +76,7 @@ function SchoolTFC() {
             // const responseIIGDepartment: ResponseData = await getIigDepartment2();
             const responseIIGDepartment: ResponseData = await getDepartment2();
 
-            const provinceOptions = ConvertOptionSelectModel(responseProvinces.data as ProvinceModel[]);
+            const provinceOptions = ConvertOptionSelectModel(responseProvinces.data as OptionModel[]);
             const departmentOptions = ConvertOptionSelectModel(responseDepartment.data as OptionModel[]);
             const stateDispatcher = {
                 provinces: [{
@@ -267,7 +266,7 @@ function SchoolTFC() {
             render: (_, record) => (
                 <Space>
                     <Permission noNode navigation={layoutCode.toeflChallengeSchool as string} bitPermission={PermissionAction.Edit}>
-                        <Button type='ghost' title='Cập nhật' loading={false} onClick={() => navigate(`/toefl-challenge/school/edit/${record.id}`)}>
+                        <Button type='dashed' title='Cập nhật' loading={false} onClick={() => navigate(`/toefl-challenge/school/edit/${record.id}`)}>
                             <EditOutlined />
                         </Button>
                     </Permission>
@@ -335,7 +334,7 @@ function SchoolTFC() {
             render: (_, record) => (
                 <Space>
                     <Permission noNode navigation={layoutCode.toeflChallengeSchool as string} bitPermission={PermissionAction.Edit}>
-                        <Button type='ghost' title='Cập nhật' loading={false} onClick={() => navigate(`/toefl-challenge/school/edit/${record.id}`)}>
+                        <Button type='dashed' title='Cập nhật' loading={false} onClick={() => navigate(`/toefl-challenge/school/edit/${record.id}`)}>
                             <EditOutlined />
                         </Button>
                     </Permission>

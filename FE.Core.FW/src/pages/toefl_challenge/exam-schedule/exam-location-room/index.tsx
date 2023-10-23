@@ -14,15 +14,12 @@ import {
 import { ColumnsType } from 'antd/lib/table';
 import { useEffect, useReducer, useState } from 'react';
 
-import { OptionModel } from '@/apis/models/data';
 import { ExamLocationModel } from '@/apis/models/toefl-challenge/ExamLocationModel';
 import { ExamLocationRoomModel } from '@/apis/models/toefl-challenge/ExamLocationRoomModel';
 import { ExamScheduleModel } from '@/apis/models/toefl-challenge/ExamScheduleModel';
-import { ProvinceModel } from '@/apis/models/toefl-challenge/ProvinceModel';
-import { getAministrativeDivisions1 } from '@/apis/services/toefl-challenge/AministrativeDivisionsService';
-import { deleteExamLocation2, getExamLocation, getExamLocation2, getExamLocationById, getExamLocationRoomById } from '@/apis/services/toefl-challenge/ExamLocationService';
+import { deleteExamLocation2, getExamLocation, getExamLocation2, getExamLocationRoomById } from '@/apis/services/toefl-challenge/ExamLocationService';
 import Permission from '@/components/Permission';
-import { examLocationMapScheduleState, examRegistrationScheduleState } from '@/store/exam-atom';
+import { examRegistrationScheduleState } from '@/store/exam-atom';
 import { PermissionAction, layoutCode } from '@/utils/constants';
 import { ConvertOptionSelectModel } from '@/utils/convert';
 import { CheckOutlined, CloseOutlined, DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
@@ -30,7 +27,7 @@ import { useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import ExamLocationCreateTFC from './create';
 import ExamLocationEditTFC from './edit';
-import { ExamLocationScheduleModel } from '@/apis/models/toefl-challenge/ExamLocationScheduleModel';
+import { OptionModel } from '@/@types/data';
 interface Props {
     examSchedule: ExamScheduleModel
 }
@@ -198,7 +195,7 @@ function ExamLocationRoomTFC({ examSchedule }: Props) {
             render: (_, record) => (
                 <Space>
                     <Permission noNode navigation={layoutCode.toeflChallengeCompetition as string} bitPermission={PermissionAction.Edit}>
-                        <Button type='ghost' title='Cập nhật' loading={buttonLoading[record.id as string]} onClick={() => onHandleShowModelEdit(record.id as string)}>
+                        <Button type='dashed' title='Cập nhật' loading={buttonLoading[record.id as string]} onClick={() => onHandleShowModelEdit(record.id as string)}>
                             <EditOutlined />
                         </Button>
                     </Permission>

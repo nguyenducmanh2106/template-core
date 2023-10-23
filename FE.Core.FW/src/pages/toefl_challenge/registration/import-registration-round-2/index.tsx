@@ -1,45 +1,34 @@
 import { Code, ResponseData } from '@/apis';
-import { OptionModel, SelectOptionModel } from '@/apis/models/data';
-import { PaymentStatus } from '@/apis/models/toefl-challenge/PaymentStatus';
-import { PaymentType } from '@/apis/models/toefl-challenge/PaymentType';
-import { RegistrationExamType } from '@/apis/models/toefl-challenge/RegistrationExamType';
-import { RegistrationModel } from '@/apis/models/toefl-challenge/RegistrationModel';
-import { RegistrationRound } from '@/apis/models/toefl-challenge/RegistrationRound';
-import { postRegistrationPayment, postRegistrationPayment1, putRegistrationPayment } from '@/apis/services/toefl-challenge/RegistrationPaymentService';
+import { ExamModel } from '@/apis/models/toefl-challenge/ExamModel';
+import { ProvinceModel } from '@/apis/models/toefl-challenge/ProvinceModel';
+import { SchoolModel } from '@/apis/models/toefl-challenge/SchoolModel';
+import { SchoolType } from '@/apis/models/toefl-challenge/SchoolType';
+import { TemplateType } from '@/apis/models/toefl-challenge/TemplateType';
+import { getAministrativeDivisions1 } from '@/apis/services/toefl-challenge/AministrativeDivisionsService';
+import { getExam1 } from '@/apis/services/toefl-challenge/ExamService';
+import { getFile } from '@/apis/services/toefl-challenge/FileService';
+import { postRegistration2 } from '@/apis/services/toefl-challenge/RegistrationService';
+import { getSchool, getSchool1 } from '@/apis/services/toefl-challenge/SchoolService';
+import { ConvertOptionSelectModel } from '@/utils/convert';
 import { InboxOutlined } from '@ant-design/icons';
 import {
     Button,
     Col,
-    DatePicker,
     Form,
     FormInstance,
     Input,
-    InputNumber,
     Modal,
     Row,
     Select,
     Space,
-    Switch,
     Typography,
     Upload,
     UploadProps,
     message
 } from 'antd';
-import locale from "antd/es/date-picker/locale/vi_VN";
-import moment from 'moment';
-import { useEffect, useReducer, useRef, useState } from 'react';
+import { useReducer, useRef, useState } from 'react';
 import DebounceSelect from '../debounce-select';
-import { SchoolModel } from '@/apis/models/toefl-challenge/SchoolModel';
-import { getAministrativeDivisions1 } from '@/apis/services/toefl-challenge/AministrativeDivisionsService';
-import { getSchool, getSchool1 } from '@/apis/services/toefl-challenge/SchoolService';
-import { ConvertOptionSelectModel } from '@/utils/convert';
-import { ProvinceModel } from '@/apis/models/toefl-challenge/ProvinceModel';
-import { getExam, getExam1 } from '@/apis/services/toefl-challenge/ExamService';
-import { ExamModel } from '@/apis/models/toefl-challenge/ExamModel';
-import { SchoolType } from '@/apis/models/toefl-challenge/SchoolType';
-import { postRegistration1, postRegistration2 } from '@/apis/services/toefl-challenge/RegistrationService';
-import { getFile } from '@/apis/services/toefl-challenge/FileService';
-import { TemplateType } from '@/apis/models/toefl-challenge/TemplateType';
+import { OptionModel, SelectOptionModel } from '@/@types/data';
 
 
 

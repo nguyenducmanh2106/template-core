@@ -16,21 +16,19 @@ import {
 import { ColumnsType } from 'antd/lib/table';
 import { JSXElementConstructor, ReactElement, ReactNode, ReactPortal, useEffect, useReducer, useState } from 'react';
 
-import { OptionModel } from '@/apis/models/data';
-import { getDistrictByProvince } from '@/apis/services/PageService';
 import {
     ConvertOptionSelectModel
 } from '@/utils/convert';
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 // import CreateDividingExamRoom from './CreateDividingExamRoom';
 import { EmailTemplateModel } from '@/apis/models/toefl-challenge/EmailTemplateModel';
-import { EmailTemplateType } from '@/apis/models/toefl-challenge/EmailTemplateType';
-import { deleteManyDepartment, getDepartmentId } from '@/apis/services/toefl-challenge/DepartmentService';
+import { deleteManyDepartment } from '@/apis/services/toefl-challenge/DepartmentService';
 import { deleteEmailTemplate, getEmailTemplate, getEmailTemplate1, getEmailTemplateType } from '@/apis/services/toefl-challenge/EmailTemplateService';
 import Permission from '@/components/Permission';
-import { PermissionAction, emailTemplateTypeConstant, layoutCode } from '@/utils/constants';
+import { PermissionAction, layoutCode } from '@/utils/constants';
 import CreateTemplateEmail from './create';
 import EditTemplateEmail from './edit';
+import { OptionModel } from '@/@types/data';
 function DepartmentTFC() {
     // Load
     const { Panel } = Collapse;
@@ -208,7 +206,7 @@ function DepartmentTFC() {
             render: (_, record) => (
                 <Space>
                     <Permission noNode navigation={layoutCode.toeflChallengeTemplateEmail as string} bitPermission={PermissionAction.Edit}>
-                        <Button type='ghost' title='Cập nhật' loading={false} onClick={() => onHandleEdit(record.id as string)}>
+                        <Button type='dashed' title='Cập nhật' loading={false} onClick={() => onHandleEdit(record.id as string)}>
                             <EditOutlined />
                         </Button>
                     </Permission>

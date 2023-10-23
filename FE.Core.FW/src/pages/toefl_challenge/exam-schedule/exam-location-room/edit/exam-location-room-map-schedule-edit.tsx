@@ -1,19 +1,17 @@
 import { Code, ResponseData } from "@/apis";
+import { ExamLocationRoomMapScheduleModel } from "@/apis/models/toefl-challenge/ExamLocationRoomMapScheduleModel";
 import { ExamLocationScheduleModel } from "@/apis/models/toefl-challenge/ExamLocationScheduleModel";
 import { ExamScheduleModel } from "@/apis/models/toefl-challenge/ExamScheduleModel";
+import { RegistrationExamType } from "@/apis/models/toefl-challenge/RegistrationExamType";
 import { getExamLocation4, getExamLocationSchedule } from "@/apis/services/toefl-challenge/ExamLocationService";
-import { examLocationMapScheduleState, examLocationScheduleState } from "@/store/exam-atom";
+import { examLocationMapScheduleState } from "@/store/exam-atom";
+import { ConvertOptionSelectModel } from "@/utils/convert";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { Button, Form, FormInstance, PaginationProps, Popconfirm, Space, Table, Typography } from "antd";
-import dayjs from "dayjs";
-import moment from "moment";
 import { useEffect, useReducer, useRef, useState } from "react";
 import { useRecoilState } from "recoil";
 import EditableCell from "./edit-cell";
-import { ExamLocationRoomMapScheduleModel } from "@/apis/models/toefl-challenge/ExamLocationRoomMapScheduleModel";
-import { RegistrationExamType } from "@/apis/models/toefl-challenge/RegistrationExamType";
-import { ConvertOptionSelectModel } from "@/utils/convert";
-import { OptionModel } from "@/apis/models/data";
+import { OptionModel } from "@/@types/data";
 
 interface Props extends React.HTMLAttributes<HTMLElement> {
     children?: React.ReactNode;
@@ -205,7 +203,7 @@ const ExamLocationRoomMapScheduleEdit: React.FC<Props> = ({
                 return editable ? (
                     <Space>
                         <Typography.Link onClick={() => saveRow(record.id as string)} style={{ marginRight: 8 }}>
-                            <Button type='ghost'>Lưu</Button>
+                            <Button type='dashed'>Lưu</Button>
                         </Typography.Link>
                         <Popconfirm title="Những thay đổi bạn đã thực hiện có thể không được lưu" onConfirm={cancel}>
                             <Button type='text' danger>Hủy bỏ</Button>

@@ -1,5 +1,5 @@
+import { OptionModel, SelectOptionModel } from "@/@types/data";
 import { ResponseData } from "@/apis";
-import { OptionModel, SelectOptionModel } from "@/apis/models/data";
 import { ExamScheduleModel } from "@/apis/models/toefl-challenge/ExamScheduleModel";
 import { PICModel } from "@/apis/models/toefl-challenge/PICModel";
 import { ProvinceModel } from "@/apis/models/toefl-challenge/ProvinceModel";

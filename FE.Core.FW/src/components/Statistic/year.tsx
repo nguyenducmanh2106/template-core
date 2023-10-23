@@ -1,6 +1,5 @@
 import useEcharts, { EChartsOption } from '@/hooks/useEcharts';
 import React, { useRef, useState } from 'react';
-import { Statistic } from '@/apis/services/ManageRegisteredCandidatesService';
 import moment from 'moment';
 
 interface Response {
@@ -42,8 +41,8 @@ const DateChart: React.FC = () => {
     try {
       let now = moment().format('yyyy-MM-DD');
       let from = moment().set({ date: 1, month: 0 }).format('yyyy-MM-DD');
-      const response = await Statistic(from, now, 3);
-      let data = response.data as Response[];
+      // const response = await Statistic(from, now, 3);
+      let data = [] as Response[];
       const option: EChartsOption = {
         xAxis: {
           data: data.map(item => item.year),

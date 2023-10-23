@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { Button, Card, Checkbox, Col, DatePicker, Form, Input, message, Radio, Row, Select } from 'antd';
-import { FormDataType } from '@/apis/models/data';
 import { createData } from '@/apis/services/PageService';
 import TableForm from '@/components/TableForm/TableForm';
 import FooterToolbar from '@/components/FooterToolbar';
+import { FormDataType } from '@/@types/data';
 
 function App() {
   const [form] = Form.useForm();

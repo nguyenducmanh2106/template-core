@@ -8,7 +8,6 @@ import {
 } from 'antd';
 import { useEffect, useMemo, useReducer, useState } from 'react';
 
-import { ProvinceModel } from '@/apis/models/data';
 import { ExamRegistrationProvinceModel } from '@/apis/models/toefl-challenge/ExamRegistrationProvinceModel';
 import { getAministrativeDivisions } from '@/apis/services/toefl-challenge/AministrativeDivisionsService';
 import { examRegistrationProvinceState } from '@/store/exam-atom';
@@ -16,6 +15,7 @@ import {
     ConvertOptionModel
 } from '@/utils/convert';
 import { useRecoilState } from 'recoil';
+import { OptionModel } from '@/@types/data';
 
 function ExamRegistrationProvinceTFC() {
     const [examRegistrationProvinces, setExamRegistrationProvinces] = useRecoilState(examRegistrationProvinceState);
@@ -37,7 +37,7 @@ function ExamRegistrationProvinceTFC() {
     const getList = async (current: number, pageSize: number = 20): Promise<void> => {
         setLoading(true);
         const responseProvinces: ResponseData = await getAministrativeDivisions();
-        const provinceOptions = ConvertOptionModel(responseProvinces.data as ProvinceModel[]);
+        const provinceOptions = ConvertOptionModel(responseProvinces.data as OptionModel[]);
         const stateDispatcher = {
             provinces: [{
                 key: 'Default',

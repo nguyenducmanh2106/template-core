@@ -19,7 +19,6 @@ import {
 import { useEffect, useReducer, useRef, useState } from 'react';
 
 import { Code } from '@/apis';
-import { OptionModel } from '@/apis/models/data';
 import { ExamModel } from '@/apis/models/toefl-challenge/ExamModel';
 import { PICModel } from '@/apis/models/toefl-challenge/PICModel';
 import { getExam } from '@/apis/services/toefl-challenge/ExamService';
@@ -39,6 +38,7 @@ import { getAministrativeDivisions } from '@/apis/services/toefl-challenge/Amini
 import { getExamScheduleById, putExamScheduleTFC } from '@/apis/services/toefl-challenge/ExamLocationService';
 import ExamLocationTFC from '../exam-location';
 import ExamLocationRoomTFC from '../exam-location-room';
+import { OptionModel } from '@/@types/data';
 
 function ExamScheduleEditTFC() {
     const navigate = useNavigate();
@@ -224,7 +224,7 @@ function ExamScheduleEditTFC() {
                 }
                 extra={
                     <Space>
-                        <Button type="ghost" onClick={() => navigate('/toefl-challenge/exam-schedule')}>
+                        <Button type="dashed" onClick={() => navigate('/toefl-challenge/exam-schedule')}>
                             Hủy bỏ
                         </Button>
                         <Button disabled={buttonLoading} htmlType="submit" type='primary' onClick={handleOk}>

@@ -1,5 +1,5 @@
+import { SelectOptionModel } from '@/@types/data';
 import { Code } from '@/apis';
-import { SelectOptionModel } from '@/apis/models/data';
 import { DepartmentModel } from '@/apis/models/toefl-challenge/DepartmentModel';
 import { putDepartment } from '@/apis/services/toefl-challenge/DepartmentService';
 import { Col, Form, Input, Modal, Row, Select, message } from 'antd';

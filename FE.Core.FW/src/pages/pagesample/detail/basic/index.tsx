@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Badge, Card, Descriptions, Divider, Spin, Table } from 'antd';
 
-import { DetailDataType } from '@/apis/models/data';
 import { ResponseData } from '@/utils/request';
 import { queryDetail } from '@/apis/services/PageService';
 import styles from './index.module.less';
+import { DetailDataType } from '@/@types/data';
 
 const progressColumns = [
   {
@@ -90,7 +90,7 @@ function App() {
     if (returnGoods.length > 0) {
       let num = 0;
       let amount = 0;
-      returnGoods.forEach((item) => {
+      returnGoods.forEach((item:any) => {
         num += Number(item.num);
         amount += Number(item.amount);
       });

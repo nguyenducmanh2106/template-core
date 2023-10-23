@@ -3,7 +3,6 @@ import { Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import moment from 'moment';
 import React, { useState, useEffect } from 'react';
-import { StatisticDetail } from '@/apis/services/ManageRegisteredCandidatesService';
 
 interface Response {
   name: string,
@@ -24,7 +23,7 @@ const Detail: React.FC = () => {
 
   useEffect(() => {
     let dateFormat = 'yyyy-MM-DD';
-    StatisticDetail(moment().set({ date: 1, month: 0}).format(dateFormat), moment().format(dateFormat)).then(response => setData(response.data as Response[]));
+    // StatisticDetail(moment().set({ date: 1, month: 0 }).format(dateFormat), moment().format(dateFormat)).then((response: any) => setData(response.data as Response[]));
   }, []);
 
   const columns: ColumnsType<Response> = [

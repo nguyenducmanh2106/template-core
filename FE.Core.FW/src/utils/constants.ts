@@ -1,4 +1,3 @@
-import { SelectOptionModel, SelectStatusOption } from '@/apis/models/data';
 import { EmailTemplateType } from '@/apis/models/toefl-challenge/EmailTemplateType';
 import { CheckboxOptionType } from "antd";
 import { lazy } from 'react';
@@ -270,41 +269,6 @@ export const routeArrays = [
 ]
 //#endregion
 
-export const statusPaid: SelectStatusOption[] = [
-  {
-    key: '1',
-    label: 'Đã thanh toán',
-    value: 2,
-  },
-  {
-    key: '2',
-    label: 'Chưa thanh toán',
-    value: 1,
-  },
-  {
-    key: '3',
-    label: 'Hoàn trả',
-    value: 5,
-  },
-];
-
-export const statusProfile: SelectStatusOption[] = [
-  {
-    key: '1',
-    label: 'Chờ duyệt',
-    value: 1,
-  },
-  {
-    key: '2',
-    label: 'Đã duyệt',
-    value: 2,
-  },
-  {
-    key: '3',
-    label: 'Từ chối',
-    value: 3,
-  }
-];
 
 export const errorMessage: Map<string, string> = new Map([
   ['incorrectFormat', 'Chỉ nhập ký tự chữ, số, " - " hoặc "_"'],
@@ -314,46 +278,3 @@ export const errorMessage: Map<string, string> = new Map([
 export const patternValidate: Map<string, RegExp> = new Map([
   ['code', /^[a-zA-Z0-9-_]+$/g]
 ]);
-
-export const emailTemplateTypeConstant = [
-  {
-    key: EmailTemplateType._0,
-    label: 'Registration',
-    value: EmailTemplateType._0
-  },
-  {
-    key: EmailTemplateType._1,
-    label: 'RegistrationPayment',
-    value: EmailTemplateType._1
-  },
-  {
-    key: EmailTemplateType._2,
-    label: 'RegistrationCode',
-    value: EmailTemplateType._2
-  },
-  {
-    key: EmailTemplateType._3,
-    label: 'RegistrationScheduleRound2',
-    value: EmailTemplateType._3
-  },
-  {
-    key: EmailTemplateType._4,
-    label: 'RegistrationScheduleRound3',
-    value: EmailTemplateType._4
-  },
-  {
-    key: EmailTemplateType._5,
-    label: 'RegistrationScoreRound1',
-    value: EmailTemplateType._5
-  },
-  {
-    key: EmailTemplateType._6,
-    label: 'RegistrationScoreRound2',
-    value: EmailTemplateType._6
-  },
-  {
-    key: EmailTemplateType._7,
-    label: 'RegistrationScoreRound3',
-    value: EmailTemplateType._7
-  },
-];

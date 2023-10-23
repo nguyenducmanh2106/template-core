@@ -17,45 +17,41 @@ import {
     Select,
     Space,
     Table,
-    TimeRangePickerProps,
     Typography,
     message
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { useEffect, useReducer, useState } from 'react';
 
-import { OptionModel, SelectOptionModel } from '@/apis/models/data';
 import { DivisionModel } from '@/apis/models/toefl-challenge/DivisionModel';
+import { PaymentStatus } from '@/apis/models/toefl-challenge/PaymentStatus';
+import { PaymentType } from '@/apis/models/toefl-challenge/PaymentType';
+import { ProvinceModel } from '@/apis/models/toefl-challenge/ProvinceModel';
 import { RegistrationModel } from '@/apis/models/toefl-challenge/RegistrationModel';
+import { RegistrationRound } from '@/apis/models/toefl-challenge/RegistrationRound';
+import { SchoolModel } from '@/apis/models/toefl-challenge/SchoolModel';
 import { getAministrativeDivisions, getAministrativeDivisions1 } from '@/apis/services/toefl-challenge/AministrativeDivisionsService';
-import { getDepartment } from '@/apis/services/toefl-challenge/DepartmentService';
-import { deleteDivision, deleteManyDivision } from '@/apis/services/toefl-challenge/DivisionService';
+import { deleteManyDivision } from '@/apis/services/toefl-challenge/DivisionService';
+import { getExam } from '@/apis/services/toefl-challenge/ExamService';
 import { deleteRegistration, getRegistration, getRegistration1, postRegistration3, postRegistration4, postRegistration5 } from '@/apis/services/toefl-challenge/RegistrationService';
+import { getSchool } from '@/apis/services/toefl-challenge/SchoolService';
 import Permission from '@/components/Permission';
 import { PermissionAction, layoutCode } from '@/utils/constants';
-import locale from "antd/es/date-picker/locale/vi_VN"
 import {
     ConvertOptionSelectModel
 } from '@/utils/convert';
 import { CreditCardOutlined, DeleteOutlined, EditOutlined, EyeOutlined, ImportOutlined, MailOutlined, PlusOutlined } from '@ant-design/icons';
-import { useNavigate } from 'react-router-dom';
-import { RegistrationRound } from '@/apis/models/toefl-challenge/RegistrationRound';
-import { RangePicker } from 'rc-picker';
-import dayjs from 'dayjs';
+import locale from "antd/es/date-picker/locale/vi_VN";
 import moment from 'moment';
-import { getExam } from '@/apis/services/toefl-challenge/ExamService';
-import { ProvinceModel } from '@/apis/models/toefl-challenge/ProvinceModel';
-import { getSchool } from '@/apis/services/toefl-challenge/SchoolService';
+import { useNavigate } from 'react-router-dom';
 import DebounceSelect from './debounce-select';
-import { SchoolModel } from '@/apis/models/toefl-challenge/SchoolModel';
-import ShowDetailRegistrationTFC from './view-detail';
-import RegistrationPaymentTFC from './update-registration-payment';
-import { PaymentStatus } from '@/apis/models/toefl-challenge/PaymentStatus';
 import ImportRegistrationPaymentTFC from './import-registration-payment';
-import { PaymentType } from '@/apis/models/toefl-challenge/PaymentType';
 import ImportRegistrationRound1 from './import-registration-round-1';
 import ImportRegistrationRound2 from './import-registration-round-2';
 import ImportRegistrationUpdateTFC from './import-update';
+import RegistrationPaymentTFC from './update-registration-payment';
+import ShowDetailRegistrationTFC from './view-detail';
+import { OptionModel, SelectOptionModel } from '@/@types/data';
 function DivisionTFC() {
     const items: MenuProps['items'] = [
         {
@@ -565,17 +561,17 @@ function DivisionTFC() {
             render: (_, record) => (
                 <Space>
                     <Permission noNode navigation={layoutCode.toeflChallengeRegistration as string} bitPermission={PermissionAction.View}>
-                        <Button type='ghost' size='small' title='Xem chi tiết' loading={buttonLoading[record.id as string]} onClick={() => onHandleShowModelViewDetail(record.id as string)}>
+                        <Button type='dashed' size='small' title='Xem chi tiết' loading={buttonLoading[record.id as string]} onClick={() => onHandleShowModelViewDetail(record.id as string)}>
                             <EyeOutlined />
                         </Button>
                     </Permission>
                     <Permission noNode navigation={layoutCode.toeflChallengeRegistration as string} bitPermission={PermissionAction.Edit}>
-                        <Button type='ghost' size='small' title='Cập nhật' loading={false} onClick={() => navigate(`/toefl-challenge/registration/edit/${record.id}`)}>
+                        <Button type='dashed' size='small' title='Cập nhật' loading={false} onClick={() => navigate(`/toefl-challenge/registration/edit/${record.id}`)}>
                             <EditOutlined />
                         </Button>
                     </Permission>
                     <Permission noNode navigation={layoutCode.toeflChallengeRegistration as string} bitPermission={PermissionAction.Edit}>
-                        <Button type='ghost'
+                        <Button type='dashed'
                             disabled={record.paymentStatus === PaymentStatus._2 && record?.paymentType === PaymentType._1}
                             size='small' title='Cập nhật thanh toán' loading={buttonLoadingRegistrationPayment[record.id as string]} onClick={() => onHandleShowModelUpdateRegistrationPayment(record.id as string)}>
                             <CreditCardOutlined />
@@ -611,7 +607,7 @@ function DivisionTFC() {
                                 }
                             }
                         }} placement="bottom" arrow>
-                            <Button type='ghost' size='small' title='Cập nhật' loading={false} >
+                            <Button type='dashed' size='small' title='Cập nhật' loading={false} >
                                 <MailOutlined />
                             </Button>
                         </Dropdown>
@@ -721,7 +717,7 @@ function DivisionTFC() {
                                                     </Form.Item>
                                                 </Col>
                                                 <Col span={4}>
-                                                    <Form.Item
+                                                    {/* <Form.Item
                                                         label={'Ngày tiếp nhận đăng ký'}
                                                         labelCol={{ span: 24 }}
                                                         wrapperCol={{ span: 24 }}
@@ -737,7 +733,7 @@ function DivisionTFC() {
                                                             locale={locale}
                                                             format="DD/MM/YYYY"
                                                         />
-                                                    </Form.Item>
+                                                    </Form.Item> */}
                                                 </Col>
 
                                                 <Col span={4}>

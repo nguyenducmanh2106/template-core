@@ -20,7 +20,6 @@ import {
 import { useEffect, useReducer, useRef, useState } from 'react';
 
 import { Code } from '@/apis';
-import { OptionModel } from '@/apis/models/data';
 import { DivisionModel } from '@/apis/models/toefl-challenge/DivisionModel';
 import { PICModel } from '@/apis/models/toefl-challenge/PICModel';
 import { ProvinceModel } from '@/apis/models/toefl-challenge/ProvinceModel';
@@ -35,6 +34,7 @@ import { ArrowLeftOutlined, DeleteOutlined, EditOutlined } from '@ant-design/ico
 import { useNavigate, useParams } from 'react-router-dom';
 import EditableCell from './edit';
 import { SchoolModel } from '@/apis/models/toefl-challenge/SchoolModel';
+import { OptionModel } from '@/@types/data';
 
 
 
@@ -400,7 +400,7 @@ function EditSchoolTFC() {
                 return editable ? (
                     <Space>
                         <Typography.Link onClick={() => saveRow(record.id as string)} style={{ marginRight: 8 }}>
-                            <Button type='ghost'>Lưu</Button>
+                            <Button type='dashed'>Lưu</Button>
                         </Typography.Link>
                         <Popconfirm title="Những thay đổi bạn đã thực hiện có thể không được lưu" onConfirm={cancel}>
                             <Button type='text' danger>Hủy bỏ</Button>
@@ -471,7 +471,7 @@ function EditSchoolTFC() {
                 }
                 extra={
                     <Space>
-                        <Button type="ghost" onClick={() => navigate('/toefl-challenge/school')}>
+                        <Button type="dashed" onClick={() => navigate('/toefl-challenge/school')}>
                             Hủy bỏ
                         </Button>
                         <Button disabled={buttonLoading} htmlType="submit" type='primary' onClick={handleOk}>

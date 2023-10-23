@@ -31,15 +31,4 @@ export const postEmail = (
   });
 };
 
-export const usePostEmailService = (
-  options: UseRequestOption
-): {
-  run: (tenant?: string, requestBody?: EmailRequest) => void;
-  data: ResponseData;
-  loading: boolean;
-  error?: Error;
-  params?: any;
-} => {
-  return useRequest(postEmail, options);
-};
 

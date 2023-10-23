@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Card, Table } from 'antd';
 import { ColumnsType, TablePaginationConfig } from 'antd/lib/table';
-import { TableListItem } from '@/apis/models/data';
 import { PaginationConfig } from '@/utils/request';
 
 import styles from '@/assets/css/index.module.less';
 
 import { ResponseData } from '@/utils/request';
 import { hotSearchQueryList } from '@/apis/services/PageService';
+import { TableListItem } from '@/@types/data';
 
 const initPagination = {
   total: 0,

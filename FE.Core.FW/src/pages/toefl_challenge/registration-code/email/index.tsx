@@ -1,5 +1,4 @@
 import { Code, ResponseData } from '@/apis';
-import { OptionModel, SelectOptionModel } from '@/apis/models/data';
 import {
     Col,
     Form,
@@ -21,6 +20,7 @@ import { getExam1 } from '@/apis/services/toefl-challenge/ExamService';
 import { ExamModel } from '@/apis/models/toefl-challenge/ExamModel';
 import { SchoolType } from '@/apis/models/toefl-challenge/SchoolType';
 import { postEmailRegistrationCode } from '@/apis/services/toefl-challenge/RegistrationCodeService';
+import { OptionModel, SelectOptionModel } from '@/@types/data';
 
 
 

@@ -1,23 +1,22 @@
-import { Card, Alert, Descriptions, Button, Divider, Space, Table, Collapse, Modal, Form, message, Row, Col, Input, Switch, Tooltip } from 'antd';
-import { useNavigate } from 'react-router-dom';
-import React, { useEffect, useReducer, useState } from 'react';
-import { ResponseData, PaginationConfig } from '@/utils/request';
-import { ColumnsType } from 'antd/lib/table';
-import dayjs from 'dayjs';
-import { DeleteOutlined, EditOutlined, PlusOutlined, SettingOutlined, UsergroupAddOutlined } from '@ant-design/icons';
+import { SelectOptionModel } from '@/@types/data';
+import { Code, UserModel } from '@/apis';
+import { getDepartment2 } from '@/apis/services/DepartmentService';
+import { getRoleValueTypes } from '@/apis/services/RoleService';
+import { deleteUser, getUser, getUserById, toggleStatus } from '@/apis/services/UserService';
+import Permission from '@/components/Permission';
+import { useUserState } from '@/store/user';
+import { PermissionAction, layoutCode } from '@/utils/constants';
+import { PaginationConfig, ResponseData } from '@/utils/request';
+import { DeleteOutlined, EditOutlined, PlusOutlined, UsergroupAddOutlined } from '@ant-design/icons';
+import { Button, Card, Col, Collapse, Form, Modal, Row, Space, Switch, Table, Tooltip, message } from 'antd';
 import Search from 'antd/lib/input/Search';
+import { ColumnsType } from 'antd/lib/table';
+import React, { useEffect, useReducer, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
 import CreateUser from './create';
 import EditUser from './edit';
 import UserRole from './user-role';
-import { deleteRole, getRole, getRoleValueTypes } from '@/apis/services/RoleService';
-import { Code, RoleModel, UserModel } from '@/apis';
-import { deleteUser, getUser, getUserById, toggleStatus } from '@/apis/services/UserService';
-import { SelectOptionModel } from '@/apis/models/data';
-import { useRecoilValue } from 'recoil';
-import { useUserState } from '@/store/user';
-import Permission from '@/components/Permission';
-import { layoutCode, PermissionAction } from '@/utils/constants';
-import { getDepartment2 } from '@/apis/services/DepartmentService';
 
 function User() {
 
@@ -256,7 +255,7 @@ function User() {
           </Button>
 
           <Permission navigation={layoutCode.user} bitPermission={PermissionAction.Delete} noNode={<></>}>
-            <Button type='ghost' disabled={record.id === user.id} size={"small"} loading={false} onClick={() => deleteRecord(record.id || '')}>
+            <Button type='dashed' disabled={record.id === user.id} size={"small"} loading={false} onClick={() => deleteRecord(record.id || '')}>
               <Tooltip title="Xóa">
                 <DeleteOutlined />
               </Tooltip>

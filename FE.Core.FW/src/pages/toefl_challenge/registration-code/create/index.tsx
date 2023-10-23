@@ -11,7 +11,6 @@ import {
     Select,
     Space,
     Spin,
-    Switch,
     Tooltip,
     Typography,
     message
@@ -19,18 +18,16 @@ import {
 import { useEffect, useReducer, useRef, useState } from 'react';
 
 import { Code } from '@/apis';
-import { OptionModel } from '@/apis/models/data';
-import { DivisionModel } from '@/apis/models/toefl-challenge/DivisionModel';
-import { getExam, postExam } from '@/apis/services/toefl-challenge/ExamService';
+import { RegistrationCodeModel } from '@/apis/models/toefl-challenge/RegistrationCodeModel';
+import { getExam } from '@/apis/services/toefl-challenge/ExamService';
+import { postRegistrationCode } from '@/apis/services/toefl-challenge/RegistrationCodeService';
 import {
     ConvertOptionSelectModel
 } from '@/utils/convert';
 import { ArrowLeftOutlined } from '@ant-design/icons';
-import { useNavigate } from 'react-router-dom';
-import moment from 'moment';
 import locale from "antd/es/date-picker/locale/vi_VN";
-import { RegistrationCodeModel } from '@/apis/models/toefl-challenge/RegistrationCodeModel';
-import { postRegistrationCode } from '@/apis/services/toefl-challenge/RegistrationCodeService';
+import { useNavigate } from 'react-router-dom';
+import { OptionModel } from '@/@types/data';
 
 function RegistrationCodeCreateTFC() {
     const navigate = useNavigate();
@@ -134,7 +131,7 @@ function RegistrationCodeCreateTFC() {
                 }
                 extra={
                     <Space>
-                        <Button type="ghost" onClick={() => navigate('/toefl-challenge/registration-code')}>
+                        <Button type="dashed" onClick={() => navigate('/toefl-challenge/registration-code')}>
                             Hủy bỏ
                         </Button>
                         <Button disabled={buttonLoading} htmlType="submit" type='primary' onClick={handleOk}>

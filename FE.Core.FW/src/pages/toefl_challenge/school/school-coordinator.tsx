@@ -1,6 +1,6 @@
+import { SelectOptionModel } from '@/@types/data';
 import { Code } from '@/apis';
 import { ResponseData } from '@/apis/models/ResponseData';
-import { SelectOptionModel } from '@/apis/models/data';
 import { getSchoolPermission, putSchoolPermission } from '@/apis/services/toefl-challenge/SchoolPermissionService';
 import { Cascader, Col, Form, Modal, Row, TreeSelect, message } from 'antd';
 import type { DataNode } from 'antd/lib/tree';

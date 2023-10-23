@@ -1,5 +1,4 @@
 import { Code } from '@/apis';
-import { SelectOptionModel } from '@/apis/models/data';
 import { ExamLocationRoomMapScheduleModel } from '@/apis/models/toefl-challenge/ExamLocationRoomMapScheduleModel';
 import { ExamLocationScheduleModel } from '@/apis/models/toefl-challenge/ExamLocationScheduleModel';
 import { ExamScheduleModel } from '@/apis/models/toefl-challenge/ExamScheduleModel';
@@ -13,6 +12,7 @@ import { useRecoilState } from 'recoil';
 import CreateExamLocationInfor from './create-exam-location';
 import ExamLocationRoomMapSchedule from './exam-location-room-map-schedule-create';
 import { ExamLocationRoomModel } from '@/apis/models/toefl-challenge/ExamLocationRoomModel';
+import { SelectOptionModel } from '@/@types/data';
 interface Props {
     open: boolean;
     examSchedule: ExamScheduleModel;

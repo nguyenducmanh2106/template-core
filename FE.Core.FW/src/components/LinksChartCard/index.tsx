@@ -3,9 +3,9 @@ import { Spin, Card, Tag, Divider, Row, Col } from 'antd';
 import useEcharts, { EChartsOption } from '@/hooks/useEcharts';
 
 import styles from '@/assets/css/index.module.less';
-import { LinksChartDataType } from '@/apis/models/data';
 import { ResponseData } from '@/utils/request';
 import { annualnewLinks } from '@/apis/services/PageService';
+import { LinksChartDataType } from '@/@types/data';
 
 const linksChartOption: EChartsOption = {
   tooltip: {},

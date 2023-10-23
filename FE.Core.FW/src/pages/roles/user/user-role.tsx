@@ -4,7 +4,7 @@ import { Code, ResponseData, RoleModel, UserModel } from '@/apis';
 import dayjs from 'dayjs';
 import { asignRole, getUserById, postUser, putUser } from '@/apis/services/UserService';
 import moment from 'moment';
-import { SelectOptionModel } from '@/apis/models/data';
+import { SelectOptionModel } from '@/@types/data';
 const { Text } = Typography;
 interface Props {
     open: boolean;

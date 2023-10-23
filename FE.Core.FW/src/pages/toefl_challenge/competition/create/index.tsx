@@ -19,7 +19,6 @@ import {
 import { useEffect, useReducer, useRef, useState } from 'react';
 
 import { Code } from '@/apis';
-import { OptionModel } from '@/apis/models/data';
 import { DivisionModel } from '@/apis/models/toefl-challenge/DivisionModel';
 import { getAministrativeDivisions } from '@/apis/services/toefl-challenge/AministrativeDivisionsService';
 import { postExam } from '@/apis/services/toefl-challenge/ExamService';
@@ -29,6 +28,7 @@ import {
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import moment from 'moment';
+import { OptionModel } from '@/@types/data';
 
 
 
@@ -193,7 +193,7 @@ function CompetitionCreateTFC() {
                 }
                 extra={
                     <Space>
-                        <Button type="ghost" onClick={() => navigate('/toefl-challenge/competition')}>
+                        <Button type="dashed" onClick={() => navigate('/toefl-challenge/competition')}>
                             Hủy bỏ
                         </Button>
                         <Button disabled={buttonLoading} htmlType="submit" type='primary' onClick={handleOk}>

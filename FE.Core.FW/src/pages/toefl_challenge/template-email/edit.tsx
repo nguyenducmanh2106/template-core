@@ -1,5 +1,5 @@
+import { SelectOptionModel } from '@/@types/data';
 import { Code } from '@/apis';
-import { SelectOptionModel } from '@/apis/models/data';
 import { EmailTemplateModel } from '@/apis/models/toefl-challenge/EmailTemplateModel';
 import { putEmailTemplate } from '@/apis/services/toefl-challenge/EmailTemplateService';
 import Editor from '@/components/CKEditor';

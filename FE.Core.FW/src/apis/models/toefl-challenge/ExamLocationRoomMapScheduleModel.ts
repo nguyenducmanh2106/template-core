@@ -2,7 +2,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import { SelectOptionModel } from "../data";
+import { SelectOptionModel } from "@/@types/data";
 import type { RegistrationExamType } from "./RegistrationExamType";
 
 export type ExamLocationRoomMapScheduleModel = {

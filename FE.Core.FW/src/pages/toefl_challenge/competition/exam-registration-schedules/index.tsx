@@ -1,5 +1,5 @@
 import { Code } from '@/apis';
-import { PaginationConfig, ResponseData } from '@/utils/request';
+import { PaginationConfig } from '@/utils/request';
 import {
     Button,
     Card,
@@ -15,24 +15,18 @@ import {
 import { ColumnsType } from 'antd/lib/table';
 import { useEffect, useReducer, useState } from 'react';
 
-import { ProvinceModel } from '@/apis/models/data';
 import { ExamRegistrationScheduleModel } from '@/apis/models/toefl-challenge/ExamRegistrationScheduleModel';
-import { getAministrativeDivisions } from '@/apis/services/toefl-challenge/AministrativeDivisionsService';
+import { RegistrationExamType } from '@/apis/models/toefl-challenge/RegistrationExamType';
 import { deleteManyDivision } from '@/apis/services/toefl-challenge/DivisionService';
-import { getExam1, putExam } from '@/apis/services/toefl-challenge/ExamService';
 import Permission from '@/components/Permission';
+import { examRegistrationScheduleState } from '@/store/exam-atom';
 import { PermissionAction, layoutCode } from '@/utils/constants';
-import {
-    ConvertOptionSelectModel
-} from '@/utils/convert';
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useRecoilState } from 'recoil';
 import ExamRegistrationScheduleCreateTFC from './create';
 import ExamRegistrationScheduleEditTFC from './edit';
-import { useRecoilState } from 'recoil';
-import { examRegistrationScheduleState } from '@/store/exam-atom';
-import { RegistrationExamType } from '@/apis/models/toefl-challenge/RegistrationExamType';
 interface Props {
     examRegistrationSchedules: ExamRegistrationScheduleModel[];
 }
@@ -205,7 +199,7 @@ function ExamRegistrationScheduleTFC() {
             render: (_, record) => (
                 <Space>
                     <Permission noNode navigation={layoutCode.toeflChallengeCompetition as string} bitPermission={PermissionAction.Edit}>
-                        <Button type='ghost' title='Cập nhật' loading={false} onClick={() => onHandleShowModelEdit(record.id as string)}>
+                        <Button type='dashed' title='Cập nhật' loading={false} onClick={() => onHandleShowModelEdit(record.id as string)}>
                             <EditOutlined />
                         </Button>
                     </Permission>

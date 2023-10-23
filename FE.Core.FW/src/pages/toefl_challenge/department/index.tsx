@@ -12,14 +12,12 @@ import {
     Select,
     Space,
     Table,
-    Typography,
-    message,
+    message
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { useEffect, useReducer, useState } from 'react';
 
-import { OptionModel, ProvinceModel } from '@/apis/models/data';
-import { getDistrictByProvince, getProvince } from '@/apis/services/PageService';
+import { getDistrictByProvince } from '@/apis/services/PageService';
 import {
     ConvertOptionSelectModel
 } from '@/utils/convert';
@@ -27,12 +25,13 @@ import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 // import CreateDividingExamRoom from './CreateDividingExamRoom';
 import { DepartmentModel } from '@/apis/models/toefl-challenge/DepartmentModel';
+import { getAministrativeDivisions } from '@/apis/services/toefl-challenge/AministrativeDivisionsService';
 import { deleteDepartment, deleteManyDepartment, getDepartment, getDepartmentId } from '@/apis/services/toefl-challenge/DepartmentService';
 import Permission from '@/components/Permission';
 import { PermissionAction, layoutCode } from '@/utils/constants';
 import CreateDepartment from './create';
 import EditDepartment from './edit';
-import { getAministrativeDivisions } from '@/apis/services/toefl-challenge/AministrativeDivisionsService';
+import { OptionModel } from '@/@types/data';
 function DepartmentTFC() {
     const navigate = useNavigate();
     // Load
@@ -70,7 +69,7 @@ function DepartmentTFC() {
         const fnGetInitState = async () => {
             const responseProvinces: ResponseData = await getAministrativeDivisions();
 
-            const provinceOptions = ConvertOptionSelectModel(responseProvinces.data as ProvinceModel[]);
+            const provinceOptions = ConvertOptionSelectModel(responseProvinces.data as OptionModel[]);
             const stateDispatcher = {
                 provinces: [{
                     key: 'Default',
@@ -209,7 +208,7 @@ function DepartmentTFC() {
             render: (_, record) => (
                 <Space>
                     <Permission noNode navigation={layoutCode.toeflChallengeDepartment as string} bitPermission={PermissionAction.Edit}>
-                        <Button type='ghost' title='Cập nhật' loading={false} onClick={() => onHandleEdit(record.id as string, record.provinceId as string)}>
+                        <Button type='dashed' title='Cập nhật' loading={false} onClick={() => onHandleEdit(record.id as string, record.provinceId as string)}>
                             <EditOutlined />
                         </Button>
                     </Permission>

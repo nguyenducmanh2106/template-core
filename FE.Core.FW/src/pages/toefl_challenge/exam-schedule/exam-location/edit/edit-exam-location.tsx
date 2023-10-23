@@ -1,16 +1,12 @@
+import { OptionModel, SelectOptionModel } from "@/@types/data";
 import { ResponseData } from "@/apis";
-import { OptionModel, SelectOptionModel } from "@/apis/models/data";
 import { ExamLocationModel } from "@/apis/models/toefl-challenge/ExamLocationModel";
-import { ExamLocationScheduleModel } from "@/apis/models/toefl-challenge/ExamLocationScheduleModel";
-import { ExamScheduleModel } from "@/apis/models/toefl-challenge/ExamScheduleModel";
-import { PICModel } from "@/apis/models/toefl-challenge/PICModel";
 import { ProvinceModel } from "@/apis/models/toefl-challenge/ProvinceModel";
 import { RegistrationRound } from "@/apis/models/toefl-challenge/RegistrationRound";
 import { getAministrativeDivisions1 } from "@/apis/services/toefl-challenge/AministrativeDivisionsService";
 import { ConvertOptionSelectModel } from "@/utils/convert";
-import { Input, InputNumber, Form, Row, Col, Select, FormInstance } from "antd";
-import React, { useEffect, useImperativeHandle, useRef } from "react";
-import { useReducer } from "react";
+import { Col, Form, FormInstance, Input, Row, Select } from "antd";
+import React, { useEffect, useReducer, useRef } from "react";
 
 interface Props extends React.HTMLAttributes<HTMLElement> {
     handleOk: (value: any) => void;

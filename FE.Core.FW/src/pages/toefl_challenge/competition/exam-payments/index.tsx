@@ -1,5 +1,5 @@
 import { Code } from '@/apis';
-import { PaginationConfig, ResponseData } from '@/utils/request';
+import { PaginationConfig } from '@/utils/request';
 import {
     Button,
     Card,
@@ -15,22 +15,17 @@ import {
 import { ColumnsType } from 'antd/lib/table';
 import { useEffect, useReducer, useState } from 'react';
 
-import { ProvinceModel } from '@/apis/models/data';
 import { ExamPaymentModel } from '@/apis/models/toefl-challenge/ExamPaymentModel';
-import { getAministrativeDivisions } from '@/apis/services/toefl-challenge/AministrativeDivisionsService';
+import { RegistrationExamType } from '@/apis/models/toefl-challenge/RegistrationExamType';
 import { deleteManyDivision } from '@/apis/services/toefl-challenge/DivisionService';
 import Permission from '@/components/Permission';
 import { examPaymentState } from '@/store/exam-atom';
 import { PermissionAction, layoutCode } from '@/utils/constants';
-import {
-    ConvertOptionSelectModel
-} from '@/utils/convert';
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import ExamPaymentCreateTFC from './create';
 import ExamPaymentEditTFC from './edit';
-import { RegistrationExamType } from '@/apis/models/toefl-challenge/RegistrationExamType';
 
 function ExamPaymentTFC() {
     const navigate = useNavigate();
@@ -172,7 +167,7 @@ function ExamPaymentTFC() {
             render: (_, record) => (
                 <Space>
                     <Permission noNode navigation={layoutCode.toeflChallengeCompetition as string} bitPermission={PermissionAction.Edit}>
-                        <Button type='ghost' title='Cập nhật' loading={false} onClick={() => onHandleShowModelEdit(record.id as string)}>
+                        <Button type='dashed' title='Cập nhật' loading={false} onClick={() => onHandleShowModelEdit(record.id as string)}>
                             <EditOutlined />
                         </Button>
                     </Permission>

@@ -1,18 +1,10 @@
-import React, { useEffect, useReducer, useState } from 'react';
-import { Button, Col, Form, Modal, Row, Select, message, Input } from 'antd';
-import { ConvertAreaOption, ConvertExamScheduleOptionModel, ConvertHeaderQuarterOptionModel, ConvertOptionModel } from '@/utils/convert';
-import { ExamScheduleTopikModel } from '@/apis/models/ExamScheduleTopikModel';
-import { AreaModel, HeadQuarterModel, SelectOptionModel } from '@/apis/models/data';
-import { getExamScheduleTopik } from '@/apis/services/ExamScheduleTopikService';
-import { createRole, getRole } from '@/apis/services/RoleService';
-import { ResponseData } from '@/apis/models/ResponseData';
-import {
-    checkExamScheduleTopik,
-    generateCandidateNumber
-} from '@/apis/services/DividingExamPlaceService';
-import { DividingExamPlaceModel } from '@/apis/models/DividingExamPlaceModel';
-import TextArea from 'antd/lib/input/TextArea';
 import { Code, RoleModel } from '@/apis';
+import { ResponseData } from '@/apis/models/ResponseData';
+import { createRole, getRole } from '@/apis/services/RoleService';
+import { ConvertOptionModel } from '@/utils/convert';
+import { Col, Form, Input, Modal, Row, Select, message } from 'antd';
+import TextArea from 'antd/lib/input/TextArea';
+import React, { useEffect, useReducer, useState } from 'react';
 
 interface Props {
     open: boolean;

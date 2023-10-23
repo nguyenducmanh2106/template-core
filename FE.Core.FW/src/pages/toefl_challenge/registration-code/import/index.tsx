@@ -1,5 +1,4 @@
 import { Code, ResponseData } from '@/apis';
-import { OptionModel, SelectOptionModel } from '@/apis/models/data';
 import { InboxOutlined } from '@ant-design/icons';
 import {
     Button,
@@ -34,6 +33,7 @@ import { SchoolType } from '@/apis/models/toefl-challenge/SchoolType';
 import { postRegistrationCode, postRegistrationCode1 } from '@/apis/services/toefl-challenge/RegistrationCodeService';
 import { getFile } from '@/apis/services/toefl-challenge/FileService';
 import { TemplateType } from '@/apis/models/toefl-challenge/TemplateType';
+import { OptionModel, SelectOptionModel } from '@/@types/data';
 
 
 

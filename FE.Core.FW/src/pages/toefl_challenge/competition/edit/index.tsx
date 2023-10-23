@@ -21,7 +21,6 @@ import {
 import { useEffect, useReducer, useRef, useState } from 'react';
 
 import { Code } from '@/apis';
-import { OptionModel } from '@/apis/models/data';
 import { ExamModel } from '@/apis/models/toefl-challenge/ExamModel';
 import { PICModel } from '@/apis/models/toefl-challenge/PICModel';
 import { ProvinceModel } from '@/apis/models/toefl-challenge/ProvinceModel';
@@ -40,6 +39,7 @@ import ExamPaymentTFC from '../exam-payments';
 import ExamRegistrationScheduleTFC from '../exam-registration-schedules';
 import ExamRegistrationProvinceTFC from '../exam-registration-provinces';
 import moment from 'moment';
+import { OptionModel } from '@/@types/data';
 
 function EditCompetitonTFC() {
     const navigate = useNavigate();
@@ -244,7 +244,7 @@ function EditCompetitonTFC() {
                 }
                 extra={
                     <Space>
-                        <Button type="ghost" onClick={() => navigate('/toefl-challenge/competition')}>
+                        <Button type="dashed" onClick={() => navigate('/toefl-challenge/competition')}>
                             Hủy bỏ
                         </Button>
                         <Button disabled={buttonLoading} htmlType="submit" type='primary' onClick={handleOk}>

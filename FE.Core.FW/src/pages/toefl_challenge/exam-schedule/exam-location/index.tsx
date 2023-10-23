@@ -5,7 +5,6 @@ import {
     Card,
     Col,
     Collapse,
-    Form,
     Modal,
     Row,
     Space,
@@ -15,25 +14,22 @@ import {
 import { ColumnsType } from 'antd/lib/table';
 import { useEffect, useReducer, useState } from 'react';
 
-import { OptionModel, SelectOptionModel } from '@/apis/models/data';
+import { OptionModel, SelectOptionModel } from '@/@types/data';
 import { ExamLocationModel } from '@/apis/models/toefl-challenge/ExamLocationModel';
-import { ExamRegistrationScheduleModel } from '@/apis/models/toefl-challenge/ExamRegistrationScheduleModel';
+import { ExamScheduleModel } from '@/apis/models/toefl-challenge/ExamScheduleModel';
+import { ProvinceModel } from '@/apis/models/toefl-challenge/ProvinceModel';
+import { getAministrativeDivisions1 } from '@/apis/services/toefl-challenge/AministrativeDivisionsService';
 import { deleteManyDivision } from '@/apis/services/toefl-challenge/DivisionService';
-import { deleteExamLocation, getExamLocation, getExamLocationById, getExamLocationSchedule } from '@/apis/services/toefl-challenge/ExamLocationService';
+import { deleteExamLocation, getExamLocation, getExamLocationById } from '@/apis/services/toefl-challenge/ExamLocationService';
 import Permission from '@/components/Permission';
 import { examRegistrationScheduleState } from '@/store/exam-atom';
 import { PermissionAction, layoutCode } from '@/utils/constants';
+import { ConvertOptionSelectModel } from '@/utils/convert';
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import ExamLocationCreateTFC from './create';
-import ExamRegistrationScheduleEditTFC from './edit';
-import { ExamScheduleModel } from '@/apis/models/toefl-challenge/ExamScheduleModel';
 import ExamLocationEditTFC from './edit';
-import { getAministrativeDivisions1 } from '@/apis/services/toefl-challenge/AministrativeDivisionsService';
-import { ProvinceModel } from '@/apis/models/toefl-challenge/ProvinceModel';
-import { ConvertOptionSelectModel } from '@/utils/convert';
-import { ExamLocationScheduleModel } from '@/apis/models/toefl-challenge/ExamLocationScheduleModel';
 interface Props {
     examSchedule: ExamScheduleModel
     provinces: SelectOptionModel[]
@@ -210,7 +206,7 @@ function ExamLocationTFC({ examSchedule, provinces }: Props) {
             render: (_, record) => (
                 <Space>
                     <Permission noNode navigation={layoutCode.toeflChallengeCompetition as string} bitPermission={PermissionAction.Edit}>
-                        <Button type='ghost' title='Cập nhật' loading={buttonLoading[record.id as string]} onClick={() => onHandleShowModelEdit(record.id as string)}>
+                        <Button type='dashed' title='Cập nhật' loading={buttonLoading[record.id as string]} onClick={() => onHandleShowModelEdit(record.id as string)}>
                             <EditOutlined />
                         </Button>
                     </Permission>

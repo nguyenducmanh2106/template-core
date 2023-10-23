@@ -1,5 +1,4 @@
 import { Code } from '@/apis';
-import { OptionModel, SelectOptionModel } from '@/apis/models/data';
 import { DivisionModel } from '@/apis/models/toefl-challenge/DivisionModel';
 import { ExamModel } from '@/apis/models/toefl-challenge/ExamModel';
 import { ProvinceModel } from '@/apis/models/toefl-challenge/ProvinceModel';
@@ -40,6 +39,7 @@ import moment from 'moment';
 import { useEffect, useReducer, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import DebounceSelect from '../debounce-select';
+import { OptionModel, SelectOptionModel } from '@/@types/data';
 
 
 
@@ -296,7 +296,7 @@ function RegistrationTFC() {
                 }
                 extra={
                     <Space>
-                        <Button type="ghost" onClick={() => navigate('/toefl-challenge/registration')}>
+                        <Button type="dashed" onClick={() => navigate('/toefl-challenge/registration')}>
                             Hủy bỏ
                         </Button>
                         <Button disabled={buttonLoading} htmlType="submit" type='primary' onClick={handleOk}>

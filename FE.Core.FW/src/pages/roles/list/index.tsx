@@ -181,7 +181,7 @@ function Role() {
             </Button>
           </Permission>
           <Permission navigation={layoutCode.role} bitPermission={PermissionAction.Edit} noNode={<></>}>
-            <Button size={"small"} type='ghost'
+            <Button size={"small"} type='dashed'
               loading={loading}
               onClick={() => onHandleShowModelAccessData(record)}>
               <Tooltip title="Quyền truy cập dữ liệu">
@@ -190,7 +190,7 @@ function Role() {
             </Button>
           </Permission>
           <Permission navigation={layoutCode.role} bitPermission={PermissionAction.Delete} noNode={<></>}>
-            <Button type='ghost' size={"small"} disabled={record.isDefault} loading={false} onClick={() => deleteRecord(record.id || '')}>
+            <Button type='dashed' size={"small"} disabled={record.isDefault} loading={false} onClick={() => deleteRecord(record.id || '')}>
               <Tooltip title="Xóa">
                 <DeleteOutlined />
               </Tooltip>

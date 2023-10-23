@@ -1,4 +1,3 @@
-import { TableListQueryParams, FormDataType, PostAuthWso2 } from '@/apis/models/data';
 import mockjs from 'mockjs';
 import { CancelablePromise } from '../core/CancelablePromise';
 import {
@@ -7,6 +6,7 @@ import {
   UseRequestOption,
 } from "../core/request";
 import { ResponseData } from '../models/ResponseData';
+import { FormDataType, PostAuthWso2, TableListQueryParams } from '@/@types/data';
 
 export async function createData(params?: FormDataType): Promise<any> {
   return;

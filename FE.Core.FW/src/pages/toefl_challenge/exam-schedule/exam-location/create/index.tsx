@@ -1,24 +1,16 @@
-import { Code, ResponseData } from '@/apis';
-import { ExamModel } from '@/apis/models/toefl-challenge/ExamModel';
+import { Code } from '@/apis';
+import { ExamLocationScheduleModel } from '@/apis/models/toefl-challenge/ExamLocationScheduleModel';
+import { ExamScheduleModel } from '@/apis/models/toefl-challenge/ExamScheduleModel';
 import { RegistrationExamType } from '@/apis/models/toefl-challenge/RegistrationExamType';
 import { RegistrationRound } from '@/apis/models/toefl-challenge/RegistrationRound';
-import { putExam } from '@/apis/services/toefl-challenge/ExamService';
-import { Col, ConfigProvider, DatePicker, Form, FormInstance, Input, Modal, Row, Select, Tabs, TabsProps, message } from 'antd';
-import React, { useEffect, useReducer, useRef, useState } from 'react';
-import locale from "antd/es/date-picker/locale/vi_VN"
-import dayjs from 'dayjs';
+import { postExamLocation, upSertExamLocationSchedule } from '@/apis/services/toefl-challenge/ExamLocationService';
+import { examLocationScheduleState } from '@/store/exam-atom';
+import { Modal, Tabs, TabsProps, message } from 'antd';
+import React, { useReducer, useState } from 'react';
 import { useRecoilState } from 'recoil';
-import { examLocationScheduleState, examRegistrationScheduleState } from '@/store/exam-atom';
-import moment from 'moment';
-import { OptionModel, SelectOptionModel } from '@/apis/models/data';
-import { getAministrativeDivisions1 } from '@/apis/services/toefl-challenge/AministrativeDivisionsService';
-import { ProvinceModel } from '@/apis/models/toefl-challenge/ProvinceModel';
-import { ConvertOptionSelectModel } from '@/utils/convert';
-import { ExamScheduleModel } from '@/apis/models/toefl-challenge/ExamScheduleModel';
 import CreateExamLocationInfor from './create-exam-location';
 import ExamLocationSchedule from './exam-location-schedule-create';
-import { ExamLocationScheduleModel } from '@/apis/models/toefl-challenge/ExamLocationScheduleModel';
-import { postExamLocation, postExamLocationSchedule, postExamSchedule, upSertExamLocationSchedule } from '@/apis/services/toefl-challenge/ExamLocationService';
+import { SelectOptionModel } from '@/@types/data';
 interface Props {
     open: boolean;
     examSchedule: ExamScheduleModel;

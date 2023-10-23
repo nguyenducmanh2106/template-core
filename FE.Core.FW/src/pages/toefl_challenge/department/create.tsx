@@ -1,7 +1,6 @@
+import { SelectOptionModel } from '@/@types/data';
 import { Code } from '@/apis';
-import { ExamScheduleTopikModel } from '@/apis/models/ExamScheduleTopikModel';
 import { ResponseData } from '@/apis/models/ResponseData';
-import { OptionModel, SelectOptionModel } from '@/apis/models/data';
 import { getDistrictByProvince } from '@/apis/services/PageService';
 import { postDepartmentCreate } from '@/apis/services/toefl-challenge/DepartmentService';
 import { ConvertOptionSelectModel } from '@/utils/convert';
@@ -19,7 +18,6 @@ const CreateDepartment: React.FC<Props> = ({ open, setOpen, reload, provinces })
     // const [open, setOpen] = useState(false);
 
     const [confirmLoading, setConfirmLoading] = useState(false);
-    const [examScheduleTopik, setExamScheduleTopik] = useState<ExamScheduleTopikModel[]>([]);
     const [modalButtonOkText, setModalButtonOkText] = useState('Lưu');
     const initState = {
         districts: [],

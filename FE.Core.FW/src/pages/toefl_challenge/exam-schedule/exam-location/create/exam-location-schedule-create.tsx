@@ -111,7 +111,7 @@ const ExamLocationSchedule: React.FC<Props> = ({
                 return editable ? (
                     <Space>
                         <Typography.Link onClick={() => saveRow(record.id as string)} style={{ marginRight: 8 }}>
-                            <Button type='ghost'>Lưu</Button>
+                            <Button type='dashed'>Lưu</Button>
                         </Typography.Link>
                         <Popconfirm title="Những thay đổi bạn đã thực hiện có thể không được lưu" onConfirm={cancel}>
                             <Button type='text' danger>Hủy bỏ</Button>

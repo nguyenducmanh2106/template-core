@@ -5,7 +5,6 @@ import {
     Card,
     Col,
     Collapse,
-    DatePicker,
     Divider,
     Form,
     Input,
@@ -15,41 +14,32 @@ import {
     Select,
     Space,
     Table,
-    TimeRangePickerProps,
     Typography,
     message
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { useEffect, useReducer, useState } from 'react';
 
-import { OptionModel, SelectOptionModel } from '@/apis/models/data';
 import { DivisionModel } from '@/apis/models/toefl-challenge/DivisionModel';
+import { ProvinceModel } from '@/apis/models/toefl-challenge/ProvinceModel';
+import { RegistrationCodeModel } from '@/apis/models/toefl-challenge/RegistrationCodeModel';
+import { RegistrationRound } from '@/apis/models/toefl-challenge/RegistrationRound';
+import { SchoolModel } from '@/apis/models/toefl-challenge/SchoolModel';
 import { getAministrativeDivisions, getAministrativeDivisions1 } from '@/apis/services/toefl-challenge/AministrativeDivisionsService';
-import { getDepartment } from '@/apis/services/toefl-challenge/DepartmentService';
-import { deleteDivision, deleteManyDivision } from '@/apis/services/toefl-challenge/DivisionService';
-import { deleteRegistration, getRegistration, getRegistration1 } from '@/apis/services/toefl-challenge/RegistrationService';
+import { getExam } from '@/apis/services/toefl-challenge/ExamService';
+import { deleteRegistrationCode, getRegistrationCode } from '@/apis/services/toefl-challenge/RegistrationCodeService';
+import { getSchool } from '@/apis/services/toefl-challenge/SchoolService';
 import Permission from '@/components/Permission';
 import { PermissionAction, layoutCode } from '@/utils/constants';
-import locale from "antd/es/date-picker/locale/vi_VN"
 import {
     ConvertOptionSelectModel
 } from '@/utils/convert';
-import { CreditCardOutlined, DeleteOutlined, EditOutlined, EyeOutlined, ImportOutlined, MailOutlined, PlusOutlined } from '@ant-design/icons';
+import { DeleteOutlined, ImportOutlined, MailOutlined, PlusOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-import { RegistrationRound } from '@/apis/models/toefl-challenge/RegistrationRound';
-import { RangePicker } from 'rc-picker';
-import dayjs from 'dayjs';
-import moment from 'moment';
-import { getExam } from '@/apis/services/toefl-challenge/ExamService';
-import { ProvinceModel } from '@/apis/models/toefl-challenge/ProvinceModel';
-import { getSchool } from '@/apis/services/toefl-challenge/SchoolService';
 import DebounceSelect from './debounce-select';
-import { SchoolModel } from '@/apis/models/toefl-challenge/SchoolModel';
-import { RegistrationCodeModel } from '@/apis/models/toefl-challenge/RegistrationCodeModel';
-import { deleteRegistrationCode, getRegistrationCode } from '@/apis/services/toefl-challenge/RegistrationCodeService';
-import ImportRegistrationCodeTFC from './import';
-import ImportRegistrationCode from './import';
 import EmailRegistrationCode from './email';
+import ImportRegistrationCode from './import';
+import { OptionModel, SelectOptionModel } from '@/@types/data';
 function CodeTFC() {
     const navigate = useNavigate();
     // Load
@@ -342,7 +332,7 @@ function CodeTFC() {
             render: (_, record) => (
                 <Space>
                     <Permission noNode navigation={layoutCode.toeflChallengeRegistrationCode as string} bitPermission={PermissionAction.View}>
-                        <Button type='ghost' size='small' title='Gửi email code thi' loading={false} >
+                        <Button type='dashed' size='small' title='Gửi email code thi' loading={false} >
                             <MailOutlined />
                         </Button>
                     </Permission>

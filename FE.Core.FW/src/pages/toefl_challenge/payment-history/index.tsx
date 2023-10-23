@@ -15,42 +15,37 @@ import {
     Select,
     Space,
     Table,
-    TimeRangePickerProps,
     Typography,
     message
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { useEffect, useReducer, useState } from 'react';
 
-import { OptionModel, SelectOptionModel } from '@/apis/models/data';
-import { DivisionModel } from '@/apis/models/toefl-challenge/DivisionModel';
+import { PaymentHistoryModel } from '@/apis/models/toefl-challenge/PaymentHistoryModel';
+import { ProvinceModel } from '@/apis/models/toefl-challenge/ProvinceModel';
 import { RegistrationModel } from '@/apis/models/toefl-challenge/RegistrationModel';
+import { RegistrationRound } from '@/apis/models/toefl-challenge/RegistrationRound';
+import { SchoolModel } from '@/apis/models/toefl-challenge/SchoolModel';
+import { TransactionStatus } from '@/apis/models/toefl-challenge/TransactionStatus';
 import { getAministrativeDivisions, getAministrativeDivisions1 } from '@/apis/services/toefl-challenge/AministrativeDivisionsService';
-import { getDepartment } from '@/apis/services/toefl-challenge/DepartmentService';
-import { deleteDivision, deleteManyDivision } from '@/apis/services/toefl-challenge/DivisionService';
-import { deleteRegistration, getRegistration, getRegistration1 } from '@/apis/services/toefl-challenge/RegistrationService';
+import { deleteManyDivision } from '@/apis/services/toefl-challenge/DivisionService';
+import { getExam } from '@/apis/services/toefl-challenge/ExamService';
+import { deleteRegistration, getRegistration1 } from '@/apis/services/toefl-challenge/RegistrationService';
+import { getSchool } from '@/apis/services/toefl-challenge/SchoolService';
+import { getTransaction2 } from '@/apis/services/toefl-challenge/TransactionService';
 import Permission from '@/components/Permission';
 import { PermissionAction, layoutCode } from '@/utils/constants';
-import locale from "antd/es/date-picker/locale/vi_VN"
 import {
     ConvertOptionSelectModel
 } from '@/utils/convert';
-import { CreditCardOutlined, DeleteOutlined, EditOutlined, EyeOutlined, ImportOutlined, PlusOutlined } from '@ant-design/icons';
-import { useNavigate } from 'react-router-dom';
-import { RegistrationRound } from '@/apis/models/toefl-challenge/RegistrationRound';
-import { RangePicker } from 'rc-picker';
-import dayjs from 'dayjs';
+import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
+import locale from "antd/es/date-picker/locale/vi_VN";
 import moment from 'moment';
-import { getExam } from '@/apis/services/toefl-challenge/ExamService';
-import { ProvinceModel } from '@/apis/models/toefl-challenge/ProvinceModel';
-import { getSchool } from '@/apis/services/toefl-challenge/SchoolService';
-import { SchoolModel } from '@/apis/models/toefl-challenge/SchoolModel';
-import { PaymentStatus } from '@/apis/models/toefl-challenge/PaymentStatus';
-import { PaymentType } from '@/apis/models/toefl-challenge/PaymentType';
+import { useNavigate } from 'react-router-dom';
 import DebounceSelect from '../registration/debounce-select';
-import { PaymentHistoryModel } from '@/apis/models/toefl-challenge/PaymentHistoryModel';
-import { getTransaction2 } from '@/apis/services/toefl-challenge/TransactionService';
-import { TransactionStatus } from '@/apis/models/toefl-challenge/TransactionStatus';
+import { OptionModel, SelectOptionModel } from '@/@types/data';
+import dayjs from 'dayjs';
+import type { Dayjs } from 'dayjs';
 function PaymentHistoryTFC() {
     const navigate = useNavigate();
     // Load
@@ -536,23 +531,24 @@ function PaymentHistoryTFC() {
                                                     </Form.Item>
                                                 </Col>
                                                 <Col span={4}>
-                                                    <Form.Item
+                                                    {/* <Form.Item
                                                         label={'Ngày tiếp nhận đăng ký'}
                                                         labelCol={{ span: 24 }}
                                                         wrapperCol={{ span: 24 }}
                                                         name='DayReception'
                                                     >
-                                                        <DatePicker.RangePicker allowClear
-                                                            ranges={{
-                                                                'Hôm nay': [moment(), moment()],
-                                                                'Tháng này': [moment().startOf('month'), moment().endOf('month')],
-                                                                '7 ngày trước': [moment().add(-7, 'd'), moment()]
-                                                            }}
+                                                        <DatePicker.RangePicker
+                                                            allowClear
+                                                            presets={[
+                                                                { label: 'Yesterday', value: dayjs().add(-1, 'd') },
+                                                                { label: 'Last Week', value: dayjs().add(-7, 'd') },
+                                                                { label: 'Last Month', value: dayjs().add(-1, 'month') }
+                                                            ]}
                                                             placeholder={['Từ', 'Đến']}
                                                             locale={locale}
                                                             format="DD/MM/YYYY"
                                                         />
-                                                    </Form.Item>
+                                                    </Form.Item> */}
                                                 </Col>
 
                                                 <Col span={4}>

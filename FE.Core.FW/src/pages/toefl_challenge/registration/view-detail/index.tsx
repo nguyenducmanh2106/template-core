@@ -1,48 +1,18 @@
-import { Code } from '@/apis';
-import { OptionModel, SelectOptionModel } from '@/apis/models/data';
-import { DivisionModel } from '@/apis/models/toefl-challenge/DivisionModel';
-import { ExamModel } from '@/apis/models/toefl-challenge/ExamModel';
-import { ProvinceModel } from '@/apis/models/toefl-challenge/ProvinceModel';
+import { PaymentStatus } from '@/apis/models/toefl-challenge/PaymentStatus';
 import { RegistrationExamType } from '@/apis/models/toefl-challenge/RegistrationExamType';
 import { RegistrationModel } from '@/apis/models/toefl-challenge/RegistrationModel';
 import { RegistrationRound } from '@/apis/models/toefl-challenge/RegistrationRound';
-import { SchoolModel } from '@/apis/models/toefl-challenge/SchoolModel';
-import { getAministrativeDivisions1 } from '@/apis/services/toefl-challenge/AministrativeDivisionsService';
-import { getExam, getExam1 } from '@/apis/services/toefl-challenge/ExamService';
-import { getRegistration1, putRegistration1 } from '@/apis/services/toefl-challenge/RegistrationService';
-import { getSchool } from '@/apis/services/toefl-challenge/SchoolService';
 import {
-    ConvertOptionSelectModel
-} from '@/utils/convert';
-import { ResponseData } from '@/utils/request';
-import { ArrowLeftOutlined } from '@ant-design/icons';
-import {
-    Button,
-    Card,
-    Checkbox,
     Col,
-    DatePicker,
     Divider,
     Form,
     FormInstance,
-    Input,
     Modal,
-    Radio,
     Row,
-    Select,
-    Space,
-    Spin,
-    Tooltip,
-    Typography,
-    message
+    Typography
 } from 'antd';
-import locale from "antd/es/date-picker/locale/vi_VN";
-import TextArea from 'antd/lib/input/TextArea';
 import moment from 'moment';
 import { useEffect, useReducer, useRef, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import DebounceSelect from '../debounce-select';
-import { PaymentStatus } from '@/apis/models/toefl-challenge/PaymentStatus';
 
 
 

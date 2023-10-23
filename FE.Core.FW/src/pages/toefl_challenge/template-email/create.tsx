@@ -1,15 +1,9 @@
+import { SelectOptionModel } from '@/@types/data';
 import { Code } from '@/apis';
-import { ExamScheduleTopikModel } from '@/apis/models/ExamScheduleTopikModel';
-import { ResponseData } from '@/apis/models/ResponseData';
-import { OptionModel, SelectOptionModel } from '@/apis/models/data';
-import { getDistrictByProvince } from '@/apis/services/PageService';
-import { postDepartmentCreate } from '@/apis/services/toefl-challenge/DepartmentService';
 import { postEmailTemplate } from '@/apis/services/toefl-challenge/EmailTemplateService';
 import Editor from '@/components/CKEditor';
-import { emailTemplateTypeConstant } from '@/utils/constants';
-import { ConvertOptionSelectModel } from '@/utils/convert';
 import { Col, Form, Input, Modal, Row, Select, message } from 'antd';
-import React, { useEffect, useReducer, useState } from 'react';
+import React, { useReducer, useState } from 'react';
 
 interface Props {
     temp: SelectOptionModel[]
@@ -22,7 +16,6 @@ const CreateTemplateEmail: React.FC<Props> = ({ temp, open, setOpen, reload }) =
     // const [open, setOpen] = useState(false);
 
     const [confirmLoading, setConfirmLoading] = useState(false);
-    const [examScheduleTopik, setExamScheduleTopik] = useState<ExamScheduleTopikModel[]>([]);
     const [modalButtonOkText, setModalButtonOkText] = useState('Lưu');
     const initState = {
         emailTemplateType: []
