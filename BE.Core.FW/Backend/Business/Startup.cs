@@ -25,6 +25,8 @@ internal static class Startup
             .AddScoped<IEmailHandler, EmailHandler>()
             .AddScoped<IAuthHandler, AuthHandler>()
             .AddScoped<IBranchHandler, BranchHandler>()
+            .AddScoped<IProductCategoryHandler, ProductCategoryHandler>()
+            .AddScoped<IProductTypeHandler, ProductTypeHandler>()
             .AddScoped<IDepartmentHandler, DepartmentHandler>();
     }
 }

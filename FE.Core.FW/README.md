@@ -6,7 +6,7 @@ các bước chạy project
 
 
 //gen api
-npx react-swagger-openapi --input http://localhost:8180/swagger/v1/swagger.json --output ./src/apis/temp
+npx react-swagger-openapi --input http://localhost:8802/swagger/v1/swagger.json --output ./src/apis/temp
 
 
 

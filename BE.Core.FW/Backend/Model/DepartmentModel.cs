@@ -5,16 +5,16 @@ namespace Backend.Model
     public class DepartmentModel
     {
         public Guid Id { get; set; }
-        public string Code { get; set; }
-        public string Name { get; set; }
-        public string Description { get; set; }
+        public string Code { get; set; } = default!;
+        public string Name { get; set; } = default!;
+        public string? Description { get; set; }
         public int Level { get; set; }
         public Guid? ParentId { get; set; }
-        public string ParentName { get; set; }
+        public string? ParentName { get; set; }
         public Guid? BranchId { get; set; }
-        public string BranchName { get; set; }
+        public string? BranchName { get; set; }
         public Guid? Manager { get; set; }
-        public string ManagerName { get; set; }
+        public string? ManagerName { get; set; }
         public bool IsCom { get; set; }
         public Guid CreatedByUserId { get; set; }
         public Guid LastModifiedByUserId { get; set; }
@@ -33,7 +33,7 @@ namespace Backend.Model
     }
     public class DepartmentFilterModel : RequestData
     {
-
+        public Guid? BranchId { get; set; }
     }
 
 }

@@ -126,7 +126,7 @@ export interface FormDataType {
 }
 
 export interface SelectOptionModel {
-  value: string;
+  value: string | number | undefined;
   label: string;
   title?: string;
   key: string;

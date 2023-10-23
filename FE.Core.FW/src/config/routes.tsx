@@ -31,6 +31,7 @@ export const SuspenseLazy = memo(({ children }: { children: React.ReactNode }) =
 
 export default memo(() => {
   const [layoutState, setLayoutState] = useRecoilState(navigationState);
+  console.log(layoutState)
   routes = createUseRoutes([
     {
       path: '/',

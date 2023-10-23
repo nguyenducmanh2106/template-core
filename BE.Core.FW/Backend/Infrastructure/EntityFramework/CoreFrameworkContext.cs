@@ -16,6 +16,12 @@ namespace Backend.Infrastructure.EntityFramework
         public DbSet<SysEmailHistory>? EmailHistories { get; set; }
         public DbSet<SysDepartment>? Departments { get; set; }
         public DbSet<SysBranch> Branchs { get; set; }
+        public DbSet<SysProductCategory> ProductCategories { get; set; }
+        public DbSet<SysProductType> ProductTypes { get; set; }
+        public DbSet<SysProduct> Products { get; set; }
+        public DbSet<SysCustomerCategory> CustomerCategories { get; set; }
+        public DbSet<SysCustomerType> CustomerTypes { get; set; }
+        public DbSet<SysCustomer> Customers { get; set; }
 
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

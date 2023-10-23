@@ -1,3 +1,4 @@
+import { ResponseData } from '@/utils/request';
 import {
     Button,
     Card,
@@ -14,23 +15,22 @@ import {
 } from 'antd';
 import { useEffect, useReducer, useRef, useState } from 'react';
 
-import { BranchModel, Code } from '@/apis';
-import { postBranch } from '@/apis/services/BranchService';
+import { Code } from '@/apis';
 import { ArrowLeftOutlined } from '@ant-design/icons';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { getProductCategory1, putProductCategory } from '@/apis/services/ProductCategoryService';
+import { ProductCategoryModel } from '@/apis/models/ProductCategoryModel';
 
 
 
 
-function BranchCreate() {
-    console.log('BranchCreate')
+function ProductCategoryEdit() {
     const navigate = useNavigate();
+    const params = useParams()
+    console.log(params);
     // Load
     const initState = {
-        provinces: [],
-        districts: [],
-        departmentEdit: {},
-        departments: [],
+        recordEdit: {}
     };
     const [loading, setLoading] = useState<boolean>(false);
 
@@ -47,29 +47,12 @@ function BranchCreate() {
     useEffect(() => {
         const fnGetInitState = async () => {
             setLoading(true);
-            // const responseProvinces: ResponseData = await getAministrativeDivisions();
-            // const responseDepartment: ResponseData = await getDepartment();
+            const responseDivision: ResponseData = await getProductCategory1(params.id);
 
-            // const provinceOptions = ConvertOptionSelectModel(responseProvinces.data as OptionModel[]);
-            // const departmentOptions = ConvertOptionSelectModel(responseDepartment.data as OptionModel[]);
-            // const stateDispatcher = {
-            //     provinces: [{
-            //         key: 'Default',
-            //         label: '-Chọn-',
-            //         value: '',
-            //     }].concat(provinceOptions),
-            //     departments: [{
-            //         key: 'Default',
-            //         label: '-Chọn-',
-            //         value: '',
-            //     }].concat(departmentOptions),
-            //     districts: [{
-            //         key: 'Default',
-            //         label: '-Chọn-',
-            //         value: '',
-            //     }]
-            // };
-            // dispatch(stateDispatcher);
+            const stateDispatcher = {
+                recordEdit: responseDivision.data
+            };
+            dispatch(stateDispatcher);
             setLoading(false);
         }
         fnGetInitState()
@@ -97,25 +80,20 @@ function BranchCreate() {
     };
 
     const handleOk = async () => {
-        // const fieldsValue = await searchForm.validateFields();
         const fieldsValue = await formRef?.current?.validateFields();
         setButtonOkText('Đang xử lý...');
         setButtonLoading(true);
-        // setConfirmLoading(true);
-        // searchForm.resetFields()
 
-        const objBody: BranchModel = {
+        const objBody: ProductCategoryModel = {
             ...fieldsValue,
         }
-        console.log(objBody)
 
-        const response = await postBranch("", objBody);
+        const response = await putProductCategory(params.id, "", objBody);
         setButtonOkText('Lưu');
         setButtonLoading(false);
         if (response.code === Code._200) {
-            message.success(response.message || "Tạo thành công")
-            //redirect đến trang chỉnh sửa
-            navigate(`/catalog/branch`)
+            message.success(response.message || "Cập nhật thành công")
+            navigate(`/catalog/product-category`)
         }
         else {
             message.error(response.message || "Thất bại")
@@ -139,24 +117,23 @@ function BranchCreate() {
                     <>
                         <Space className="title">
                             <Tooltip title="Quay lại">
-                                <Button type="text" shape='circle' onClick={() => navigate('/catalog/branch')}>
+                                <Button type="text" shape='circle' onClick={() => navigate('/catalog/product-category')}>
                                     <ArrowLeftOutlined />
                                 </Button>
                             </Tooltip>
-                            <Text strong>Thêm mới chi nhánh</Text>
+                            <Text strong>Cập nhật nhóm SP</Text>
                         </Space>
                     </>
                 }
                 extra={
                     <Space>
-                        <Button type="default" onClick={() => navigate('/catalog/branch')}>
+                        <Button type="dashed" onClick={() => navigate('/catalog/product-category')}>
                             Hủy bỏ
                         </Button>
                         <Button disabled={buttonLoading} htmlType="submit" type='primary' onClick={handleOk}>
                             {buttonOkText}
                         </Button>
                     </Space>
-
                 }
             >
                 {loading ? <Spin /> :
@@ -167,18 +144,20 @@ function BranchCreate() {
                         onFinish={handleOk}
                         validateMessages={validateMessages}
                         initialValues={{
-                            ["Name"]: '',
+                            ["Name"]: state.recordEdit?.name,
+                            ["Code"]: state.recordEdit?.code,
+                            ["Description"]: state.recordEdit?.description,
                         }}
                     >
                         <Row gutter={16} justify='start'>
                             <Col span={12}>
-                                <Form.Item label={'Mã chi nhánh'} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name='Code' rules={[{ required: true, whitespace: true }]}>
-                                    <Input placeholder='Nhập mã chi nhánh' allowClear />
+                                <Form.Item label={'Mã nhóm SP'} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name='Code' rules={[{ required: true, whitespace: true }]}>
+                                    <Input placeholder='Nhập mã nhóm SP' allowClear />
                                 </Form.Item>
                             </Col>
                             <Col span={12}>
-                                <Form.Item label={'Tên chi nhánh'} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name='Name' rules={[{ required: true, whitespace: true }]}>
-                                    <Input placeholder='Nhập tên chi nhánh' allowClear />
+                                <Form.Item label={'Tên nhóm SP'} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name='Name' rules={[{ required: true, whitespace: true }]}>
+                                    <Input placeholder='Nhập tên nhóm SP' allowClear />
                                 </Form.Item>
                             </Col>
                             <Col span={12}>
@@ -198,4 +177,4 @@ function BranchCreate() {
     );
 }
 
-export default BranchCreate;
+export default ProductCategoryEdit;

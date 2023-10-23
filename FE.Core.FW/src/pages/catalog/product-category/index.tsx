@@ -1,50 +1,38 @@
-import { Code } from '@/apis';
 import { PaginationConfig, ResponseData } from '@/utils/request';
 import {
     Button,
     Card,
-    Checkbox,
     Col,
     Collapse,
-    Dropdown,
     Form,
     Input,
     Modal,
     Row,
-    Select,
     Space,
-    Table,
     Typography,
     message
 } from 'antd';
-import { ColumnsType } from 'antd/lib/table';
 import { useEffect, useReducer, useRef, useState } from 'react';
 
-import { deleteDivision, deleteManyDivision } from '@/apis/services/toefl-challenge/DivisionService';
+import { Code } from '@/apis';
+import { ProductCategoryModel } from '@/apis/models/ProductCategoryModel';
+import { deleteProductCategory, getProductCategory } from '@/apis/services/ProductCategoryService';
+import { deleteManyDivision } from '@/apis/services/toefl-challenge/DivisionService';
 import Permission from '@/components/Permission';
 import { PermissionAction, layoutCode } from '@/utils/constants';
-import {
-    ConvertOptionSelectModel
-} from '@/utils/convert';
-import { DeleteOutlined, DownOutlined, EditOutlined, EllipsisOutlined, PlusOutlined } from '@ant-design/icons';
-import { useNavigate } from 'react-router-dom';
-import { DepartmentModel } from '@/apis/models/DepartmentModel';
-import { deleteDepartment, getDepartment } from '@/apis/services/DepartmentService';
+import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import { ActionType, ProColumns, ProTable } from '@ant-design/pro-components';
-import { OptionModel } from '@/@types/data';
-function Department() {
+import { useNavigate } from 'react-router-dom';
+function ProductCategory() {
     const navigate = useNavigate();
     // Load
     const { Panel } = Collapse;
     const initState = {
-        provinces: [],
-        districts: [],
-        departmentEdit: {},
         departments: [],
     };
     const [loading, setLoading] = useState<boolean>(false);
     const [loadingDelete, setLoadingDelete] = useState<boolean>(false);
-    const [list, setList] = useState<DepartmentModel[]>([]);
+    const [list, setList] = useState<ProductCategoryModel[]>([]);
     const [pagination, setPagination] = useState<PaginationConfig>({
         total: 0,
         current: 1,
@@ -99,7 +87,7 @@ function Department() {
             okText: 'Đồng ý',
             cancelText: 'Hủy',
             onOk: async () => {
-                const response = await deleteDepartment(id);
+                const response = await deleteProductCategory(id);
                 if (response.code === Code._200) {
                     message.success(response.message)
                     getList(1);
@@ -134,7 +122,7 @@ function Department() {
     };
 
     const onHandleShowModelCreate = async () => {
-        navigate(`/catalog/department/create`)
+        navigate(`/catalog/product-category/create`)
     };
 
     // searchForm
@@ -148,10 +136,10 @@ function Department() {
                 size: pageSize,
                 textSearch: fieldsValue.TextSearch,
             }
-            const response: ResponseData = await getDepartment(
+            const response: ResponseData = await getProductCategory(
                 JSON.stringify(filter)
             );
-            setList((response.data || []) as DepartmentModel[]);
+            setList((response.data || []) as ProductCategoryModel[]);
             setPagination({
                 ...pagination,
                 current,
@@ -166,7 +154,7 @@ function Department() {
     };
 
 
-    const columns: ProColumns<DepartmentModel>[] = [
+    const columns: ProColumns<ProductCategoryModel>[] = [
         {
             title: 'STT',
             dataIndex: 'index',
@@ -174,24 +162,14 @@ function Department() {
             render: (_, record, index) => <>{(pagination.current - 1) * pagination.pageSize + index + 1}</>,
         },
         {
-            title: 'Mã phòng ban',
+            title: 'Mã nhóm SP',
             dataIndex: 'code',
             render: (_, record) => <span>{record.code}</span>,
         },
         {
-            title: 'Tên phòng ban',
+            title: 'Tên nhóm SP',
             dataIndex: 'name',
             render: (_, record) => <span>{record.name}</span>,
-        },
-        {
-            title: 'Tên chi nhánh',
-            dataIndex: 'branchName',
-            render: (_, record) => <span>{record.branchName}</span>,
-        },
-        {
-            title: 'Tính hoa hồng',
-            dataIndex: 'isCom',
-            render: (_, record) => <span> <Checkbox checked={record.isCom} disabled /></span>,
         },
         {
             title: 'Mô tả',
@@ -205,12 +183,12 @@ function Department() {
             width: 300,
             render: (_, record) => (
                 <Space>
-                    <Permission noNode navigation={layoutCode.catalogDepartment as string} bitPermission={PermissionAction.Edit}>
-                        <Button type="dashed" title='Cập nhật' loading={false} onClick={() => navigate(`/catalog/department/edit/${record.id}`)}>
+                    <Permission noNode navigation={layoutCode.catalogProductCategory as string} bitPermission={PermissionAction.Edit}>
+                        <Button type="dashed" title='Cập nhật' loading={false} onClick={() => navigate(`/catalog/product-category/edit/${record.id}`)}>
                             <EditOutlined />
                         </Button>
                     </Permission>
-                    <Permission noNode navigation={layoutCode.catalogDepartment as string} bitPermission={PermissionAction.Delete}>
+                    <Permission noNode navigation={layoutCode.catalogProductCategory as string} bitPermission={PermissionAction.Delete}>
                         <Button danger title='Xóa' loading={false} onClick={() => deleteRecord(record.id || '')}>
                             <DeleteOutlined />
                         </Button>
@@ -230,7 +208,7 @@ function Department() {
                         <Row gutter={16} justify='start'>
                             <Col span={24} className='gutter-row' style={{ marginBottom: '8px' }}>
                                 <Space>
-                                    {/* <Permission noNode navigation={layoutCode.toeflChallengeDivision as string} bitPermission={PermissionAction.Add}>
+                                    {/* <Permission noNode navigation={layoutCode.catalogBranch as string} bitPermission={PermissionAction.Add}>
                                         <Button htmlType='button' type='default' onClick={() => onHandleShowModelCreate()}>
                                             <PlusOutlined />
                                             Tạo mới
@@ -259,13 +237,13 @@ function Department() {
                                             <Row gutter={16} justify='start'>
                                                 <Col span={6}>
                                                     <Form.Item
-                                                        label={'Tên phòng ban'}
+                                                        label={'Tên nhóm SP'}
                                                         labelCol={{ span: 24 }}
                                                         wrapperCol={{ span: 17 }}
                                                         name='TextSearch'
                                                     >
                                                         <Input
-                                                            placeholder='Tên phòng ban'
+                                                            placeholder='Tên nhóm SP'
                                                             allowClear />
                                                     </Form.Item>
                                                 </Col>
@@ -306,7 +284,7 @@ function Department() {
                     }}
                 /> */}
 
-                <ProTable<DepartmentModel>
+                <ProTable<ProductCategoryModel>
                     dataSource={list}
                     rowKey="id"
                     loading={loading}
@@ -321,7 +299,7 @@ function Department() {
                     dateFormatter="string"
                     headerTitle="Tiêu đề"
                     toolBarRender={() => [
-                        <Permission noNode navigation={layoutCode.catalogDepartment as string} bitPermission={PermissionAction.Add}>
+                        <Permission noNode navigation={layoutCode.catalogProductCategory as string} bitPermission={PermissionAction.Add}>
                             <Button htmlType='button' type='default' onClick={() => onHandleShowModelCreate()}>
                                 <PlusOutlined />
                                 Tạo mới
@@ -335,4 +313,4 @@ function Department() {
     );
 }
 
-export default Department;
+export default ProductCategory;

@@ -14,16 +14,16 @@ import {
 } from 'antd';
 import { useEffect, useReducer, useRef, useState } from 'react';
 
-import { BranchModel, Code } from '@/apis';
-import { postBranch } from '@/apis/services/BranchService';
+import { Code } from '@/apis';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
+import { postProductCategory } from '@/apis/services/ProductCategoryService';
+import { ProductCategoryModel } from '@/apis/models/ProductCategoryModel';
 
 
 
 
-function BranchCreate() {
-    console.log('BranchCreate')
+function ProductCategoryCreate() {
     const navigate = useNavigate();
     // Load
     const initState = {
@@ -104,18 +104,17 @@ function BranchCreate() {
         // setConfirmLoading(true);
         // searchForm.resetFields()
 
-        const objBody: BranchModel = {
+        const objBody: ProductCategoryModel = {
             ...fieldsValue,
         }
-        console.log(objBody)
 
-        const response = await postBranch("", objBody);
+        const response = await postProductCategory("", objBody);
         setButtonOkText('Lưu');
         setButtonLoading(false);
         if (response.code === Code._200) {
             message.success(response.message || "Tạo thành công")
             //redirect đến trang chỉnh sửa
-            navigate(`/catalog/branch`)
+            navigate(`/catalog/product-category`)
         }
         else {
             message.error(response.message || "Thất bại")
@@ -139,17 +138,17 @@ function BranchCreate() {
                     <>
                         <Space className="title">
                             <Tooltip title="Quay lại">
-                                <Button type="text" shape='circle' onClick={() => navigate('/catalog/branch')}>
+                                <Button type="text" shape='circle' onClick={() => navigate('/catalog/product-category')}>
                                     <ArrowLeftOutlined />
                                 </Button>
                             </Tooltip>
-                            <Text strong>Thêm mới chi nhánh</Text>
+                            <Text strong>Thêm mới nhóm SP</Text>
                         </Space>
                     </>
                 }
                 extra={
                     <Space>
-                        <Button type="default" onClick={() => navigate('/catalog/branch')}>
+                        <Button type="default" onClick={() => navigate('/catalog/product-category')}>
                             Hủy bỏ
                         </Button>
                         <Button disabled={buttonLoading} htmlType="submit" type='primary' onClick={handleOk}>
@@ -172,13 +171,13 @@ function BranchCreate() {
                     >
                         <Row gutter={16} justify='start'>
                             <Col span={12}>
-                                <Form.Item label={'Mã chi nhánh'} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name='Code' rules={[{ required: true, whitespace: true }]}>
-                                    <Input placeholder='Nhập mã chi nhánh' allowClear />
+                                <Form.Item label={'Mã nhóm SP'} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name='Code' rules={[{ required: true, whitespace: true }]}>
+                                    <Input placeholder='Nhập mã nhóm SP' allowClear />
                                 </Form.Item>
                             </Col>
                             <Col span={12}>
-                                <Form.Item label={'Tên chi nhánh'} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name='Name' rules={[{ required: true, whitespace: true }]}>
-                                    <Input placeholder='Nhập tên chi nhánh' allowClear />
+                                <Form.Item label={'Tên nhóm SP'} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name='Name' rules={[{ required: true, whitespace: true }]}>
+                                    <Input placeholder='Nhập tên nhóm SP' allowClear />
                                 </Form.Item>
                             </Col>
                             <Col span={12}>
@@ -198,4 +197,4 @@ function BranchCreate() {
     );
 }
 
-export default BranchCreate;
+export default ProductCategoryCreate;

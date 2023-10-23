@@ -75,14 +75,22 @@ export const layoutCode = {
   toeflChallengeExamScheduleCreate: "toefl-challenge-exam-schedule__create",
   toeflChallengeExamScheduleEdit: "toefl-challenge-exam-schedule__edit",
   toeflChallengePaymentHistory: "toefl-challenge-payment-history",
-  toeflChallengeRegistrationCode:"toefl-challenge-registration-code",
-  toeflChallengeRegistrationCodeCreate:"toefl-challenge-registration-code__create",
-  toeflChallengeRegistrationCodeEdit:"toefl-challenge-registration-code__edit",
+  toeflChallengeRegistrationCode: "toefl-challenge-registration-code",
+  toeflChallengeRegistrationCodeCreate: "toefl-challenge-registration-code__create",
+  toeflChallengeRegistrationCodeEdit: "toefl-challenge-registration-code__edit",
   catalog: "catalog",
   catalogBranch: "catalog-branch",
-  catalogBranchCreate: "catalog-department__create",
-  catalogBranchEdit: "catalog-department__edit",
+  catalogBranchCreate: "catalog-branch__create",
+  catalogBranchEdit: "catalog-branch__edit",
   catalogDepartment: "catalog-department",
+  catalogDepartmentCreate: "catalog-department__create",
+  catalogDepartmentEdit: "catalog-department__edit",
+  catalogProductCategory: "catalog-product-category",
+  catalogProductCategoryCreate: "catalog-product-category__create",
+  catalogProductCategoryEdit: "catalog-product-category__edit",
+  catalogProductType: "catalog-product-type",
+  catalogProductTypeCreate: "catalog-product-type__create",
+  catalogProductTypeEdit: "catalog-product-type__edit",
 }
 export const routeArrays = [
   {
@@ -265,6 +273,38 @@ export const routeArrays = [
   {
     "Code": layoutCode.catalogDepartment,
     "ComponentPath": lazy(() => import('../pages/catalog/department'))
+  },
+  {
+    "Code": layoutCode.catalogDepartmentCreate,
+    "ComponentPath": lazy(() => import('../pages/catalog/department/create'))
+  },
+  {
+    "Code": layoutCode.catalogDepartmentEdit,
+    "ComponentPath": lazy(() => import('../pages/catalog/department/edit'))
+  },
+  {
+    "Code": layoutCode.catalogProductCategory,
+    "ComponentPath": lazy(() => import('../pages/catalog/product-category'))
+  },
+  {
+    "Code": layoutCode.catalogProductCategoryCreate,
+    "ComponentPath": lazy(() => import('../pages/catalog/product-category/create'))
+  },
+  {
+    "Code": layoutCode.catalogProductCategoryEdit,
+    "ComponentPath": lazy(() => import('../pages/catalog/product-category/edit'))
+  },
+  {
+    "Code": layoutCode.catalogProductType,
+    "ComponentPath": lazy(() => import('../pages/catalog/product-type'))
+  },
+  {
+    "Code": layoutCode.catalogProductTypeCreate,
+    "ComponentPath": lazy(() => import('../pages/catalog/product-type/create'))
+  },
+  {
+    "Code": layoutCode.catalogProductTypeEdit,
+    "ComponentPath": lazy(() => import('../pages/catalog/product-type/edit'))
   },
 ]
 //#endregion

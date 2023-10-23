@@ -252,9 +252,13 @@ export const formatRoutes = (routes: IRouter[], parentPath = '/', parentPaths: s
 
       pkChildren = fRoutes.pathKeyRouter;
     }
-    else{
+    else {
+      const fRoutes = formatRoutes(item.children ?? [], path, [...pPaths, path]);
+
       newItem.children = undefined
-      pkChildren = undefined
+
+      pkChildren = fRoutes.pathKeyRouter;
+
     }
 
     // item
@@ -264,7 +268,7 @@ export const formatRoutes = (routes: IRouter[], parentPath = '/', parentPaths: s
       jsonItems = merge(jsonItems, pkChildren);
     }
   }
-  console.log(items)
+  // console.log(items)
   return {
     router: items,
     pathKeyRouter: jsonItems,

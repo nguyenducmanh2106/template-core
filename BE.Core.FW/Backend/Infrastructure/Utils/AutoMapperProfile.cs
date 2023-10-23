@@ -22,6 +22,8 @@ namespace Backend.Infrastructure.Utils
             CreateMap<SysRole, RoleModel>().ReverseMap();
             CreateMap<string, string>().ConvertUsing(s => string.IsNullOrEmpty(s) ? s : s.Trim());
             CreateMap<SysDepartment, DepartmentModel>().ReverseMap();
+            CreateMap<SysProductCategory, ProductCategoryModel>().ReverseMap();
+            CreateMap<SysProductType, ProductTypeModel>().ReverseMap();
             CreateMap<SysBranch, BranchModel>().ReverseMap();
         }
     }

@@ -2,6 +2,7 @@ import { ResponseData } from '@/utils/request';
 import {
     Button,
     Card,
+    Checkbox,
     Col,
     Divider,
     Form,
@@ -14,37 +15,31 @@ import {
     Spin,
     Table,
     Tooltip,
+    TreeSelect,
     Typography,
     message
 } from 'antd';
 import { useEffect, useReducer, useRef, useState } from 'react';
 
-import { Code } from '@/apis';
-import { DivisionModel } from '@/apis/models/toefl-challenge/DivisionModel';
-import { PICModel } from '@/apis/models/toefl-challenge/PICModel';
-import { getDepartment } from '@/apis/services/toefl-challenge/DepartmentService';
-import { postDivisionCreate } from '@/apis/services/toefl-challenge/DivisionService';
+import { Code, DepartmentModel } from '@/apis';
 import {
     ConvertOptionSelectModel
 } from '@/utils/convert';
 import { ArrowLeftOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import EditableCell from './create';
-import { getAministrativeDivisions, getAministrativeDivisions1 } from '@/apis/services/toefl-challenge/AministrativeDivisionsService';
-import { DistrictModel } from '@/apis/models/toefl-challenge/DistrictModel';
-import { ProvinceModel } from '@/apis/models/toefl-challenge/ProvinceModel';
-import { OptionModel } from '@/@types/data';
+import { OptionModel, SelectOptionModel } from '@/@types/data';
+import { getBranch } from '@/apis/services/BranchService';
+import { getDepartment, getDepartment2, postDepartment } from '@/apis/services/DepartmentService';
 
 
 
 
-function DivisionTFC() {
+function DepartmentCreate() {
     const navigate = useNavigate();
     // Load
     const initState = {
-        provinces: [],
-        districts: [],
-        departmentEdit: {},
+        branches: [],
         departments: [],
     };
     const [loading, setLoading] = useState<boolean>(false);
@@ -62,27 +57,17 @@ function DivisionTFC() {
     useEffect(() => {
         const fnGetInitState = async () => {
             setLoading(true);
-            const responseProvinces: ResponseData = await getAministrativeDivisions();
-            const responseDepartment: ResponseData = await getDepartment();
+            const response: ResponseData = await getBranch();
+            const options = ConvertOptionSelectModel(response.data as OptionModel[]);
 
-            const provinceOptions = ConvertOptionSelectModel(responseProvinces.data as OptionModel[]);
-            const departmentOptions = ConvertOptionSelectModel(responseDepartment.data as OptionModel[]);
+            const responseDepartment: ResponseData = await getDepartment2();
             const stateDispatcher = {
-                provinces: [{
+                branches: [{
                     key: 'Default',
                     label: '-Chọn-',
                     value: '',
-                }].concat(provinceOptions),
-                departments: [{
-                    key: 'Default',
-                    label: '-Chọn-',
-                    value: '',
-                }].concat(departmentOptions),
-                districts: [{
-                    key: 'Default',
-                    label: '-Chọn-',
-                    value: '',
-                }]
+                } as SelectOptionModel].concat(options),
+                departments: responseDepartment.data,
             };
             dispatch(stateDispatcher);
             setLoading(false);
@@ -114,60 +99,49 @@ function DivisionTFC() {
     const handleOk = async () => {
         // const fieldsValue = await searchForm.validateFields();
         const fieldsValue = await formRef?.current?.validateFields();
-        const fieldsValueTable = [...data];
         setButtonOkText('Đang xử lý...');
         setButtonLoading(true);
         // setConfirmLoading(true);
         // searchForm.resetFields()
 
-        const objBody: DivisionModel = {
+        const objBody: DepartmentModel = {
             ...fieldsValue,
-            piCs: fieldsValueTable
+            ParentId: fieldsValue.ParentId ? fieldsValue.ParentId : undefined
         }
         console.log(objBody)
 
-        const response = await postDivisionCreate(objBody);
+        const response = await postDepartment("", objBody);
         setButtonOkText('Lưu');
         setButtonLoading(false);
         if (response.code === Code._200) {
             message.success(response.message || "Tạo thành công")
             //redirect đến trang chỉnh sửa
-            navigate(`/toefl-challenge/division/edit/${response.data}`)
+            navigate(`/catalog/department`)
         }
         else {
             message.error(response.message || "Thất bại")
         }
     };
-    const onChangeProvince = async () => {
-        const fieldsValue = await formRef.current?.getFieldsValue();
-        formRef.current?.setFieldsValue({
-            "DistrictId": '',
-            "DepartmentId": '',
-        })
-        const responseDistricts: ResponseData = await getAministrativeDivisions1(fieldsValue.ProvinceId);
-        const dataDistricts = responseDistricts?.data as ProvinceModel
-        const districtOptions = ConvertOptionSelectModel(dataDistricts.districts as OptionModel[]);
-        const filter = {
-            provinceId: fieldsValue.ProvinceId ? fieldsValue.ProvinceId : undefined,
-        }
-        const response: ResponseData = await getDepartment(
-            JSON.stringify(filter)
-        );
-        const departmentOptions = ConvertOptionSelectModel(response.data as OptionModel[]);
+    const onChangeBranch = async () => {
+        // const fieldsValue = await formRef.current?.getFieldsValue();
+        // formRef.current?.setFieldsValue({
+        //     "ParentId": '',
+        // })
 
-        const stateDispatcher = {
-            departments: [{
-                key: 'Default',
-                label: '-Chọn-',
-                value: '',
-            }].concat(departmentOptions),
-            districts: [{
-                key: 'Default',
-                label: '-Chọn-',
-                value: '',
-            }].concat(districtOptions),
-        }
-        dispatch(stateDispatcher)
+        // const filter = {
+        //     BranchId: fieldsValue.BranchId ? fieldsValue.BranchId : undefined,
+        // }
+
+        // const responseDepartment: ResponseData = await getDepartment(JSON.stringify(filter));
+        // const optionDepartment = ConvertOptionSelectModel(responseDepartment.data as OptionModel[]);
+        // const stateDispatcher = {
+        //     departments: [{
+        //         key: 'Default',
+        //         label: '-Chọn-',
+        //         value: '',
+        //     } as SelectOptionModel].concat(optionDepartment),
+        // };
+        // dispatch(stateDispatcher);
     };
 
     function uuidv4() {
@@ -178,189 +152,7 @@ function DivisionTFC() {
                 return v.toString(16);
             });
     }
-    // const columns: ColumnsType<DivisionModel> = [
-    //     {
-    //         title: 'STT',
-    //         dataIndex: 'index',
-    //         width: 80,
-    //         render: (_, record, index) => <>{(pagination.current - 1) * pagination.pageSize + index + 1}</>,
-    //     },
-    //     {
-    //         title: 'Mã sở giáo dục',
-    //         dataIndex: 'code',
-    //         render: (_, record) => <span>{record.code}</span>,
-    //     },
-    //     {
-    //         title: 'Tên phòng giáo dục',
-    //         dataIndex: 'name',
-    //         render: (_, record) => <span>{record.name}</span>,
-    //     },
-    //     {
-    //         title: 'Sở giáo dục',
-    //         dataIndex: 'departmentName',
-    //         render: (_, record) => <span>{record.departmentName}</span>,
-    //     },
-    //     {
-    //         title: 'Tỉnh/TP',
-    //         dataIndex: 'provinceName',
-    //         render: (_, record) => <span>{record.provinceName}</span>,
-    //     },
-    //     {
-    //         title: 'Quận/huyện',
-    //         dataIndex: 'districtName',
-    //         render: (_, record) => <span>{record.districtName}</span>,
-    //     },
 
-    //     {
-    //         title: 'Thao tác',
-    //         key: 'action',
-    //         align: 'center',
-    //         width: 300,
-    //         render: (_, record) => (
-    //             <Space>
-    //                 <Permission noNode navigation={layoutCode.toeflChallengeDepartment as string} bitPermission={PermissionAction.Edit}>
-    //                     <Button type='ghost' title='Cập nhật' loading={false} onClick={() => onHandleEdit(record.id as string, record.provinceId as string)}>
-    //                         <EditOutlined />
-    //                     </Button>
-    //                 </Permission>
-    //                 <Permission noNode navigation={layoutCode.toeflChallengeDepartment as string} bitPermission={PermissionAction.Delete}>
-    //                     <Button danger title='Xóa' loading={false} onClick={() => deleteRecord(record.id || '')}>
-    //                         <DeleteOutlined />
-    //                     </Button>
-    //                 </Permission>
-    //             </Space>
-    //         ),
-    //     },
-    // ];
-
-    ////
-    const [data, setData] = useState<PICModel[]>([]);
-    const [editingKey, setEditingKey] = useState('');
-
-    const isEditing = (record: PICModel) => record.id === editingKey;
-
-    const edit = (record: Partial<PICModel>) => {
-        form.setFieldsValue({ name: '', jobTitle: '', email: '', tel: '', ...record });
-        setEditingKey(record.id as string);
-    };
-
-    const cancel = () => {
-        setEditingKey('');
-    };
-    const saveRow = async (id: string) => {
-        try {
-            const row = (await form.validateFields()) as PICModel;
-
-            const newData = [...data];
-            const index = newData.findIndex((item) => id === item.id);
-            if (index > -1) {
-                const item = newData[index];
-                newData.splice(index, 1, {
-                    ...item,
-                    ...row,
-                });
-                setData(newData);
-                setEditingKey('');
-            } else {
-                newData.push(row);
-                setData(newData);
-                setEditingKey('');
-            }
-        } catch (errInfo) {
-            console.log('Validate Failed:', errInfo);
-        }
-    };
-
-    const handleDelete = (id: string) => {
-        const newData = data.filter((item) => item.id !== id);
-        setData(newData);
-    };
-    const columns = [
-        {
-            title: 'Họ tên',
-            dataIndex: 'name',
-            width: '25%',
-            editable: true,
-        },
-        {
-            title: 'Chức vụ',
-            dataIndex: 'jobTitle',
-            width: '15%',
-            editable: true,
-        },
-        {
-            title: 'SĐT',
-            dataIndex: 'tel',
-            width: '15%',
-            editable: true,
-        },
-        {
-            title: 'Email',
-            dataIndex: 'email',
-            width: '25%',
-            editable: true,
-        },
-        {
-            title: 'Thao tác',
-            dataIndex: 'operation',
-            render: (_: any, record: PICModel) => {
-                const editable = isEditing(record);
-                return editable ? (
-                    <Space>
-                        <Typography.Link onClick={() => saveRow(record.id as string)} style={{ marginRight: 8 }}>
-                            <Button type='dashed'>Lưu</Button>
-                        </Typography.Link>
-                        <Popconfirm title="Những thay đổi bạn đã thực hiện có thể không được lưu" onConfirm={cancel}>
-                            <Button type='text' danger>Hủy bỏ</Button>
-                        </Popconfirm>
-                    </Space>
-                ) : (
-                    <Space>
-                        <Typography.Link title='Chỉnh sửa' disabled={editingKey !== ''} onClick={() => edit(record)}>
-                            <Button type='text'>
-                                <EditOutlined />
-                            </Button>
-                        </Typography.Link>
-                        <Typography.Link title='Chỉnh sửa' disabled={editingKey !== ''} onClick={() => handleDelete(record.id as string)}>
-                            <Button type='text' danger>
-                                <DeleteOutlined />
-                            </Button>
-                        </Typography.Link>
-                    </Space>
-
-                );
-            },
-        },
-    ];
-
-    const mergedColumns = columns.map((col) => {
-        if (!col.editable) {
-            return col;
-        }
-        return {
-            ...col,
-            onCell: (record: PICModel) => ({
-                record,
-                inputType: col.dataIndex === 'age' ? 'number' : 'text',
-                dataIndex: col.dataIndex,
-                title: col.title,
-                editing: isEditing(record),
-            }),
-        };
-    });
-
-    const handleAdd = () => {
-        console.log(uuidv4())
-        const newData: PICModel = {
-            // key: count,
-            id: uuidv4(),
-            name: ``,
-            jobTitle: '',
-            email: ``,
-            tel: ``,
-        };
-        setData([...data, newData]);
-    };
     return (
         <div className='layout-main-content'>
             <Card
@@ -369,17 +161,17 @@ function DivisionTFC() {
                     <>
                         <Space className="title">
                             <Tooltip title="Quay lại">
-                                <Button type="text" shape='circle' onClick={() => navigate('/toefl-challenge/division')}>
+                                <Button type="text" shape='circle' onClick={() => navigate('/catalog/department')}>
                                     <ArrowLeftOutlined />
                                 </Button>
                             </Tooltip>
-                            <Text strong>Thêm mới phòng giáo dục</Text>
+                            <Text strong>Thêm mới phòng ban</Text>
                         </Space>
                     </>
                 }
                 extra={
                     <Space>
-                        <Button type="dashed" onClick={() => navigate('/toefl-challenge/division')}>
+                        <Button type="dashed" onClick={() => navigate('/catalog/department')}>
                             Hủy bỏ
                         </Button>
                         <Button disabled={buttonLoading} htmlType="submit" type='primary' onClick={handleOk}>
@@ -398,82 +190,69 @@ function DivisionTFC() {
                         validateMessages={validateMessages}
                         initialValues={{
                             ["Name"]: '',
-                            ["ProvinceId"]: '',
-                            ["DistrictId"]: '',
-                            ["DepartmentId"]: '',
                         }}
                     >
                         <Row gutter={16} justify='start'>
                             <Col span={12}>
-                                <Form.Item label={'Tên phòng giáo dục'} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name='Name' rules={[{ required: true, whitespace: true }]}>
-                                    <Input placeholder='Nhập tên phòng giáo dục' allowClear />
+                                <Form.Item label={'Mã phòng ban'} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name='Code' rules={[{ required: true, whitespace: true }]}>
+                                    <Input placeholder='Nhập mã phòng ban' allowClear />
+                                </Form.Item>
+                            </Col>
+                            <Col span={12}>
+                                <Form.Item label={'Tên phòng ban'} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name='Name' rules={[{ required: true, whitespace: true }]}>
+                                    <Input placeholder='Nhập tên phòng ban' allowClear />
+                                </Form.Item>
+                            </Col>
+                            <Col span={12}>
+                                <Form.Item label={'Mô tả'} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name='Description'>
+                                    <Input placeholder='Nhập mô tả' allowClear />
+                                </Form.Item>
+                            </Col>
+                            <Col span={12}>
+                                <Form.Item label={' '} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name='IsCom' valuePropName="checked">
+                                    <Checkbox>Tính hoa hồng</Checkbox>
                                 </Form.Item>
                             </Col>
                             <Col span={12}>
                                 <Form.Item
-                                    label={'Tỉnh/TP'}
+                                    label={'Chi nhánh'}
                                     labelCol={{ span: 24 }}
                                     wrapperCol={{ span: 24 }}
-                                    name='ProvinceId'
+                                    name='BranchId'
                                     rules={[{ required: true }]}
                                 >
                                     <Select
                                         showSearch
                                         optionFilterProp="children"
                                         filterOption={(input, option) => (option?.label ?? '').toString().toLowerCase().includes(input.toLowerCase())}
-                                        filterSort={(optionA, optionB) =>
-                                            (optionA?.label ?? '').toString().toLowerCase().localeCompare((optionB?.label ?? '').toString().toLowerCase())
-                                        }
-                                        placeholder='Chọn Tỉnh/TP' options={state.provinces} onChange={() => onChangeProvince()} />
+                                        // filterSort={(optionA, optionB) =>
+                                        //     (optionA?.label ?? '').toString().toLowerCase().localeCompare((optionB?.label ?? '').toString().toLowerCase())
+                                        // }
+                                        placeholder='-Chọn-' options={state.branches} onChange={() => onChangeBranch()} />
                                 </Form.Item>
                             </Col>
                             <Col span={12}>
-                                <Form.Item label={'Quận/Huyện'} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name='DistrictId' rules={[{ required: true }]}>
-                                    <Select
+                                <Form.Item
+                                    label={'Phòng ban cha'}
+                                    labelCol={{ span: 24 }}
+                                    wrapperCol={{ span: 24 }}
+                                    name='ParentId'
+                                >
+                                    <TreeSelect
                                         showSearch
-                                        optionFilterProp="children"
-                                        filterOption={(input, option) => (option?.label ?? '').toString().toLowerCase().includes(input.toLowerCase())}
-                                        filterSort={(optionA, optionB) =>
-                                            (optionA?.label ?? '').toString().toLowerCase().localeCompare((optionB?.label ?? '').toString().toLowerCase())
-                                        }
-                                        placeholder='Chọn Quận/Huyện' options={state.districts} />
-                                </Form.Item>
-                            </Col>
-                            <Col span={12}>
-                                <Form.Item label={'Sở giáo dục'} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name='DepartmentId' rules={[{ required: true }]}>
-                                    <Select
-                                        showSearch
-                                        optionFilterProp="children"
-                                        filterOption={(input, option) => (option?.label ?? '').toString().toLowerCase().includes(input.toLowerCase())}
-                                        filterSort={(optionA, optionB) =>
-                                            (optionA?.label ?? '').toString().toLowerCase().localeCompare((optionB?.label ?? '').toString().toLowerCase())
-                                        }
-                                        placeholder='Chọn sở giáo dục' options={state.departments} />
+                                        treeLine
+                                        style={{ width: '100%' }}
+                                        // value={value}
+                                        dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+                                        placeholder="-Chọn phòng ban-"
+                                        allowClear
+                                        treeDefaultExpandAll
+                                        showCheckedStrategy={TreeSelect.SHOW_CHILD}
+                                        treeData={state.departments}
+                                    />
                                 </Form.Item>
                             </Col>
                         </Row>
-                        <Divider orientation="left" plain>
-                            Thông tin liên hệ phòng giáo dục
-                        </Divider>
-                        <Form form={form} component={false}>
-                            <Button onClick={handleAdd} type="primary" style={{ marginBottom: 16 }}>
-                                Thêm dòng
-                            </Button>
-                            <Table
-                                components={{
-                                    body: {
-                                        cell: EditableCell,
-                                    },
-                                }}
-                                bordered
-                                dataSource={data}
-                                columns={mergedColumns}
-                                rowClassName="editable-row"
-                                pagination={{
-                                    onChange: cancel,
-                                }}
-                            />
-                        </Form>
                     </Form>
                 }
 
@@ -485,4 +264,4 @@ function DivisionTFC() {
     );
 }
 
-export default DivisionTFC;
+export default DepartmentCreate;

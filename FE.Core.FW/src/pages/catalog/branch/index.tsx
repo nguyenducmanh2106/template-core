@@ -18,7 +18,7 @@ import { ColumnsType } from 'antd/lib/table';
 import { useEffect, useReducer, useRef, useState } from 'react';
 
 import { OptionModel } from '@/@types/data';
-import { getBranch } from '@/apis/services/BranchService';
+import { deleteBranch, getBranch } from '@/apis/services/BranchService';
 import { deleteDivision, deleteManyDivision } from '@/apis/services/toefl-challenge/DivisionService';
 import Permission from '@/components/Permission';
 import { PermissionAction, layoutCode } from '@/utils/constants';
@@ -92,7 +92,7 @@ function Branch() {
             okText: 'Đồng ý',
             cancelText: 'Hủy',
             onOk: async () => {
-                const response = await deleteDivision(id);
+                const response = await deleteBranch(id);
                 if (response.code === Code._200) {
                     message.success(response.message)
                     getList(1);
@@ -125,10 +125,6 @@ function Branch() {
             },
         });
     };
-
-    // Data
-    const [showModelEdit, setShowModelEdit] = useState<boolean>(false);
-    const [buttonLoading, setButtonLoading] = useState<boolean>(false);
 
     const onHandleShowModelCreate = async () => {
         navigate(`/catalog/branch/create`)
@@ -192,12 +188,12 @@ function Branch() {
             width: 300,
             render: (_, record) => (
                 <Space>
-                    <Permission noNode navigation={layoutCode.toeflChallengeDivision as string} bitPermission={PermissionAction.Edit}>
-                        <Button type="dashed" title='Cập nhật' loading={false} onClick={() => navigate(`/toefl-challenge/division/edit/${record.id}`)}>
+                    <Permission noNode navigation={layoutCode.catalogBranch as string} bitPermission={PermissionAction.Edit}>
+                        <Button type="dashed" title='Cập nhật' loading={false} onClick={() => navigate(`/catalog/branch/edit/${record.id}`)}>
                             <EditOutlined />
                         </Button>
                     </Permission>
-                    <Permission noNode navigation={layoutCode.toeflChallengeDivision as string} bitPermission={PermissionAction.Delete}>
+                    <Permission noNode navigation={layoutCode.catalogBranch as string} bitPermission={PermissionAction.Delete}>
                         <Button danger title='Xóa' loading={false} onClick={() => deleteRecord(record.id || '')}>
                             <DeleteOutlined />
                         </Button>
@@ -217,7 +213,7 @@ function Branch() {
                         <Row gutter={16} justify='start'>
                             <Col span={24} className='gutter-row' style={{ marginBottom: '8px' }}>
                                 <Space>
-                                    {/* <Permission noNode navigation={layoutCode.toeflChallengeDivision as string} bitPermission={PermissionAction.Add}>
+                                    {/* <Permission noNode navigation={layoutCode.catalogBranch as string} bitPermission={PermissionAction.Add}>
                                         <Button htmlType='button' type='default' onClick={() => onHandleShowModelCreate()}>
                                             <PlusOutlined />
                                             Tạo mới
@@ -246,13 +242,13 @@ function Branch() {
                                             <Row gutter={16} justify='start'>
                                                 <Col span={6}>
                                                     <Form.Item
-                                                        label={'Tên phòng ban'}
+                                                        label={'Tên chi nhánh'}
                                                         labelCol={{ span: 24 }}
                                                         wrapperCol={{ span: 17 }}
                                                         name='TextSearch'
                                                     >
                                                         <Input
-                                                            placeholder='Tên phòng ban'
+                                                            placeholder='Tên chi nhánh'
                                                             allowClear />
                                                     </Form.Item>
                                                 </Col>
@@ -308,7 +304,7 @@ function Branch() {
                     dateFormatter="string"
                     headerTitle="Tiêu đề"
                     toolBarRender={() => [
-                        <Permission noNode navigation={layoutCode.catalogDepartment as string} bitPermission={PermissionAction.Add}>
+                        <Permission noNode navigation={layoutCode.catalogBranch as string} bitPermission={PermissionAction.Add}>
                             <Button htmlType='button' type='default' onClick={() => onHandleShowModelCreate()}>
                                 <PlusOutlined />
                                 Tạo mới
