@@ -11,7 +11,7 @@ namespace Backend.Infrastructure.EntityFramework.Datatables
         [Required]
         public string Name { get; set; } = string.Empty;
         public string? AccessDataHeaderQuater { get; set; }
-        public string Description { get; set; } = string.Empty;
+        public string? Description { get; set; } = string.Empty;
 
         /// <summary>
         /// Là vai trò mặc định không cho phép chỉnh sửa

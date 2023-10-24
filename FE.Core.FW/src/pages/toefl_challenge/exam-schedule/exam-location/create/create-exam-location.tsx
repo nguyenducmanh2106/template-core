@@ -83,7 +83,7 @@ const CreateExamLocationInfor: React.FC<Props> = (({
                     key: 'Default',
                     label: '-Chọn-',
                     value: '',
-                }].concat(districtOptions),
+                } as SelectOptionModel].concat(districtOptions),
             }
             dispatch(stateDispatcher)
         }
@@ -100,7 +100,7 @@ const CreateExamLocationInfor: React.FC<Props> = (({
                 key: 'Default',
                 label: '-Chọn-',
                 value: '',
-            }].concat(districtOptions),
+            } as SelectOptionModel].concat(districtOptions),
         }
         dispatch(stateDispatcher)
     };

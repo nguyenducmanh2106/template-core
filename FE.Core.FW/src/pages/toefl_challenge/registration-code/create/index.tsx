@@ -27,7 +27,7 @@ import {
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import locale from "antd/es/date-picker/locale/vi_VN";
 import { useNavigate } from 'react-router-dom';
-import { OptionModel } from '@/@types/data';
+import { OptionModel, SelectOptionModel } from '@/@types/data';
 
 function RegistrationCodeCreateTFC() {
     const navigate = useNavigate();
@@ -57,7 +57,7 @@ function RegistrationCodeCreateTFC() {
                     key: 'Default',
                     label: '-Chọn-',
                     value: '',
-                }].concat(examOptions)
+                } as SelectOptionModel].concat(examOptions)
             };
             dispatch(stateDispatcher);
             setLoading(false);

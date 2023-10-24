@@ -23,12 +23,12 @@ import { DeleteOutlined, EditOutlined, ImportOutlined, PlusOutlined } from '@ant
 import { ActionType, ProColumns, ProTable } from '@ant-design/pro-components';
 import { useNavigate } from 'react-router-dom';
 import { deleteProduct, getProduct } from '@/apis/services/ProductService';
-import { ProductModel } from '@/apis/temp';
 import { getProductCategory } from '@/apis/services/ProductCategoryService';
 import { ConvertOptionSelectModel } from '@/utils/convert';
 import { OptionModel, SelectOptionModel } from '@/@types/data';
 import { getProductType } from '@/apis/services/ProductTypeService';
 import ImportProduct from './import-product';
+import { ProductModel } from '@/apis/models/ProductModel';
 function Product() {
     const navigate = useNavigate();
     // Load

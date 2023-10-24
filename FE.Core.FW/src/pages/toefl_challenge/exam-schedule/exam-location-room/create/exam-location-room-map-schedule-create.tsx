@@ -9,7 +9,7 @@ import { Button, Form, FormInstance, PaginationProps, Popconfirm, Space, Table, 
 import { useEffect, useReducer, useRef, useState } from "react";
 import { useRecoilState } from "recoil";
 import EditableCell from "./edit-cell";
-import { OptionModel } from "@/@types/data";
+import { OptionModel, SelectOptionModel } from "@/@types/data";
 
 interface Props extends React.HTMLAttributes<HTMLElement> {
     children?: React.ReactNode;
@@ -78,7 +78,7 @@ const ExamLocationRoomMapSchedule: React.FC<Props> = ({
                     key: 'Default',
                     label: '-Chọn-',
                     value: '',
-                },
+                } as SelectOptionModel
             ].concat(examLocationMapScheduleOptions),
         };
         dispatch(stateDispatcher);
@@ -102,7 +102,7 @@ const ExamLocationRoomMapSchedule: React.FC<Props> = ({
 
             row = {
                 ...row,
-                examLocationScheduleId: row.examLocationScheduleSelect?.value,
+                examLocationScheduleId: row.examLocationScheduleSelect?.value as string,
                 examType: +(row.examTypeSelect?.value ?? 0)
             }
             const newData = [...data];

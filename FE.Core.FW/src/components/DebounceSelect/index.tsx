@@ -15,7 +15,7 @@ export interface DebounceSelectProps<ValueType = any>
     onChange?: () => Promise<void>;
 }
 function DebounceSelect<
-    ValueType extends { key?: string; label: React.ReactNode; value: string | number } = any,
+    ValueType extends { key?: string; label: React.ReactNode; value: string | number | undefined } = any,
 >({ fetchOptions, onChange, debounceTimeout = 800, ...props }: DebounceSelectProps<ValueType>) {
     const [fetching, setFetching] = useState(false);
     // const [hasContentLoading, setHasContentLoading] = useState(false);

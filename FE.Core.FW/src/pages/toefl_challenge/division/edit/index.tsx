@@ -32,7 +32,7 @@ import {
 import { ArrowLeftOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import { useNavigate, useParams } from 'react-router-dom';
 import EditableCell from './edit';
-import { OptionModel } from '@/@types/data';
+import { OptionModel, SelectOptionModel } from '@/@types/data';
 
 
 
@@ -81,17 +81,17 @@ function EditDivisionTFC() {
                     key: 'Default',
                     label: '-Chọn-',
                     value: '',
-                }].concat(provinceOptions),
+                } as SelectOptionModel].concat(provinceOptions),
                 departments: [{
                     key: 'Default',
                     label: '-Chọn-',
                     value: '',
-                }].concat(departmentOptions),
+                } as SelectOptionModel].concat(departmentOptions),
                 districts: [{
                     key: 'Default',
                     label: '-Chọn-',
                     value: '',
-                }].concat(districtOptions),
+                } as SelectOptionModel].concat(districtOptions),
                 divisionEdit: responseDivision.data
             };
             dispatch(stateDispatcher);
@@ -165,12 +165,12 @@ function EditDivisionTFC() {
                 key: 'Default',
                 label: '-Chọn-',
                 value: '',
-            }].concat(departmentOptions),
+            } as SelectOptionModel].concat(departmentOptions),
             districts: [{
                 key: 'Default',
                 label: '-Chọn-',
                 value: '',
-            }].concat(districtOptions),
+            } as SelectOptionModel].concat(districtOptions),
         }
         dispatch(stateDispatcher)
     };

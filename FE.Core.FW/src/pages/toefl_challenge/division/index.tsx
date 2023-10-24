@@ -31,7 +31,7 @@ import {
 } from '@/utils/convert';
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-import { OptionModel } from '@/@types/data';
+import { OptionModel, SelectOptionModel } from '@/@types/data';
 function DivisionTFC() {
     const navigate = useNavigate();
     // Load
@@ -79,12 +79,12 @@ function DivisionTFC() {
                     key: 'Default',
                     label: '-Chọn-',
                     value: '',
-                }].concat(provinceOptions),
+                } as SelectOptionModel].concat(provinceOptions),
                 departments: [{
                     key: 'Default',
                     label: '-Chọn-',
                     value: '',
-                }].concat(departmentOptions)
+                } as SelectOptionModel].concat(departmentOptions)
             };
             dispatch(stateDispatcher);
         }
@@ -187,7 +187,7 @@ function DivisionTFC() {
                 key: 'Default',
                 label: '-Chọn-',
                 value: '',
-            }].concat(departmentOptions),
+            } as SelectOptionModel].concat(departmentOptions),
         }
         dispatch(stateDispatcher)
     };

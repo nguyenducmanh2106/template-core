@@ -32,13 +32,13 @@ import { useRecoilState } from 'recoil';
 // import ExamPaymentTFC from '../exam-payments';
 // import ExamRegistrationScheduleTFC from '../exam-registration-schedules';
 // import ExamRegistrationProvinceTFC from '../exam-registration-provinces';
+import { OptionModel, SelectOptionModel } from '@/@types/data';
 import { ExamScheduleModel } from '@/apis/models/toefl-challenge/ExamScheduleModel';
 import { RegistrationRound } from '@/apis/models/toefl-challenge/RegistrationRound';
 import { getAministrativeDivisions } from '@/apis/services/toefl-challenge/AministrativeDivisionsService';
 import { getExamScheduleById, putExamScheduleTFC } from '@/apis/services/toefl-challenge/ExamLocationService';
 import ExamLocationTFC from '../exam-location';
 import ExamLocationRoomTFC from '../exam-location-room';
-import { OptionModel } from '@/@types/data';
 
 function ExamScheduleEditTFC() {
     const navigate = useNavigate();
@@ -125,12 +125,12 @@ function ExamScheduleEditTFC() {
                 key: 'Default',
                 label: '-Chọn-',
                 value: '',
-            }].concat(provinceOptions),
+            } as SelectOptionModel].concat(provinceOptions),
             exams: [{
                 key: 'Default',
                 label: '-Chọn-',
                 value: '',
-            }].concat(examOptions),
+            } as SelectOptionModel].concat(examOptions),
             recordEdit: responseData
         };
         // setExamRegistrationSchedules(responseData.examRegistrationSchedules ?? [])

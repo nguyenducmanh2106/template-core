@@ -27,7 +27,7 @@ import { useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import ExamLocationCreateTFC from './create';
 import ExamLocationEditTFC from './edit';
-import { OptionModel } from '@/@types/data';
+import { OptionModel, SelectOptionModel } from '@/@types/data';
 interface Props {
     examSchedule: ExamScheduleModel
 }
@@ -113,7 +113,7 @@ function ExamLocationRoomTFC({ examSchedule }: Props) {
                         key: 'Default',
                         label: '-Chọn-',
                         value: '',
-                    },
+                    } as SelectOptionModel
                 ].concat(options),
             };
             dispatch(stateDispatcher);

@@ -32,6 +32,7 @@ const Edit: React.FC<Props> = ({ open, setOpen, reload, userEdit, initLoadingMod
 
         const objBody = {
             ...fieldsValue,
+            DOB: fieldsValue.DOB ? fieldsValue.DOB : undefined
         }
         // console.log(objBody)
         // return
@@ -87,7 +88,7 @@ const Edit: React.FC<Props> = ({ open, setOpen, reload, userEdit, initLoadingMod
                             // ["DOB"]: userEdit.dob ? dayjs(userEdit.dob, "DD/MM/YYYY") : '',
                             ["DOB"]: userEdit.dob ? moment(userEdit.dob) : '',
                             ["Phone"]: userEdit.phone ?? '',
-                            ["IIGDepartmentId"]: userEdit?.iigDepartmentId,
+                            ["DepartmentId"]: userEdit?.departmentId,
                         }}
                     >
                         <Row gutter={16} justify='start'>
@@ -107,17 +108,17 @@ const Edit: React.FC<Props> = ({ open, setOpen, reload, userEdit, initLoadingMod
                                 </Form.Item>
                             </Col>
                             <Col span={24}>
-                                <Form.Item label={'Ngày sinh'} labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} name='DOB' rules={[{ required: true }]}>
+                                <Form.Item label={'Ngày sinh'} labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} name='DOB'>
                                     <DatePicker format={'DD/MM/YYYY'} />
                                 </Form.Item>
                             </Col>
                             <Col span={24}>
-                                <Form.Item label={'Số điện thoại'} labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} name='Phone' rules={[{ required: true }]}>
+                                <Form.Item label={'Số điện thoại'} labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} name='Phone'>
                                     <Input allowClear />
                                 </Form.Item>
                             </Col>
                             <Col span={24}>
-                                <Form.Item label={'Phòng ban'} labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} name='IIGDepartmentId'>
+                                <Form.Item label={'Phòng ban'} labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} name='DepartmentId'>
                                     <TreeSelect
                                         showSearch
                                         treeLine

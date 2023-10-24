@@ -56,8 +56,8 @@ namespace Backend.Business.User
                 model.Username = model.Username.Trim().ToLower();
                 model.Fullname = model.Fullname.Trim();
                 model.Email = model.Email.Trim();
-                model.IsDisabled = false;
-                
+                model.IsLocked = false;
+
                 using UnitOfWork unitOfWork = new(_httpContextAccessor);
                 if (unitOfWork.Repository<SysUser>().FirstOrDefault(x => x.Username.ToLower() == model.Username.ToLower()) != null)
                     return new ResponseDataError(Code.BadRequest, "Username already exists");
@@ -251,7 +251,7 @@ namespace Backend.Business.User
                     _cached.Remove(keyCache);
                 }
                 // update db
-                existData.IsDisabled = !status;
+                existData.IsLocked = !status;
                 unitOfWork.Repository<SysUser>().Update(existData);
                 unitOfWork.Save();
                 return new ResponseData(Code.Success, "Thay đổi thành công");
@@ -341,7 +341,7 @@ namespace Backend.Business.User
                 using UnitOfWork unitOfWork = new(_httpContextAccessor);
 
                 var iigDepartmentQuery = unitOfWork.Repository<SysDepartment>().GetAll();
-               
+
                 var userData = unitOfWork.Repository<SysUser>().GetQueryable(
                     g => string.IsNullOrEmpty(name) || (!string.IsNullOrEmpty(name) && (g.Fullname.ToLower().Contains(name.Trim().ToLower()) || g.Username.ToLower().Contains(name.Trim().ToLower())))
                     ).OrderByDescending(g => g.CreatedOnDate).Skip((pageIndex - 1) * pageSize).Take(pageSize);
@@ -355,9 +355,9 @@ namespace Backend.Business.User
                                   Fullname = user.Fullname,
                                   RoleId = user.RoleId,
                                   RoleName = userRoleTable.Name,
-                                  IsDisabled = user.IsDisabled,
+                                  IsLocked = user.IsLocked,
                                   Id = user.Id,
-                                  IIGDepartmentId = user.IIGDepartmentId,
+                                  DepartmentId = user.DepartmentId,
                                   SyncId = user.SyncId,
                                   CreatedOnDate = user.CreatedOnDate,
                               })?.OrderByDescending(g => g.CreatedOnDate).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList() ?? new List<UserModel>();
@@ -369,7 +369,7 @@ namespace Backend.Business.User
                 var pagination = new Pagination(pageIndex, pageSize, countTotal, totalPage);
                 foreach (var item in result)
                 {
-                    item.IIGDepartmentName = iigDepartmentQuery.FirstOrDefault(g => g.Id == item.IIGDepartmentId)?.Name;
+                    item.DepartmentName = iigDepartmentQuery.FirstOrDefault(g => g.Id == item.DepartmentId)?.Name;
                 }
                 return new PageableData<List<UserModel>>(result, pagination, Code.Success, "");
             }
@@ -427,7 +427,7 @@ namespace Backend.Business.User
                                      RoleId = user.RoleId,
                                      RoleName = roleDefault != null ? roleDefault.Name : "",
                                      SyncId = syncId,
-                                     IIGDepartmentId = user.IIGDepartmentId,
+                                     DepartmentId = user.DepartmentId,
                                      Fullname = user.Fullname,
                                      Username = user.Username,
                                      DOB = user.DOB,
@@ -481,7 +481,7 @@ namespace Backend.Business.User
                                      RoleId = user.RoleId,
                                      RoleName = roleDefault != null ? roleDefault.Name : "",
                                      SyncId = user.SyncId,
-                                     IIGDepartmentId = user.IIGDepartmentId,
+                                     DepartmentId = user.DepartmentId,
                                      Fullname = user.Fullname,
                                      Username = user.Username,
                                      DOB = user.DOB,
@@ -600,7 +600,7 @@ namespace Backend.Business.User
                 existUser.Fullname = model.Fullname;
                 existUser.Email = model.Email;
                 existUser.Phone = model.Phone;
-                existUser.IIGDepartmentId = model.IIGDepartmentId;
+                existUser.DepartmentId = model.DepartmentId;
                 unitOfWork.Repository<SysUser>().Update(existUser);
                 unitOfWork.Save();
                 return new ResponseData(Code.Success, "Thay đổi thành công");

@@ -22,6 +22,8 @@ namespace Backend.Infrastructure.EntityFramework
         public DbSet<SysCustomerCategory> CustomerCategories { get; set; }
         public DbSet<SysCustomerType> CustomerTypes { get; set; }
         public DbSet<SysCustomer> Customers { get; set; }
+        public DbSet<SysProvince> Provinces { get; set; }
+        public DbSet<SysDistrict> Districts { get; set; }
 
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

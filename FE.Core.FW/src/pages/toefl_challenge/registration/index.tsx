@@ -44,7 +44,6 @@ import { CreditCardOutlined, DeleteOutlined, EditOutlined, EyeOutlined, ImportOu
 import locale from "antd/es/date-picker/locale/vi_VN";
 import moment from 'moment';
 import { useNavigate } from 'react-router-dom';
-import DebounceSelect from './debounce-select';
 import ImportRegistrationPaymentTFC from './import-registration-payment';
 import ImportRegistrationRound1 from './import-registration-round-1';
 import ImportRegistrationRound2 from './import-registration-round-2';
@@ -52,6 +51,7 @@ import ImportRegistrationUpdateTFC from './import-update';
 import RegistrationPaymentTFC from './update-registration-payment';
 import ShowDetailRegistrationTFC from './view-detail';
 import { OptionModel, SelectOptionModel } from '@/@types/data';
+import DebounceSelect from '@/components/DebounceSelect';
 function DivisionTFC() {
     const items: MenuProps['items'] = [
         {
@@ -192,7 +192,7 @@ function DivisionTFC() {
                     key: 'Default',
                     label: '-Chọn-',
                     value: '',
-                }].concat(provinceOptions),
+                } as SelectOptionModel].concat(provinceOptions),
                 districts: [{
                     key: 'Default',
                     label: '-Chọn-',
@@ -202,12 +202,12 @@ function DivisionTFC() {
                     key: 'Default',
                     label: '-Chọn-',
                     value: '',
-                }].concat(examOptions),
+                } as SelectOptionModel].concat(examOptions),
                 blocks: [{
                     key: 'Default',
                     label: '-Chọn-',
                     value: '',
-                }].concat(blocks)
+                } as SelectOptionModel].concat(blocks)
             };
             dispatch(stateDispatcher);
         }
@@ -455,7 +455,7 @@ function DivisionTFC() {
                 key: 'Default',
                 label: '-Chọn-',
                 value: '',
-            }].concat(districtOptions),
+            } as SelectOptionModel].concat(districtOptions),
         }
         dispatch(stateDispatcher)
     };

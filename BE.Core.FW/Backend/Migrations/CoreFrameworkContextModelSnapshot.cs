@@ -268,6 +268,40 @@ namespace Backend.Migrations
                     b.ToTable("Departments");
                 });
 
+            modelBuilder.Entity("Backend.Infrastructure.EntityFramework.Datatables.SysDistrict", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("CreatedByUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedOnDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("LastModifiedByUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("LastModifiedOnDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("ProvinceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Districts");
+                });
+
             modelBuilder.Entity("Backend.Infrastructure.EntityFramework.Datatables.SysEmailHistory", b =>
                 {
                     b.Property<Guid>("Id")
@@ -552,6 +586,40 @@ namespace Backend.Migrations
                     b.ToTable("ProductTypes");
                 });
 
+            modelBuilder.Entity("Backend.Infrastructure.EntityFramework.Datatables.SysProvince", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Area")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("CreatedByUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedOnDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("LastModifiedByUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("LastModifiedOnDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Provinces");
+                });
+
             modelBuilder.Entity("Backend.Infrastructure.EntityFramework.Datatables.SysRole", b =>
                 {
                     b.Property<Guid>("Id")
@@ -572,7 +640,6 @@ namespace Backend.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsDefault")
@@ -605,21 +672,26 @@ namespace Backend.Migrations
                     b.Property<DateTime>("CreatedOnDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("DOB")
+                    b.Property<DateTime?>("DOB")
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid?>("DepartmentId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Email")
-                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("EmployeeAccessLevels")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Fullname")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("IIGDepartmentId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<bool>("IsAccessMaxLevel")
+                        .HasColumnType("bit");
 
-                    b.Property<bool>("IsDisabled")
+                    b.Property<bool>("IsLocked")
                         .HasColumnType("bit");
 
                     b.Property<Guid>("LastModifiedByUserId")
@@ -628,8 +700,10 @@ namespace Backend.Migrations
                     b.Property<DateTime>("LastModifiedOnDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Password")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Phone")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("RoleId")

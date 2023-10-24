@@ -27,8 +27,8 @@ import {
     message
 } from 'antd';
 import { useReducer, useRef, useState } from 'react';
-import DebounceSelect from '../debounce-select';
 import { OptionModel, SelectOptionModel } from '@/@types/data';
+import DebounceSelect from '@/components/DebounceSelect';
 
 
 
@@ -128,7 +128,7 @@ function ImportRegistrationRound1({ temp, open, setOpen, reload }: Props) {
                 key: 'Default',
                 label: '-Chọn-',
                 value: '',
-            }].concat(provinceOptions),
+            } as SelectOptionModel].concat(provinceOptions),
         }
         dispatch(stateDispatcher)
     };
@@ -159,7 +159,7 @@ function ImportRegistrationRound1({ temp, open, setOpen, reload }: Props) {
                 key: 'Default',
                 label: '-Chọn-',
                 value: '',
-            }].concat(districtOptions),
+            } as SelectOptionModel].concat(districtOptions),
         }
         dispatch(stateDispatcher)
     };

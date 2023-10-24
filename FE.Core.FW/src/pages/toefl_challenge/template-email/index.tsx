@@ -28,7 +28,7 @@ import Permission from '@/components/Permission';
 import { PermissionAction, layoutCode } from '@/utils/constants';
 import CreateTemplateEmail from './create';
 import EditTemplateEmail from './edit';
-import { OptionModel } from '@/@types/data';
+import { OptionModel, SelectOptionModel } from '@/@types/data';
 function DepartmentTFC() {
     // Load
     const { Panel } = Collapse;
@@ -71,7 +71,7 @@ function DepartmentTFC() {
                     key: 'Default',
                     label: '-Chọn-',
                     value: '',
-                }].concat(emailTemplateTypeOptions),
+                } as SelectOptionModel].concat(emailTemplateTypeOptions),
             };
             dispatch(stateDispatcher);
         }

@@ -87,89 +87,37 @@ namespace Backend.Infrastructure.Utils
             public const string col6 = "Mã loại sản phẩm";
         }
 
-        public struct TestScoreFormCheck
+        public struct ProvinceExcelColumnName
         {
-            public const string col0 = "FIRST_NAME";
-            public const string col1 = "LAST_NAME";
-            public const string col2 = "DOB";
+            public const string col0 = "Code";
+            public const string col1 = "Name";
         }
 
-        public struct TextStatusProfile
+        public struct DistrictExcelColumnName
         {
-            public const string ChuaDuyet = "Chưa duyệt";
-            public const string DaDuyet = "Đã duyệt";
-            public const string DoiLich = "Đổi lịch";
-            public const string HoanLich = "Hoãn lịch";
-            public const string HuyLich = "Hủy lịch";
-            public const string IIGDoiLich = "IIG thay thay đổi lịch";
+            public const string col0 = "Code";
+            public const string col1 = "Name";
+            public const string col2 = "ParentCode";
         }
 
-        public struct TextStatusPaid
+        public struct CustomerExcelColumnName
         {
-            public const string ChuaThanhToan = "Chưa thanh toán";
-            public const string DaThanhToan = "Đã thanh toán";
-            public const string HoanTra = "Hoàn trả";
-        }
-
-        public struct Language
-        {
-            public const string VietNam = "vi";
-            public const string England = "en";
-            public const string Korea = "ko";
-        }
-
-        public struct LayoutCode
-        {
-            public const string statisticalRegisterTopik = "statistical-register-topik";
-            public const string userManager = "userManager";
-            public const string user = "user";
-            public const string role = "role";
-            public const string permission = "permission";
-            public const string blacklist = "blacklist";
-            public const string permissions = "permissions";
-            public const string tuieditor = "tuieditor";
-            public const string coreTct = "core-tct";
-            public const string detail = "detail";
-            public const string timeFrame = "time-frame";
-            public const string complex = "complex";
-            public const string examCalendarTopik = "exam-calendar-topik";
-            public const string manageRegisteredCandidateTopik = "manage-registered-candidate-topik";
-            public const string dividingExamRoomId = "dividing-exam-room-id";
-            public const string dividingExamRoom = "dividing-exam-room";
-            public const string dividingExamRoomCandidate = "dividing-exam-room-candidate";
-            public const string svg = "svg";
-            public const string component = "component";
-            public const string blacklistDelete = "blacklist-delete";
-            public const string test = "test";
-            public const string form = "form";
-            public const string applicationTime = "application-time";
-            public const string core = "core";
-            public const string basic = "basic";
-            public const string manageRegisteredCandidates = "manage-registered-candidates";
-            public const string listBlacklist = "list-blacklist";
-            public const string home = "home";
-            public const string resource = "resource";
-            public const string examCalendar = "exam-calendar";
-            public const string timeFrameInDay = "time-frame-in-day";
-            public const string workplace = "workplace";
-            public const string navigations = "navigations";
-            public const string pages = "pages";
-            public const string payment = "payment";
-            public const string customer = "Customer";
-            public const string suppliesGroup = "SuppliesGroup";
-            public const string supplier = "Supplier";
-            public const string stockList = "StockList";
-            public const string kho = "Kho";
-            public const string suppliesCategory = "SuppliesCategory";
-            public const string suppliesKind = "SuppliesKind";
-            public const string supplies = "Supplies";
-            public const string userManageStock = "UserManageStock";
-            public const string importStockReceipt = "ImportStockReceipt";
-            public const string importStockProposal = "ImportStockProposal";
-            public const string examPeriod = "ExamPeriod";
-            public const string blackListTopik = "BlackListTopik";
-            public const string testMail = "ContactTestMail";
-            public const string candidateInvalid = "candidate-invalid";
+            public const string col0 = "Mã nhóm khách hàng";
+            public const string col1 = "Mã khách hàng";
+            public const string col2 = "Tên khách hàng";
+            public const string col3 = "Mã số thuế";
+            public const string col4 = "Địa chỉ";
+            public const string col5 = "SĐT-Fax";
+            public const string col6 = "Mã phòng ban quản lý";
+            public const string col7 = "Người đại diện";
+            public const string col8 = "Chức vụ";
+            public const string col9 = "Điện thoại";
+            public const string col10 = "Fax";
+            public const string col11 = "Số tài khoản ngân hàng";
+            public const string col12 = "Chi nhánh ngân hàng";
+            public const string col13 = "Mã loại hình KH";
+            public const string col14 = "Thành phố";
+            public const string col15 = "Quận huyện";
         }
 
         public struct ActionPermission

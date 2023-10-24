@@ -3,7 +3,6 @@ import { Code } from '@/apis';
 import { EmailTemplateModel } from '@/apis/models/toefl-challenge/EmailTemplateModel';
 import { putEmailTemplate } from '@/apis/services/toefl-challenge/EmailTemplateService';
 import Editor from '@/components/CKEditor';
-import { emailTemplateTypeConstant } from '@/utils/constants';
 import { Col, Form, Input, Modal, Row, Select, message } from 'antd';
 import React, { memo, useReducer, useState } from 'react';
 
@@ -21,7 +20,7 @@ const EditTemplateEmail: React.FC<Props> = ({ temp, open, setOpen, reload, recor
     const [confirmLoading, setConfirmLoading] = useState(false);
     const [modalButtonOkText, setModalButtonOkText] = useState('Lưu');
     const initState = {
-        emailTemplateType: emailTemplateTypeConstant
+        emailTemplateType: []
     }
 
     const [state, dispatch] = useReducer<(prevState: any, updatedProperty: any) => any>((prevState: any, updatedProperty: any) => ({

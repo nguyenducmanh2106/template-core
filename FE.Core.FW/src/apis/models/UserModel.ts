@@ -10,17 +10,21 @@ export type UserModel = {
   username?: string | null;
   fullname?: string | null;
   email?: string | null;
-  dob?: string;
+  dob?: string | null;
   phone?: string | null;
-  metadata?: Array<UserMetadataModel> | null;
+  syncId?: string;
+  isLocked?: boolean;
   roleId?: string | null;
   roleName?: string | null;
-  syncId?: string;
-  isDisabled?: boolean;
-  iigDepartmentId?: string | null;
-  iigDepartmentName?: string | null;
+  departmentId?: string | null;
+  departmentName?: string | null;
+  employeeAccessLevels?: string | null;
+  isAccessMaxLevel?: boolean;
+  password?: string | null;
+  metadata?: Array<UserMetadataModel> | null;
   permissions?: Array<PolicyModel> | null;
   createdOnDate?: string;
+  employeeAccessLevelArray?: Array<string> | null;
   accessDataHeaderQuater?: Array<string> | null;
 };
 

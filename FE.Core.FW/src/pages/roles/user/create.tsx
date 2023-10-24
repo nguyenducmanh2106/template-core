@@ -54,6 +54,7 @@ const Create: React.FC<Props> = ({ open, setOpen, reload, iigdepartments }) => {
 
         const objBody = {
             ...fieldsValue,
+            DOB: fieldsValue.DOB ? fieldsValue.DOB : undefined
         }
         // console.log(objBody)
         // return
@@ -130,17 +131,17 @@ const Create: React.FC<Props> = ({ open, setOpen, reload, iigdepartments }) => {
                             </Form.Item>
                         </Col>
                         <Col span={24}>
-                            <Form.Item label={'Ngày sinh'} labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} name='DOB' rules={[{ required: true }]}>
+                            <Form.Item label={'Ngày sinh'} labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} name='DOB'>
                                 <DatePicker format={'DD/MM/YYYY'} />
                             </Form.Item>
                         </Col>
                         <Col span={24}>
-                            <Form.Item label={'Số điện thoại'} labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} name='Phone' rules={[{ required: true }]}>
+                            <Form.Item label={'Số điện thoại'} labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} name='Phone'>
                                 <Input allowClear />
                             </Form.Item>
                         </Col>
                         <Col span={24}>
-                            <Form.Item label={'Phòng ban'} labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} name='IIGDepartmentId'>
+                            <Form.Item label={'Phòng ban'} labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} name='DepartmentId'>
                                 <TreeSelect
                                     showSearch
                                     treeLine

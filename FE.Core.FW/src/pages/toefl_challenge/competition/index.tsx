@@ -32,7 +32,7 @@ import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import moment from 'moment';
 import { useNavigate } from 'react-router-dom';
-import { OptionModel } from '@/@types/data';
+import { OptionModel, SelectOptionModel } from '@/@types/data';
 function CompetitionTFC() {
     const navigate = useNavigate();
     // Load
@@ -83,7 +83,7 @@ function CompetitionTFC() {
                     key: 'Default',
                     label: '-Chọn-',
                     value: '',
-                }].concat(provinceOptions),
+                } as SelectOptionModel].concat(provinceOptions),
             };
             dispatch(stateDispatcher);
         }

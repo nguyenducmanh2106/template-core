@@ -1,5 +1,7 @@
+using Backend.Business.AdministrativeDivision;
 using Backend.Business.Auth;
 using Backend.Business.Branch;
+using Backend.Business.Customer;
 using Backend.Business.Department;
 using Backend.Business.Mailing;
 using Backend.Business.Navigation;
@@ -28,6 +30,10 @@ internal static class Startup
             .AddScoped<IProductCategoryHandler, ProductCategoryHandler>()
             .AddScoped<IProductTypeHandler, ProductTypeHandler>()
             .AddScoped<IProductHandler, ProductHandler>()
+            .AddScoped<ICustomerCategoryHandler, CustomerCategoryHandler>()
+            .AddScoped<ICustomerTypeHandler, CustomerTypeHandler>()
+            .AddScoped<IAdministrativeDivisionHandler, AdministrativeDivisionHandler>()
+            .AddScoped<ICustomerHandler, CustomerHandler>()
             .AddScoped<IDepartmentHandler, DepartmentHandler>();
     }
 }

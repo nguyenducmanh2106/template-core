@@ -220,8 +220,8 @@ function User() {
     },
     {
       title: 'Phòng ban',
-      dataIndex: 'iigDepartmentName',
-      render: (_, record) => <span>{record.iigDepartmentName}</span>,
+      dataIndex: 'departmentName',
+      render: (_, record) => <span>{record.departmentName}</span>,
     },
     {
       title: 'Vai trò',
@@ -236,6 +236,7 @@ function User() {
     {
       title: 'Thao tác',
       key: 'action',
+      fixed: 'right',
       align: 'center',
       width: 300,
       render: (_, record) => (
@@ -302,6 +303,7 @@ function User() {
           columns={columns}
           dataSource={list}
           loading={loading}
+          scroll={{ x: '100vw', y: '460px' }}
           pagination={{
             ...pagination,
             onChange: (page: number, pageSize: number) => {

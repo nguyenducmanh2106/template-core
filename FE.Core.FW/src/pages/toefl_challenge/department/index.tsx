@@ -31,7 +31,7 @@ import Permission from '@/components/Permission';
 import { PermissionAction, layoutCode } from '@/utils/constants';
 import CreateDepartment from './create';
 import EditDepartment from './edit';
-import { OptionModel } from '@/@types/data';
+import { OptionModel, SelectOptionModel } from '@/@types/data';
 function DepartmentTFC() {
     const navigate = useNavigate();
     // Load
@@ -75,7 +75,7 @@ function DepartmentTFC() {
                     key: 'Default',
                     label: '-Chọn-',
                     value: '',
-                }].concat(provinceOptions),
+                } as SelectOptionModel].concat(provinceOptions),
             };
             dispatch(stateDispatcher);
         }
@@ -173,7 +173,7 @@ function DepartmentTFC() {
                     key: 'Default',
                     label: '-Chọn-',
                     value: '',
-                }].concat(districtOptions),
+                } as SelectOptionModel].concat(districtOptions),
             };
             dispatch(stateDispatcher);
             setShowModelEdit(true)
@@ -193,13 +193,13 @@ function DepartmentTFC() {
             dataIndex: 'name',
             render: (_, record) => <span>{record.name}</span>,
         },
-        
+
         {
             title: 'Tỉnh/TP',
             dataIndex: 'provinceName',
             render: (_, record) => <span>{record.provinceName}</span>,
         },
-        
+
         {
             title: 'Thao tác',
             key: 'action',

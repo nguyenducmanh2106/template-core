@@ -168,6 +168,7 @@ function Role() {
       title: 'Thao tác',
       key: 'action',
       align: 'center',
+      fixed: 'right',
       width: 300,
       render: (_, record) => (
         <Space>
@@ -237,6 +238,7 @@ function Role() {
           columns={columns}
           dataSource={list}
           loading={loading}
+          scroll={{ x: '100vw', y: '460px' }}
           pagination={{
             ...pagination,
             onChange: (page: number, pageSize: number) => {

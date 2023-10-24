@@ -34,7 +34,7 @@ import { ArrowLeftOutlined, DeleteOutlined, EditOutlined } from '@ant-design/ico
 import { useNavigate, useParams } from 'react-router-dom';
 import EditableCell from './edit';
 import { SchoolModel } from '@/apis/models/toefl-challenge/SchoolModel';
-import { OptionModel } from '@/@types/data';
+import { OptionModel, SelectOptionModel } from '@/@types/data';
 
 
 
@@ -129,28 +129,28 @@ function EditSchoolTFC() {
                     key: 'Default',
                     label: '-Chọn-',
                     value: '',
-                }].concat(provinceOptions),
+                } as SelectOptionModel].concat(provinceOptions),
                 departments: [{
                     key: 'Default',
                     label: '-Chọn-',
                     value: '00000000-0000-0000-0000-000000000000',
-                }].concat(departmentOptions),
+                } as SelectOptionModel].concat(departmentOptions),
                 divisions: [{
                     key: 'Default',
                     label: '-Chọn-',
                     value: '00000000-0000-0000-0000-000000000000',
-                }].concat(divisionOptions),
+                } as SelectOptionModel].concat(divisionOptions),
                 districts: [{
                     key: 'Default',
                     label: '-Chọn-',
                     value: '',
-                }].concat(districtOptions),
+                } as SelectOptionModel].concat(districtOptions),
                 schoolEdit: responseSchool.data,
                 schoolParents: [{
                     key: 'Default',
                     label: '-Chọn-',
                     value: '',
-                }].concat(schoolOptions),
+                } as SelectOptionModel].concat(schoolOptions),
             };
             dispatch(stateDispatcher);
             setLoading(false);
@@ -257,17 +257,17 @@ function EditSchoolTFC() {
                 key: 'Default',
                 label: '-Chọn-',
                 value: '',
-            }].concat(departmentOptions),
+            } as SelectOptionModel].concat(departmentOptions),
             districts: [{
                 key: 'Default',
                 label: '-Chọn-',
                 value: '',
-            }].concat(districtOptions),
+            } as SelectOptionModel].concat(districtOptions),
             schoolParents: [{
                 key: 'Default',
                 label: '-Chọn-',
                 value: '',
-            }].concat(schoolOptions),
+            } as SelectOptionModel].concat(schoolOptions),
         }
         dispatch(stateDispatcher)
     };
@@ -287,7 +287,7 @@ function EditSchoolTFC() {
                 key: 'Default',
                 label: '-Chọn-',
                 value: '',
-            }].concat(divisionOptions),
+            } as SelectOptionModel].concat(divisionOptions),
         }
         dispatch(stateDispatcher)
     };
@@ -311,7 +311,7 @@ function EditSchoolTFC() {
                 key: 'Default',
                 label: '-Chọn-',
                 value: '',
-            }].concat(schoolOptions),
+            } as SelectOptionModel].concat(schoolOptions),
         }
         dispatch(stateDispatcher)
     };

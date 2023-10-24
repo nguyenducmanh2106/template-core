@@ -36,10 +36,10 @@ import {
 } from '@/utils/convert';
 import { DeleteOutlined, ImportOutlined, MailOutlined, PlusOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-import DebounceSelect from './debounce-select';
 import EmailRegistrationCode from './email';
 import ImportRegistrationCode from './import';
 import { OptionModel, SelectOptionModel } from '@/@types/data';
+import DebounceSelect from '@/components/DebounceSelect';
 function CodeTFC() {
     const navigate = useNavigate();
     // Load
@@ -152,7 +152,7 @@ function CodeTFC() {
                     key: 'Default',
                     label: '-Chọn-',
                     value: '',
-                }].concat(provinceOptions),
+                } as SelectOptionModel].concat(provinceOptions),
                 districts: [{
                     key: 'Default',
                     label: '-Chọn-',
@@ -162,12 +162,12 @@ function CodeTFC() {
                     key: 'Default',
                     label: '-Chọn-',
                     value: '',
-                }].concat(examOptions),
+                } as SelectOptionModel].concat(examOptions),
                 blocks: [{
                     key: 'Default',
                     label: '-Chọn-',
                     value: '',
-                }].concat(blocks)
+                } as SelectOptionModel].concat(blocks)
             };
             dispatch(stateDispatcher);
         }
@@ -289,7 +289,7 @@ function CodeTFC() {
                 key: 'Default',
                 label: '-Chọn-',
                 value: '',
-            }].concat(districtOptions),
+            } as SelectOptionModel].concat(districtOptions),
         }
         dispatch(stateDispatcher)
     };

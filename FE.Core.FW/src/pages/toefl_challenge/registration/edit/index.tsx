@@ -38,8 +38,8 @@ import TextArea from 'antd/lib/input/TextArea';
 import moment from 'moment';
 import { useEffect, useReducer, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import DebounceSelect from '../debounce-select';
 import { OptionModel, SelectOptionModel } from '@/@types/data';
+import DebounceSelect from '@/components/DebounceSelect';
 
 
 
@@ -141,22 +141,22 @@ function RegistrationTFC() {
                     key: 'Default',
                     label: '-Chọn-',
                     value: '',
-                }].concat(provinceOptions),
+                } as SelectOptionModel].concat(provinceOptions),
                 exams: [{
                     key: 'Default',
                     label: '-Chọn-',
                     value: '',
-                }].concat(examOptions),
+                } as SelectOptionModel].concat(examOptions),
                 blocks: [{
                     key: 'Default',
                     label: '-Chọn-',
                     value: '',
-                }].concat(blocks),
+                } as SelectOptionModel].concat(blocks),
                 districts: [{
                     key: 'Default',
                     label: '-Chọn-',
                     value: '',
-                }].concat(districtOptions),
+                } as SelectOptionModel].concat(districtOptions),
                 recordEdit: responseRegistration.data
             };
             dispatch(stateDispatcher);
@@ -224,7 +224,7 @@ function RegistrationTFC() {
                 key: 'Default',
                 label: '-Chọn-',
                 value: '',
-            }].concat(districtOptions),
+            } as SelectOptionModel].concat(districtOptions),
         }
         dispatch(stateDispatcher)
     };
@@ -253,7 +253,7 @@ function RegistrationTFC() {
                 key: 'Default',
                 label: '-Chọn-',
                 value: '',
-            }].concat(provinceOptions),
+            } as SelectOptionModel].concat(provinceOptions),
         }
         dispatch(stateDispatcher)
     }

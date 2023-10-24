@@ -44,43 +44,6 @@ namespace Backend.Infrastructure.Utils
             return contentType;
         }
 
-        public static string ConvertStatus(int sts)
-        {
-            string res = string.Empty;
-            switch (sts)
-            {
-                case (int)StatusProfile.Receive:
-                    res = TextStatusProfile.ChuaDuyet;
-                    break;
-                case (int)StatusProfile.Approved:
-                    res = TextStatusProfile.DaDuyet;
-                    break;
-                case (int)StatusProfile.UnApproved:
-                    res = TextStatusProfile.DoiLich;
-                    break;
-            }
-            return res;
-        }
-
-
-        public static string ConvertStatusPaid(int sts)
-        {
-            string res = string.Empty;
-            switch (sts)
-            {
-                case (int)StatusPaid.UnPaid:
-                    res = TextStatusPaid.ChuaThanhToan;
-                    break;
-                case (int)StatusPaid.Paid:
-                    res = TextStatusPaid.DaThanhToan;
-                    break;
-                case (int)StatusPaid.Refund:
-                    res = TextStatusPaid.HoanTra;
-                    break;
-            }
-            return res;
-        }
-
         public static void LogRequest(HttpRequest request, object? body = null)
         {
             var requestId = Guid.NewGuid().ToString();

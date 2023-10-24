@@ -5,16 +5,21 @@ import { lazy } from 'react';
 //#region Dùng để phân quyền
 export const PermissionAction = {
   View: 1,
-  Add: 2,
-  Edit: 4,
-  Delete: 8,
-  Import: 16
+  ViewDetail: 2,
+  Add: 4,
+  Edit: 8,
+  Delete: 16,
+  Import: 32
 }
 
 export const permissionOptions: CheckboxOptionType[] = [
   {
     "label": "Xem",
     "value": PermissionAction.View
+  },
+  {
+    "label": "Xem chi tiết",
+    "value": PermissionAction.ViewDetail
   },
   {
     "label": "Thêm",
@@ -74,7 +79,6 @@ export const layoutCode = {
   toeflChallengeExamSchedule: "toefl-challenge-exam-schedule",
   toeflChallengeExamScheduleCreate: "toefl-challenge-exam-schedule__create",
   toeflChallengeExamScheduleEdit: "toefl-challenge-exam-schedule__edit",
-  toeflChallengePaymentHistory: "toefl-challenge-payment-history",
   toeflChallengeRegistrationCode: "toefl-challenge-registration-code",
   toeflChallengeRegistrationCodeCreate: "toefl-challenge-registration-code__create",
   toeflChallengeRegistrationCodeEdit: "toefl-challenge-registration-code__edit",
@@ -94,6 +98,15 @@ export const layoutCode = {
   catalogProduct: "catalog-product",
   catalogProductCreate: "catalog-product__create",
   catalogProductEdit: "catalog-product__edit",
+  catalogCustomerCategory: "catalog-customer-category",
+  catalogCustomerCategoryCreate: "catalog-customer-category__create",
+  catalogCustomerCategoryEdit: "catalog-customer-category__edit",
+  catalogCustomerType: "catalog-customer-type",
+  catalogCustomerTypeCreate: "catalog-customer-type__create",
+  catalogCustomerTypeEdit: "catalog-customer-type__edit",
+  catalogCustomer: "catalog-customer",
+  catalogCustomerCreate: "catalog-customer__create",
+  catalogCustomerEdit: "catalog-customer__edit",
 }
 export const routeArrays = [
   {
@@ -245,10 +258,6 @@ export const routeArrays = [
     "ComponentPath": lazy(() => import('../pages/toefl_challenge/exam-schedule/edit'))
   },
   {
-    "Code": layoutCode.toeflChallengePaymentHistory,
-    "ComponentPath": lazy(() => import('../pages/toefl_challenge/payment-history'))
-  },
-  {
     "Code": layoutCode.toeflChallengeRegistrationCode,
     "ComponentPath": lazy(() => import('../pages/toefl_challenge/registration-code'))
   },
@@ -320,6 +329,42 @@ export const routeArrays = [
   {
     "Code": layoutCode.catalogProductEdit,
     "ComponentPath": lazy(() => import('../pages/catalog/product/edit'))
+  },
+  {
+    "Code": layoutCode.catalogCustomerCategory,
+    "ComponentPath": lazy(() => import('../pages/catalog/customer-category'))
+  },
+  {
+    "Code": layoutCode.catalogCustomerCategoryCreate,
+    "ComponentPath": lazy(() => import('../pages/catalog/customer-category/create'))
+  },
+  {
+    "Code": layoutCode.catalogCustomerCategoryEdit,
+    "ComponentPath": lazy(() => import('../pages/catalog/customer-category/edit'))
+  },
+  {
+    "Code": layoutCode.catalogCustomerType,
+    "ComponentPath": lazy(() => import('../pages/catalog/customer-type'))
+  },
+  {
+    "Code": layoutCode.catalogCustomerTypeCreate,
+    "ComponentPath": lazy(() => import('../pages/catalog/customer-type/create'))
+  },
+  {
+    "Code": layoutCode.catalogCustomerTypeEdit,
+    "ComponentPath": lazy(() => import('../pages/catalog/customer-type/edit'))
+  },
+  {
+    "Code": layoutCode.catalogCustomer,
+    "ComponentPath": lazy(() => import('../pages/catalog/customer'))
+  },
+  {
+    "Code": layoutCode.catalogCustomerCreate,
+    "ComponentPath": lazy(() => import('../pages/catalog/customer/create'))
+  },
+  {
+    "Code": layoutCode.catalogCustomerEdit,
+    "ComponentPath": lazy(() => import('../pages/catalog/customer/edit'))
   },
 ]
 //#endregion

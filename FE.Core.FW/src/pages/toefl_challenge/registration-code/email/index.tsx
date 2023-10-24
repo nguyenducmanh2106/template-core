@@ -10,7 +10,6 @@ import {
     message
 } from 'antd';
 import { useReducer, useRef, useState } from 'react';
-import DebounceSelect from '../debounce-select';
 import { SchoolModel } from '@/apis/models/toefl-challenge/SchoolModel';
 import { getAministrativeDivisions1 } from '@/apis/services/toefl-challenge/AministrativeDivisionsService';
 import { getSchool, getSchool1 } from '@/apis/services/toefl-challenge/SchoolService';
@@ -21,6 +20,7 @@ import { ExamModel } from '@/apis/models/toefl-challenge/ExamModel';
 import { SchoolType } from '@/apis/models/toefl-challenge/SchoolType';
 import { postEmailRegistrationCode } from '@/apis/services/toefl-challenge/RegistrationCodeService';
 import { OptionModel, SelectOptionModel } from '@/@types/data';
+import DebounceSelect from '@/components/DebounceSelect';
 
 
 
@@ -120,7 +120,7 @@ function EmailRegistrationCode({ temp, open, setOpen, reload }: Props) {
                 key: 'Default',
                 label: '-Chọn-',
                 value: '',
-            }].concat(provinceOptions),
+            } as SelectOptionModel].concat(provinceOptions),
         }
         dispatch(stateDispatcher)
     };
@@ -151,7 +151,7 @@ function EmailRegistrationCode({ temp, open, setOpen, reload }: Props) {
                 key: 'Default',
                 label: '-Chọn-',
                 value: '',
-            }].concat(districtOptions),
+            } as SelectOptionModel].concat(districtOptions),
         }
         dispatch(stateDispatcher)
     };

@@ -32,7 +32,7 @@ import {
 import { DeleteOutlined, EditOutlined, GatewayOutlined, PlusOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import SchoolCoordinator from './school-coordinator';
-import { OptionModel } from '@/@types/data';
+import { OptionModel, SelectOptionModel } from '@/@types/data';
 function SchoolTFC() {
     const navigate = useNavigate();
     // Load
@@ -83,12 +83,12 @@ function SchoolTFC() {
                     key: 'Default',
                     label: '-Chọn-',
                     value: '',
-                }].concat(provinceOptions),
+                } as SelectOptionModel].concat(provinceOptions),
                 departments: [{
                     key: 'Default',
                     label: '-Chọn-',
                     value: '',
-                }].concat(departmentOptions),
+                } as SelectOptionModel].concat(departmentOptions),
                 iigdepartments: responseIIGDepartment.data ?? []
             };
             dispatch(stateDispatcher);
@@ -206,7 +206,7 @@ function SchoolTFC() {
                 key: 'Default',
                 label: '-Chọn-',
                 value: '',
-            }].concat(departmentOptions),
+            } as SelectOptionModel].concat(departmentOptions),
         }
         dispatch(stateDispatcher)
     };

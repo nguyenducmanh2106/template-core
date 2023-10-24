@@ -28,7 +28,7 @@ import {
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import moment from 'moment';
-import { OptionModel } from '@/@types/data';
+import { OptionModel, SelectOptionModel } from '@/@types/data';
 
 
 
@@ -84,7 +84,7 @@ function CompetitionCreateTFC() {
                     key: 'Default',
                     label: '-Chọn-',
                     value: '',
-                }].concat(provinceOptions),
+                } as SelectOptionModel].concat(provinceOptions),
                 divisions: [{
                     key: 'Default',
                     label: '-Chọn-',

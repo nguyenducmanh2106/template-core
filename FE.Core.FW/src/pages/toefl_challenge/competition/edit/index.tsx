@@ -39,7 +39,7 @@ import ExamPaymentTFC from '../exam-payments';
 import ExamRegistrationScheduleTFC from '../exam-registration-schedules';
 import ExamRegistrationProvinceTFC from '../exam-registration-provinces';
 import moment from 'moment';
-import { OptionModel } from '@/@types/data';
+import { OptionModel, SelectOptionModel } from '@/@types/data';
 
 function EditCompetitonTFC() {
     const navigate = useNavigate();
@@ -95,7 +95,7 @@ function EditCompetitonTFC() {
                 key: 'Default',
                 label: '-Chọn-',
                 value: '',
-            }].concat(provinceOptions),
+            } as SelectOptionModel].concat(provinceOptions),
 
             recordEdit: responseData
         };
@@ -177,12 +177,12 @@ function EditCompetitonTFC() {
                 key: 'Default',
                 label: '-Chọn-',
                 value: '',
-            }].concat(departmentOptions),
+            } as SelectOptionModel].concat(departmentOptions),
             districts: [{
                 key: 'Default',
                 label: '-Chọn-',
                 value: '',
-            }].concat(districtOptions),
+            } as SelectOptionModel].concat(districtOptions),
         }
         dispatch(stateDispatcher)
     };
@@ -202,7 +202,7 @@ function EditCompetitonTFC() {
                 key: 'Default',
                 label: '-Chọn-',
                 value: '',
-            }].concat(divisionOptions),
+            } as SelectOptionModel].concat(divisionOptions),
         }
         dispatch(stateDispatcher)
     };

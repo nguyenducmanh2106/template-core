@@ -36,8 +36,8 @@ import locale from "antd/es/date-picker/locale/vi_VN";
 import TextArea from 'antd/lib/input/TextArea';
 import { useEffect, useReducer, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import DebounceSelect from '../debounce-select';
 import { OptionModel, SelectOptionModel } from '@/@types/data';
+import DebounceSelect from '@/components/DebounceSelect';
 
 
 
@@ -133,7 +133,7 @@ function RegistrationTFC() {
                     key: 'Default',
                     label: '-Chọn-',
                     value: '',
-                }].concat(examOptions),
+                } as SelectOptionModel].concat(examOptions),
                 districts: [{
                     key: 'Default',
                     label: '-Chọn-',
@@ -143,7 +143,7 @@ function RegistrationTFC() {
                     key: 'Default',
                     label: '-Chọn-',
                     value: '',
-                }].concat(blocks)
+                } as SelectOptionModel].concat(blocks)
             };
             dispatch(stateDispatcher);
             setLoading(false);
@@ -214,7 +214,7 @@ function RegistrationTFC() {
                 key: 'Default',
                 label: '-Chọn-',
                 value: '',
-            }].concat(districtOptions),
+            } as SelectOptionModel].concat(districtOptions),
         }
         dispatch(stateDispatcher)
     };
@@ -246,7 +246,7 @@ function RegistrationTFC() {
                 key: 'Default',
                 label: '-Chọn-',
                 value: '',
-            }].concat(provinceOptions),
+            } as SelectOptionModel].concat(provinceOptions),
         }
         dispatch(stateDispatcher)
     }

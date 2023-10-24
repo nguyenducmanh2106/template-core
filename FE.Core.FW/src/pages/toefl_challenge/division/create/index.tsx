@@ -32,7 +32,7 @@ import {
 import { ArrowLeftOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import EditableCell from './create';
-import { OptionModel } from '@/@types/data';
+import { OptionModel, SelectOptionModel } from '@/@types/data';
 
 
 
@@ -71,12 +71,12 @@ function DivisionTFC() {
                     key: 'Default',
                     label: '-Chọn-',
                     value: '',
-                }].concat(provinceOptions),
+                } as SelectOptionModel].concat(provinceOptions),
                 departments: [{
                     key: 'Default',
                     label: '-Chọn-',
                     value: '',
-                }].concat(departmentOptions),
+                } as SelectOptionModel].concat(departmentOptions),
                 districts: [{
                     key: 'Default',
                     label: '-Chọn-',
@@ -159,12 +159,12 @@ function DivisionTFC() {
                 key: 'Default',
                 label: '-Chọn-',
                 value: '',
-            }].concat(departmentOptions),
+            } as SelectOptionModel].concat(departmentOptions),
             districts: [{
                 key: 'Default',
                 label: '-Chọn-',
                 value: '',
-            }].concat(districtOptions),
+            } as SelectOptionModel].concat(districtOptions),
         }
         dispatch(stateDispatcher)
     };

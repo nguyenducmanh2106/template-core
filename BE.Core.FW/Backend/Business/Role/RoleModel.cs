@@ -8,7 +8,7 @@ namespace Backend.Business.Role
         public string Code { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
         public string? AccessDataHeaderQuater { get; set; }
-        public string Description { get; set; } = string.Empty;
+        public string? Description { get; set; } = string.Empty;
 
         /// <summary>
         /// Id của bản ghi lấy để clone quyền

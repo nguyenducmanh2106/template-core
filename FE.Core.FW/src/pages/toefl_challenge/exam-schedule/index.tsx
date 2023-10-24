@@ -30,7 +30,7 @@ import {
 } from '@/utils/convert';
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-import { OptionModel } from '@/@types/data';
+import { OptionModel, SelectOptionModel } from '@/@types/data';
 function ExamScheduleTFC() {
     const navigate = useNavigate();
     // Load
@@ -83,7 +83,7 @@ function ExamScheduleTFC() {
                     key: 'Default',
                     label: '-Chọn-',
                     value: '',
-                }].concat(examOptions),
+                } as SelectOptionModel].concat(examOptions),
             };
             dispatch(stateDispatcher);
         }
@@ -288,7 +288,7 @@ function ExamScheduleTFC() {
                                                                 (option?.label ?? '').toString().toLowerCase().includes(input.toLowerCase())
                                                             }
                                                             options={state.exams}
-                                                            // onChange={() => onChangeProvince()}
+                                                        // onChange={() => onChangeProvince()}
                                                         />
                                                     </Form.Item>
                                                 </Col>

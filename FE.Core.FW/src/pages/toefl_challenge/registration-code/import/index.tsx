@@ -21,7 +21,6 @@ import {
 import locale from "antd/es/date-picker/locale/vi_VN";
 import moment from 'moment';
 import { useEffect, useReducer, useRef, useState } from 'react';
-import DebounceSelect from '../debounce-select';
 import { SchoolModel } from '@/apis/models/toefl-challenge/SchoolModel';
 import { getAministrativeDivisions1 } from '@/apis/services/toefl-challenge/AministrativeDivisionsService';
 import { getSchool, getSchool1 } from '@/apis/services/toefl-challenge/SchoolService';
@@ -34,6 +33,7 @@ import { postRegistrationCode, postRegistrationCode1 } from '@/apis/services/toe
 import { getFile } from '@/apis/services/toefl-challenge/FileService';
 import { TemplateType } from '@/apis/models/toefl-challenge/TemplateType';
 import { OptionModel, SelectOptionModel } from '@/@types/data';
+import DebounceSelect from '@/components/DebounceSelect';
 
 
 
@@ -133,7 +133,7 @@ function ImportRegistrationCode({ temp, open, setOpen, reload }: Props) {
                 key: 'Default',
                 label: '-Chọn-',
                 value: '',
-            }].concat(provinceOptions),
+            } as SelectOptionModel].concat(provinceOptions),
         }
         dispatch(stateDispatcher)
     };
@@ -164,7 +164,7 @@ function ImportRegistrationCode({ temp, open, setOpen, reload }: Props) {
                 key: 'Default',
                 label: '-Chọn-',
                 value: '',
-            }].concat(districtOptions),
+            } as SelectOptionModel].concat(districtOptions),
         }
         dispatch(stateDispatcher)
     };

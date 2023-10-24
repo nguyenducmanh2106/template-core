@@ -142,7 +142,7 @@ function ExamLocationTFC({ examSchedule, provinces }: Props) {
                         key: 'Default',
                         label: '-Chọn-',
                         value: '',
-                    },
+                    } as SelectOptionModel
                 ].concat(districtOptions),
             };
             dispatch(stateDispatcher);

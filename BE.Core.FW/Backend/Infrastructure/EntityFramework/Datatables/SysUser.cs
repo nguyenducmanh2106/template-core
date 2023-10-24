@@ -10,12 +10,12 @@ namespace Backend.Infrastructure.EntityFramework.Datatables
         public string Username { get; set; } = string.Empty;
         [Required]
         public string Fullname { get; set; } = string.Empty;
-        [Required]
+
         [EmailAddress]
-        public string Email { get; set; } = string.Empty;
-        public DateTime DOB { get; set; }
+        public string? Email { get; set; }
+        public DateTime? DOB { get; set; }
         [Phone]
-        public string Phone { get; set; } = string.Empty;
+        public string? Phone { get; set; }
 
         /// <summary>
         /// Id đồng bộ với account của wsO2
@@ -25,7 +25,7 @@ namespace Backend.Infrastructure.EntityFramework.Datatables
         /// <summary>
         /// mặc định tài khoản ở trạng thái khóa
         /// </summary>
-        public bool IsDisabled { get; set; } = false;
+        public bool IsLocked { get; set; } = false;
 
 
         /// <summary>
@@ -36,6 +36,12 @@ namespace Backend.Infrastructure.EntityFramework.Datatables
         /// <summary>
         /// id phòng ban
         /// </summary>
-        public Guid? IIGDepartmentId { get; set; }
+        public Guid? DepartmentId { get; set; }
+
+        public string? EmployeeAccessLevels { get; set; }
+
+        public bool IsAccessMaxLevel { get; set; } = false;
+
+        public string? Password { get; set; }
     }
 }
