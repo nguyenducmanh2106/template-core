@@ -24,6 +24,8 @@ namespace Backend.Infrastructure.Utils
             CreateMap<SysDepartment, DepartmentModel>().ReverseMap();
             CreateMap<SysProductCategory, ProductCategoryModel>().ReverseMap();
             CreateMap<SysProductType, ProductTypeModel>().ReverseMap();
+            CreateMap<SysProduct, ProductModel>().ReverseMap();
+            CreateMap<SysCustomerCategory, CustomerCategoryModel>().ReverseMap();
             CreateMap<SysBranch, BranchModel>().ReverseMap();
         }
     }

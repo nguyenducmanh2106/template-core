@@ -184,6 +184,7 @@ function Branch() {
         {
             title: 'Thao tác',
             key: 'action',
+            fixed: 'right',
             align: 'center',
             width: 300,
             render: (_, record) => (
@@ -299,6 +300,7 @@ function Branch() {
                             getList(page, pageSize);
                         },
                     }}
+                    scroll={{ x: '100vw', y: '460px' }}
                     columns={columns}
                     search={false}
                     dateFormatter="string"

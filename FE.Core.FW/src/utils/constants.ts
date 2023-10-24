@@ -91,6 +91,9 @@ export const layoutCode = {
   catalogProductType: "catalog-product-type",
   catalogProductTypeCreate: "catalog-product-type__create",
   catalogProductTypeEdit: "catalog-product-type__edit",
+  catalogProduct: "catalog-product",
+  catalogProductCreate: "catalog-product__create",
+  catalogProductEdit: "catalog-product__edit",
 }
 export const routeArrays = [
   {
@@ -305,6 +308,18 @@ export const routeArrays = [
   {
     "Code": layoutCode.catalogProductTypeEdit,
     "ComponentPath": lazy(() => import('../pages/catalog/product-type/edit'))
+  },
+  {
+    "Code": layoutCode.catalogProduct,
+    "ComponentPath": lazy(() => import('../pages/catalog/product'))
+  },
+  {
+    "Code": layoutCode.catalogProductCreate,
+    "ComponentPath": lazy(() => import('../pages/catalog/product/create'))
+  },
+  {
+    "Code": layoutCode.catalogProductEdit,
+    "ComponentPath": lazy(() => import('../pages/catalog/product/edit'))
   },
 ]
 //#endregion

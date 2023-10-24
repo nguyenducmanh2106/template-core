@@ -65,13 +65,15 @@ public class ProductTypeHandler : IProductTypeHandler
             int pageNumber = 0;
             int pageSize = 20;
             int totalCount = 0;
-            var filterModel = JsonConvert.DeserializeObject<RequestData>(filter);
+            var filterModel = JsonConvert.DeserializeObject<ProductTypeFilterModel>(filter);
             if (filterModel == null)
                 return new ResponseDataError(Code.BadRequest, "Filter invalid");
             using var unitOfWork = new UnitOfWork(_httpContextAccessor);
             var iigDepartmentData = unitOfWork.Repository<SysProductType>().Get();
             if (!string.IsNullOrEmpty(filterModel.TextSearch))
                 iigDepartmentData = iigDepartmentData.Where(x => x.Name.ToLower().Contains(filterModel.TextSearch.ToLower()));
+            if (filterModel.ProductCategoryId.HasValue)
+                iigDepartmentData = iigDepartmentData.Where(x => x.ProductCategoryId == filterModel.ProductCategoryId.Value);
             totalCount = iigDepartmentData.Count();
             if (filterModel.Page.HasValue && filterModel.Size.HasValue)
             {
@@ -79,8 +81,13 @@ public class ProductTypeHandler : IProductTypeHandler
                 pageNumber = filterModel.Page.Value;
                 pageSize = filterModel.Size.Value;
             }
-
-            var result = _mapper.Map<List<ProductTypeModel>>(iigDepartmentData);
+            var result = new List<ProductTypeModel>();
+            foreach (var item in iigDepartmentData)
+            {
+                var modelMapping = _mapper.Map<ProductTypeModel>(item);
+                modelMapping.ProductCategoryName = modelMapping.ProductCategoryId.HasValue ? unitOfWork.Repository<SysProductCategory>().GetById(modelMapping.ProductCategoryId)?.Name : null;
+                result.Add(modelMapping);
+            }
 
             var pagination = new Pagination()
             {
@@ -133,9 +140,10 @@ public class ProductTypeHandler : IProductTypeHandler
             if (!string.IsNullOrEmpty(model.Name))
                 iigDepartmentData.Name = model.Name;
 
-            if (!string.IsNullOrEmpty(model.Description))
-                iigDepartmentData.Description = model.Description;
+            if (model.ProductCategoryId.HasValue)
+                iigDepartmentData.ProductCategoryId = model.ProductCategoryId.Value;
 
+            iigDepartmentData.Description = model.Description;
             unitOfWork.Repository<SysProductType>().Update(iigDepartmentData);
 
             unitOfWork.Save();

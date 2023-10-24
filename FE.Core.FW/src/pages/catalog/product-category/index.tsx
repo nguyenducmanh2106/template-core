@@ -180,6 +180,7 @@ function ProductCategory() {
             title: 'Thao tác',
             key: 'action',
             align: 'center',
+            fixed:'right',
             width: 300,
             render: (_, record) => (
                 <Space>
@@ -295,6 +296,7 @@ function ProductCategory() {
                         },
                     }}
                     columns={columns}
+                    scroll={{ x: '100vw', y: '460px' }}
                     search={false}
                     dateFormatter="string"
                     headerTitle="Tiêu đề"

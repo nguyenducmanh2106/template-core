@@ -76,17 +76,15 @@ namespace Backend.Infrastructure.Utils
             Open = 0,
             Close = 1,
         }
-        public struct TestScoreFormColumns
+        public struct ProductExcelColumnName
         {
-            public const string col0 = "FIRST_NAME";
-            public const string col1 = "LAST_NAME";
-            public const string col2 = "DOB";
-            public const string col3 = "ID_or_PASSPORT";
-            public const string col4 = "LISTENING";
-            public const string col5 = "READING";
-            public const string col6 = "TOTAL";
-            public const string col7 = "TEST_DATE";
-            public const string col8 = "FORM_CODE";
+            public const string col0 = "Mã nhóm sản phẩm";
+            public const string col1 = "Mã sản phẩm";
+            public const string col2 = "Tên sản phẩm";
+            public const string col3 = "Đơn giá";
+            public const string col4 = "Thuế VAT";
+            public const string col5 = "Ghi chú";
+            public const string col6 = "Mã loại sản phẩm";
         }
 
         public struct TestScoreFormCheck

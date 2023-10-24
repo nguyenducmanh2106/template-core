@@ -202,6 +202,7 @@ function Department() {
             title: 'Thao tác',
             key: 'action',
             align: 'center',
+            fixed: 'right',
             width: 300,
             render: (_, record) => (
                 <Space>
@@ -316,6 +317,7 @@ function Department() {
                             getList(page, pageSize);
                         },
                     }}
+                    scroll={{ x: '100vw', y: '460px' }}
                     columns={columns}
                     search={false}
                     dateFormatter="string"

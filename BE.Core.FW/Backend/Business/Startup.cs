@@ -27,6 +27,7 @@ internal static class Startup
             .AddScoped<IBranchHandler, BranchHandler>()
             .AddScoped<IProductCategoryHandler, ProductCategoryHandler>()
             .AddScoped<IProductTypeHandler, ProductTypeHandler>()
+            .AddScoped<IProductHandler, ProductHandler>()
             .AddScoped<IDepartmentHandler, DepartmentHandler>();
     }
 }

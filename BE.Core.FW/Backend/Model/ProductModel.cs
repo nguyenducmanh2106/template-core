@@ -2,7 +2,7 @@
 
 namespace Backend.Model
 {
-    public class ProductTypeModel
+    public class ProductModel
     {
         public Guid Id { get; set; }
         public string Code { get; set; } = default!;
@@ -10,13 +10,19 @@ namespace Backend.Model
         public string? Description { get; set; }
         public Guid? ProductCategoryId { get; set; }
         public string? ProductCategoryName { get; set; }
+        public Guid? ProductTypeId { get; set; }
+        public string? ProductTypeName { get; set; }
+        public int Price { get; set; }
+        public float Tax { get; set; }
         public Guid CreatedByUserId { get; set; }
         public Guid LastModifiedByUserId { get; set; }
         public DateTime LastModifiedOnDate { get; set; } = DateTime.Now;
         public DateTime CreatedOnDate { get; set; } = DateTime.Now;
     }
-    public class ProductTypeFilterModel : RequestData
+
+    public class ProductFilterModel : RequestData
     {
+        public Guid? ProductTypeId { get; set; }
         public Guid? ProductCategoryId { get; set; }
     }
 }

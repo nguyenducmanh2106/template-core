@@ -7,6 +7,7 @@ import {
     FormInstance,
     Input,
     Row,
+    Select,
     Space,
     Spin,
     Tooltip,
@@ -18,19 +19,23 @@ import { useEffect, useReducer, useRef, useState } from 'react';
 import { Code } from '@/apis';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import { useNavigate, useParams } from 'react-router-dom';
-import { getProductCategory1, putProductCategory } from '@/apis/services/ProductCategoryService';
-import { ProductCategoryModel } from '@/apis/models/ProductCategoryModel';
+import { getProductCategory, getProductCategory1, putProductCategory } from '@/apis/services/ProductCategoryService';
+import { OptionModel, SelectOptionModel } from '@/@types/data';
+import { ConvertOptionSelectModel } from '@/utils/convert';
+import { getProductType1, putProductType } from '@/apis/services/ProductTypeService';
+import { ProductTypeModel } from '@/apis/models/ProductTypeModel';
 
 
 
 
-function ProductCategoryEdit() {
+function ProductTypeEdit() {
     const navigate = useNavigate();
     const params = useParams()
     console.log(params);
     // Load
     const initState = {
-        recordEdit: {}
+        recordEdit: {},
+        productCategories: [],
     };
     const [loading, setLoading] = useState<boolean>(false);
 
@@ -47,10 +52,17 @@ function ProductCategoryEdit() {
     useEffect(() => {
         const fnGetInitState = async () => {
             setLoading(true);
-            const responseDivision: ResponseData = await getProductCategory1(params.id);
+            const responseRecordEdit: ResponseData = await getProductType1(params.id);
+            const response: ResponseData = await getProductCategory();
 
+            const options = ConvertOptionSelectModel(response.data as OptionModel[]);
             const stateDispatcher = {
-                recordEdit: responseDivision.data
+                recordEdit: responseRecordEdit.data,
+                productCategories: [{
+                    key: 'Default',
+                    label: '-Chọn-',
+                    value: '',
+                } as SelectOptionModel].concat(options),
             };
             dispatch(stateDispatcher);
             setLoading(false);
@@ -84,16 +96,16 @@ function ProductCategoryEdit() {
         setButtonOkText('Đang xử lý...');
         setButtonLoading(true);
 
-        const objBody: ProductCategoryModel = {
+        const objBody: ProductTypeModel = {
             ...fieldsValue,
         }
 
-        const response = await putProductCategory(params.id, "", objBody);
+        const response = await putProductType(params.id, "", objBody);
         setButtonOkText('Lưu');
         setButtonLoading(false);
         if (response.code === Code._200) {
             message.success(response.message || "Cập nhật thành công")
-            navigate(`/catalog/product-category`)
+            navigate(`/catalog/product-type`)
         }
         else {
             message.error(response.message || "Thất bại")
@@ -117,17 +129,17 @@ function ProductCategoryEdit() {
                     <>
                         <Space className="title">
                             <Tooltip title="Quay lại">
-                                <Button type="text" shape='circle' onClick={() => navigate('/catalog/product-category')}>
+                                <Button type="text" shape='circle' onClick={() => navigate('/catalog/product-type')}>
                                     <ArrowLeftOutlined />
                                 </Button>
                             </Tooltip>
-                            <Text strong>Cập nhật nhóm SP</Text>
+                            <Text strong>Cập nhật loại SP</Text>
                         </Space>
                     </>
                 }
                 extra={
                     <Space>
-                        <Button type="dashed" onClick={() => navigate('/catalog/product-category')}>
+                        <Button type="dashed" onClick={() => navigate('/catalog/product-type')}>
                             Hủy bỏ
                         </Button>
                         <Button disabled={buttonLoading} htmlType="submit" type='primary' onClick={handleOk}>
@@ -147,6 +159,7 @@ function ProductCategoryEdit() {
                             ["Name"]: state.recordEdit?.name,
                             ["Code"]: state.recordEdit?.code,
                             ["Description"]: state.recordEdit?.description,
+                            ["ProductCategoryId"]: state.recordEdit?.productCategoryId,
                         }}
                     >
                         <Row gutter={16} justify='start'>
@@ -158,6 +171,24 @@ function ProductCategoryEdit() {
                             <Col span={12}>
                                 <Form.Item label={'Tên nhóm SP'} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name='Name' rules={[{ required: true, whitespace: true }]}>
                                     <Input placeholder='Nhập tên nhóm SP' allowClear />
+                                </Form.Item>
+                            </Col>
+                            <Col span={12}>
+                                <Form.Item
+                                    label={'Nhóm sản phẩm'}
+                                    labelCol={{ span: 24 }}
+                                    wrapperCol={{ span: 24 }}
+                                    name='ProductCategoryId'
+                                    rules={[{ required: true }]}
+                                >
+                                    <Select
+                                        showSearch
+                                        optionFilterProp="children"
+                                        filterOption={(input, option) => (option?.label ?? '').toString().toLowerCase().includes(input.toLowerCase())}
+                                        // filterSort={(optionA, optionB) =>
+                                        //     (optionA?.label ?? '').toString().toLowerCase().localeCompare((optionB?.label ?? '').toString().toLowerCase())
+                                        // }
+                                        placeholder='-Chọn-' options={state.productCategories} />
                                 </Form.Item>
                             </Col>
                             <Col span={12}>
@@ -177,4 +208,4 @@ function ProductCategoryEdit() {
     );
 }
 
-export default ProductCategoryEdit;
+export default ProductTypeEdit;

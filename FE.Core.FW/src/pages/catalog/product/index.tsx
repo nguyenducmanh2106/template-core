@@ -8,6 +8,7 @@ import {
     Input,
     Modal,
     Row,
+    Select,
     Space,
     Typography,
     message
@@ -18,21 +19,28 @@ import { Code } from '@/apis';
 import { deleteManyDivision } from '@/apis/services/toefl-challenge/DivisionService';
 import Permission from '@/components/Permission';
 import { PermissionAction, layoutCode } from '@/utils/constants';
-import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined, ImportOutlined, PlusOutlined } from '@ant-design/icons';
 import { ActionType, ProColumns, ProTable } from '@ant-design/pro-components';
 import { useNavigate } from 'react-router-dom';
-import { ProductTypeModel } from '@/apis/models/ProductTypeModel';
-import { deleteProductType, getProductType } from '@/apis/services/ProductTypeService';
-function ProductType() {
+import { deleteProduct, getProduct } from '@/apis/services/ProductService';
+import { ProductModel } from '@/apis/temp';
+import { getProductCategory } from '@/apis/services/ProductCategoryService';
+import { ConvertOptionSelectModel } from '@/utils/convert';
+import { OptionModel, SelectOptionModel } from '@/@types/data';
+import { getProductType } from '@/apis/services/ProductTypeService';
+import ImportProduct from './import-product';
+function Product() {
     const navigate = useNavigate();
     // Load
     const { Panel } = Collapse;
     const initState = {
-        departments: [],
+        productCategories: [],
+        productTypes: [],
     };
     const [loading, setLoading] = useState<boolean>(false);
     const [loadingDelete, setLoadingDelete] = useState<boolean>(false);
-    const [list, setList] = useState<ProductTypeModel[]>([]);
+    const [list, setList] = useState<ProductModel[]>([]);
+    const [showModelImport, setShowModelImport] = useState<boolean>(false);
     const [pagination, setPagination] = useState<PaginationConfig>({
         total: 0,
         current: 1,
@@ -57,24 +65,24 @@ function ProductType() {
     };
     useEffect(() => {
         const fnGetInitState = async () => {
-            // const responseProvinces: ResponseData = await getAministrativeDivisions();
-            // const responseDepartment: ResponseData = await getDepartment();
+            const responseProductCategory: ResponseData = await getProductCategory();
+            const responseProductType: ResponseData = await getProductType();
 
-            // const provinceOptions = ConvertOptionSelectModel(responseProvinces.data as ProvinceModel[]);
-            // const departmentOptions = ConvertOptionSelectModel(responseDepartment.data as OptionModel[]);
-            // const stateDispatcher = {
-            //     provinces: [{
-            //         key: 'Default',
-            //         label: '-Chọn-',
-            //         value: '',
-            //     }].concat(provinceOptions),
-            //     departments: [{
-            //         key: 'Default',
-            //         label: '-Chọn-',
-            //         value: '',
-            //     }].concat(departmentOptions)
-            // };
-            // dispatch(stateDispatcher);
+            const optionProductCategores = ConvertOptionSelectModel(responseProductCategory.data as OptionModel[]);
+            const optionProductTypes = ConvertOptionSelectModel(responseProductType.data as OptionModel[]);
+            const stateDispatcher = {
+                productCategories: [{
+                    key: 'Default',
+                    label: '-Chọn-',
+                    value: '',
+                } as SelectOptionModel].concat(optionProductCategores),
+                productTypes: [{
+                    key: 'Default',
+                    label: '-Chọn-',
+                    value: '',
+                } as SelectOptionModel].concat(optionProductTypes),
+            };
+            dispatch(stateDispatcher);
         }
         fnGetInitState()
         getList(1);
@@ -87,7 +95,7 @@ function ProductType() {
             okText: 'Đồng ý',
             cancelText: 'Hủy',
             onOk: async () => {
-                const response = await deleteProductType(id);
+                const response = await deleteProduct(id);
                 if (response.code === Code._200) {
                     message.success(response.message)
                     getList(1);
@@ -98,6 +106,38 @@ function ProductType() {
             },
         });
     };
+
+    const onChangeProductCategory = async () => {
+        const fieldsValue = await searchForm.validateFields();
+        searchForm?.setFieldsValue({
+            "ProductTypeId": '',
+        })
+        const filter = {
+            ProductCategoryId: fieldsValue.ProductCategoryId ? fieldsValue.ProductCategoryId : undefined,
+        }
+        if (!fieldsValue.ProductCategoryId) {
+            const stateDispatcher = {
+                productTypes: [{
+                    key: 'Default',
+                    label: '-Chọn-',
+                    value: '',
+                }],
+            }
+            dispatch(stateDispatcher)
+            return
+        }
+        const response: ResponseData = await getProductType(JSON.stringify(filter));
+
+        const options = ConvertOptionSelectModel(response.data as OptionModel[]);
+        const stateDispatcher = {
+            productTypes: [{
+                key: 'Default',
+                label: '-Chọn-',
+                value: '',
+            } as SelectOptionModel].concat(options),
+        };
+        dispatch(stateDispatcher);
+    }
 
     const multiDeleteRecord = () => {
         setLoadingDelete(true)
@@ -122,7 +162,7 @@ function ProductType() {
     };
 
     const onHandleShowModelCreate = async () => {
-        navigate(`/catalog/product-type/create`)
+        navigate(`/catalog/product/create`)
     };
 
     // searchForm
@@ -132,14 +172,14 @@ function ProductType() {
             const fieldsValue = await searchForm.validateFields();
             setLoading(true)
             const filter = {
+                ...fieldsValue,
                 page: current,
                 size: pageSize,
-                textSearch: fieldsValue.TextSearch,
             }
-            const response: ResponseData = await getProductType(
+            const response: ResponseData = await getProduct(
                 JSON.stringify(filter)
             );
-            setList((response.data || []) as ProductTypeModel[]);
+            setList((response.data || []) as ProductModel[]);
             setPagination({
                 ...pagination,
                 current,
@@ -154,7 +194,7 @@ function ProductType() {
     };
 
 
-    const columns: ProColumns<ProductTypeModel>[] = [
+    const columns: ProColumns<ProductModel>[] = [
         {
             title: 'STT',
             dataIndex: 'index',
@@ -162,14 +202,19 @@ function ProductType() {
             render: (_, record, index) => <>{(pagination.current - 1) * pagination.pageSize + index + 1}</>,
         },
         {
-            title: 'Mã loại SP',
+            title: 'Mã SP',
             dataIndex: 'code',
             render: (_, record) => <span>{record.code}</span>,
         },
         {
-            title: 'Tên loại SP',
+            title: 'Tên SP',
             dataIndex: 'name',
             render: (_, record) => <span>{record.name}</span>,
+        },
+        {
+            title: 'Loại SP',
+            dataIndex: 'productTypeName',
+            render: (_, record) => <span>{record.productTypeName}</span>,
         },
         {
             title: 'Nhóm SP',
@@ -184,17 +229,17 @@ function ProductType() {
         {
             title: 'Thao tác',
             key: 'action',
-            align: 'center',
             fixed: 'right',
+            align: 'center',
             width: 300,
             render: (_, record) => (
                 <Space>
-                    <Permission noNode navigation={layoutCode.catalogProductType as string} bitPermission={PermissionAction.Edit}>
-                        <Button type="dashed" title='Cập nhật' loading={false} onClick={() => navigate(`/catalog/product-type/edit/${record.id}`)}>
+                    <Permission noNode navigation={layoutCode.catalogProduct as string} bitPermission={PermissionAction.Edit}>
+                        <Button type="dashed" title='Cập nhật' loading={false} onClick={() => navigate(`/catalog/product/edit/${record.id}`)}>
                             <EditOutlined />
                         </Button>
                     </Permission>
-                    <Permission noNode navigation={layoutCode.catalogProductType as string} bitPermission={PermissionAction.Delete}>
+                    <Permission noNode navigation={layoutCode.catalogProduct as string} bitPermission={PermissionAction.Delete}>
                         <Button danger title='Xóa' loading={false} onClick={() => deleteRecord(record.id || '')}>
                             <DeleteOutlined />
                         </Button>
@@ -203,6 +248,9 @@ function ProductType() {
             ),
         },
     ];
+    const onHandleShowImportRegistrationPayments = async () => {
+        setShowModelImport(true)
+    }
 
     const actionRef = useRef<ActionType>();
     return (
@@ -220,7 +268,7 @@ function ProductType() {
                                             Tạo mới
                                         </Button>
                                     </Permission> */}
-                                    <Permission noNode navigation={layoutCode.catalogProductType as string} bitPermission={PermissionAction.Delete}>
+                                    <Permission noNode navigation={layoutCode.catalogProduct as string} bitPermission={PermissionAction.Delete}>
                                         {selectedRowDeleteKeys.length > 0 &&
                                             <Button htmlType='button' danger loading={loadingDelete} type='dashed' onClick={() => multiDeleteRecord()}>
                                                 <DeleteOutlined />
@@ -243,14 +291,48 @@ function ProductType() {
                                             <Row gutter={16} justify='start'>
                                                 <Col span={6}>
                                                     <Form.Item
-                                                        label={'Tên loại SP'}
+                                                        label={'Tên SP'}
                                                         labelCol={{ span: 24 }}
                                                         wrapperCol={{ span: 17 }}
                                                         name='TextSearch'
                                                     >
                                                         <Input
-                                                            placeholder='Tên loại SP'
+                                                            placeholder='Tên SP'
                                                             allowClear />
+                                                    </Form.Item>
+                                                </Col>
+                                                <Col span={6}>
+                                                    <Form.Item
+                                                        label={'Nhóm sản phẩm'}
+                                                        labelCol={{ span: 24 }}
+                                                        wrapperCol={{ span: 24 }}
+                                                        name='ProductCategoryId'
+                                                    >
+                                                        <Select
+                                                            showSearch
+                                                            optionFilterProp="children"
+                                                            filterOption={(input, option) => (option?.label ?? '').toString().toLowerCase().includes(input.toLowerCase())}
+                                                            // filterSort={(optionA, optionB) =>
+                                                            //     (optionA?.label ?? '').toString().toLowerCase().localeCompare((optionB?.label ?? '').toString().toLowerCase())
+                                                            // }
+                                                            placeholder='-Chọn-' options={state.productCategories} onChange={onChangeProductCategory} />
+                                                    </Form.Item>
+                                                </Col>
+                                                <Col span={6}>
+                                                    <Form.Item
+                                                        label={'Loại sản phẩm'}
+                                                        labelCol={{ span: 24 }}
+                                                        wrapperCol={{ span: 24 }}
+                                                        name='ProductTypeId'
+                                                    >
+                                                        <Select
+                                                            showSearch
+                                                            optionFilterProp="children"
+                                                            filterOption={(input, option) => (option?.label ?? '').toString().toLowerCase().includes(input.toLowerCase())}
+                                                            // filterSort={(optionA, optionB) =>
+                                                            //     (optionA?.label ?? '').toString().toLowerCase().localeCompare((optionB?.label ?? '').toString().toLowerCase())
+                                                            // }
+                                                            placeholder='-Chọn-' options={state.productTypes} />
                                                     </Form.Item>
                                                 </Col>
 
@@ -290,7 +372,7 @@ function ProductType() {
                     }}
                 /> */}
 
-                <ProTable<ProductTypeModel>
+                <ProTable<ProductModel>
                     dataSource={list}
                     rowKey="id"
                     loading={loading}
@@ -306,18 +388,30 @@ function ProductType() {
                     dateFormatter="string"
                     headerTitle="Tiêu đề"
                     toolBarRender={() => [
-                        <Permission noNode navigation={layoutCode.catalogProductType as string} bitPermission={PermissionAction.Add}>
+                        <Permission noNode navigation={layoutCode.catalogProduct as string} bitPermission={PermissionAction.Add}>
                             <Button htmlType='button' type='default' onClick={() => onHandleShowModelCreate()}>
                                 <PlusOutlined />
                                 Tạo mới
+                            </Button>
+                        </Permission>,
+                        <Permission noNode navigation={layoutCode.toeflChallengeRegistration as string} bitPermission={PermissionAction.Edit}>
+                            <Button htmlType='button' type='default' onClick={() => onHandleShowImportRegistrationPayments()}>
+                                <ImportOutlined />
+                                Import
                             </Button>
                         </Permission>
                     ]}
                 />
             </Card>
-
+            {showModelImport && (
+                <ImportProduct
+                    open={showModelImport}
+                    setOpen={setShowModelImport}
+                    reload={searchFormSubmit}
+                />
+            )}
         </div>
     );
 }
 
-export default ProductType;
+export default Product;
