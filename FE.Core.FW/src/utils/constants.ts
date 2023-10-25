@@ -107,6 +107,9 @@ export const layoutCode = {
   catalogCustomer: "catalog-customer",
   catalogCustomerCreate: "catalog-customer__create",
   catalogCustomerEdit: "catalog-customer__edit",
+  catalogContractType: "catalog-contract-type",
+  catalogContractTypeCreate: "catalog-contract-type__create",
+  catalogContractTypeEdit: "catalog-contract-type__edit",
 }
 export const routeArrays = [
   {
@@ -365,6 +368,18 @@ export const routeArrays = [
   {
     "Code": layoutCode.catalogCustomerEdit,
     "ComponentPath": lazy(() => import('../pages/catalog/customer/edit'))
+  },
+  {
+    "Code": layoutCode.catalogContractType,
+    "ComponentPath": lazy(() => import('../pages/catalog/contract-type'))
+  },
+  {
+    "Code": layoutCode.catalogContractTypeCreate,
+    "ComponentPath": lazy(() => import('../pages/catalog/contract-type/create'))
+  },
+  {
+    "Code": layoutCode.catalogContractTypeEdit,
+    "ComponentPath": lazy(() => import('../pages/catalog/contract-type/edit'))
   },
 ]
 //#endregion

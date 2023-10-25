@@ -8,6 +8,7 @@ using Backend.Business.Mailing;
 using Backend.Business.Navigation;
 using Backend.Business.Policy;
 using Backend.Business.Role;
+using Backend.Business.TaxCategory;
 using Backend.Business.UploadFile;
 using Backend.Business.User;
 
@@ -36,6 +37,7 @@ internal static class Startup
             .AddScoped<IAdministrativeDivisionHandler, AdministrativeDivisionHandler>()
             .AddScoped<ICustomerHandler, CustomerHandler>()
             .AddScoped<IContractTypeHandler, ContractTypeHandler>()
+            .AddScoped<ITaxCategoryHandler, TaxCategoryHandler>()
             .AddScoped<IDepartmentHandler, DepartmentHandler>();
     }
 }

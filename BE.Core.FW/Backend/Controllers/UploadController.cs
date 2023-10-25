@@ -3,12 +3,14 @@ using Backend.Infrastructure.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Serilog;
+using System;
 
 namespace Backend.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    [Authorize]
+    //[Authorize]
     [EnableCors]
     public class UploadController : ControllerBase
     {
@@ -21,9 +23,36 @@ namespace Backend.Controllers
 
 
         [HttpPost]
-        public async Task<ResponseData> ImportFile([FromForm] UploadFileModel fileDetails)
+        [Route("UploadFiles")]
+        public async Task<ActionResult> UploadFiles(List<IFormFile> files)
         {
-            return await _handler.PostFileAsync(fileDetails);
+            try
+            {
+                var result = await _handler.UploadFiles(files);
+
+                return Ok(new { files = result });
+            }
+            catch (Exception exception)
+            {
+                Log.Error(exception, exception.Message);
+                return default;
+            }
+        }
+
+        //[ValidateInput(false)]
+        [HttpDelete]
+        [Route("DeleteFile")]
+        public async Task<ResponseData> DeleteFile(string url)
+        {
+            try
+            {
+                return await _handler.DeleteFile(url);
+            }
+            catch (Exception exception)
+            {
+                Log.Error(exception, exception.Message);
+                return default;
+            }
         }
     }
 }

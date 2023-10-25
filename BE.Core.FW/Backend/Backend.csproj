@@ -133,6 +133,7 @@
 		<Folder Include="Infrastructure\DataAnnotations\" />
 		<Folder Include="FileDownload\" />
 		<Folder Include="OutputExcel\" />
+		<Folder Include="Upload\" />
 		<Folder Include="wwwroot\FileUploaded\" />
 		<Folder Include="wwwroot\FileDownload\" />
 		<Folder Include="ZipFiles\" />
