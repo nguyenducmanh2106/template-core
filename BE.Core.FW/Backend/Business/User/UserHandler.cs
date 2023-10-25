@@ -485,6 +485,7 @@ namespace Backend.Business.User
                                      Fullname = user.Fullname,
                                      Username = user.Username,
                                      DOB = user.DOB,
+                                     EmployeeAccessLevels = user.EmployeeAccessLevels,
                                  })?.FirstOrDefault();
                 if (existData == null)
                     return new ResponseDataError(Code.BadRequest, "SyncId not found");
@@ -497,7 +498,8 @@ namespace Backend.Business.User
 
                 var getRole = unitOfWork.Repository<SysRole>().FirstOrDefault(p => p.Id == existData.RoleId);
                 existData.AccessDataHeaderQuater = !string.IsNullOrEmpty(getRole?.AccessDataHeaderQuater) ? getRole.AccessDataHeaderQuater.Split(",").Select(p => new Guid(p)).ToList() : new List<Guid>();
-
+                existData.EmployeeAccessLevelArray = !string.IsNullOrEmpty(existData?.EmployeeAccessLevels) ? existData?.EmployeeAccessLevels.Split(",").Select(p => new Guid(p)).ToList() : new List<Guid>();
+                existData.DepartmentName = existData.DepartmentId.HasValue ? unitOfWork.Repository<SysDepartment>().GetById(existData.DepartmentId.Value)?.Name : string.Empty;
                 _cached.Add(keyCache, existData, 30);
                 return new ResponseDataObject<UserLoginInfo>(existData, Code.Success, "");
             }

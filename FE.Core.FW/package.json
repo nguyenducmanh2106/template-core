@@ -34,6 +34,7 @@
     "rc-picker": "^3.5.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-infinite-scroll-component": "^6.1.0",
     "react-router-dom": "^6.3.0",
     "react-swagger-openapi": "^0.14.1",
     "react-webcam": "^7.1.1",

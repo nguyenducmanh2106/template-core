@@ -32,6 +32,12 @@ namespace Backend.Infrastructure.Middleware.Permissions
             DateTimeOffset.FromUnixTimeSeconds(Convert.ToInt64(
                 principal.FindFirstValue(FSHClaims.Expiration)));
 
+        public static string? GetDepartmentAccess(this ClaimsPrincipal principal)
+          => principal.FindFirstValue(FSHClaims.DepartmentAccess);
+
+        public static bool IsManager(this ClaimsPrincipal principal)
+          => Boolean.Parse(principal.FindFirstValue(FSHClaims.IsManager));
+
         private static string? FindFirstValue(this ClaimsPrincipal principal, string claimType) =>
             principal is null
                 ? throw new ArgumentNullException(nameof(principal))

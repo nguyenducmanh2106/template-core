@@ -82,6 +82,7 @@ public class CustomerHandler : ICustomerHandler
             int pageNumber = 0;
             int pageSize = 20;
             int totalCount = 0;
+            string? departmentAccess = _currentUser.GetDepartmentAccess()?.ToLower();
             var filterModel = JsonConvert.DeserializeObject<CustomerFilterModel>(filter);
             if (filterModel == null)
                 return new ResponseDataError(Code.BadRequest, "Filter invalid");
@@ -91,6 +92,9 @@ public class CustomerHandler : ICustomerHandler
                 iigDepartmentData = iigDepartmentData.Where(x => x.Name.ToLower().Contains(filterModel.TextSearch.ToLower()));
             if (filterModel.DepartmentId.HasValue)
                 iigDepartmentData = iigDepartmentData.Where(x => x.DepartmentId == filterModel.DepartmentId.Value);
+            else
+                iigDepartmentData = iigDepartmentData.Where(x => x.DepartmentId.HasValue && !string.IsNullOrEmpty(departmentAccess) && departmentAccess.Contains(x.DepartmentId.Value.ToString().ToLower()));
+
             if (filterModel.DistrictId.HasValue)
                 iigDepartmentData = iigDepartmentData.Where(x => x.DistrictId == filterModel.DistrictId.Value);
             if (filterModel.ProvinceId.HasValue)
@@ -169,44 +173,55 @@ public class CustomerHandler : ICustomerHandler
             dr = Master.NewRow();
 
             // Tạo bảng dữ liệu Chi tiết ( Details )
-            DataTable detailProductCategories = new DataTable();
-            DataTable detailProductType = new DataTable();
+            DataTable detail = new DataTable();
+            DataTable detailCustomerType = new DataTable();
+            DataTable detailDepartment = new DataTable();
             using var unitOfWork = new UnitOfWork(_httpContextAccessor);
-            var productCategoryEntitys = unitOfWork.Repository<SysProductCategory>().Get();
-            var productTypeEntitys = unitOfWork.Repository<SysProductType>().Get();
+            var customerCategoryEntitys = unitOfWork.Repository<SysCustomerCategory>().Get();
+            var customerTypeEntitys = unitOfWork.Repository<SysCustomerType>().Get();
+            var departmentEntitys = unitOfWork.Repository<SysDepartment>().Get();
 
-            if (productCategoryEntitys != null && productCategoryEntitys.Count() > 0)
+            if (customerCategoryEntitys != null && customerCategoryEntitys.Count() > 0)
             {
-                List<ProductCategoryModel> productCategoryModels = _mapper.Map<List<ProductCategoryModel>>(productCategoryEntitys);
-                if (productCategoryModels != null && productCategoryModels.Count() > 0)
+                List<CustomerCategoryModel> customerCategoryModels = _mapper.Map<List<CustomerCategoryModel>>(customerCategoryEntitys);
+                if (customerCategoryModels != null && customerCategoryModels.Count() > 0)
                 {
-                    detailProductCategories = Commonyy.ToDataTable<ProductCategoryModel>(productCategoryModels);
-                    detailProductCategories.TableName = "ProductCategories";
+                    detail = Commonyy.ToDataTable<CustomerCategoryModel>(customerCategoryModels);
+                    detail.TableName = "CustomerCategories";
                 }
 
             }
-            if (productTypeEntitys != null && productTypeEntitys.Count() > 0)
+            if (customerTypeEntitys != null && customerTypeEntitys.Count() > 0)
             {
-                List<ProductTypeModel> productTypeModels = _mapper.Map<List<ProductTypeModel>>(productTypeEntitys);
-                if (productTypeModels != null && productTypeModels.Count() > 0)
+                List<CustomerTypeModel> customerTypeModels = _mapper.Map<List<CustomerTypeModel>>(customerTypeEntitys);
+                if (customerTypeModels != null && customerTypeModels.Count() > 0)
                 {
-                    detailProductType = Commonyy.ToDataTable<ProductTypeModel>(productTypeModels);
-                    detailProductType.TableName = "ProductTypes";
+                    detailCustomerType = Commonyy.ToDataTable<CustomerTypeModel>(customerTypeModels);
+                    detailCustomerType.TableName = "CustomerTypes";
                 }
             }
-
+            if (departmentEntitys != null && departmentEntitys.Count() > 0)
+            {
+                List<DepartmentModel> departmentModels = _mapper.Map<List<DepartmentModel>>(departmentEntitys);
+                if (departmentModels != null && departmentModels.Count() > 0)
+                {
+                    detailDepartment = Commonyy.ToDataTable<DepartmentModel>(departmentModels);
+                    detailDepartment.TableName = "Departments";
+                }
+            }
 
             Master.Rows.Add(dr);
             // Tạo Dataset ghi dữ liệu Master + Details 
             var ds = new DataSet();
-            ds.Tables.Add(detailProductCategories);
-            ds.Tables.Add(detailProductType);
+            ds.Tables.Add(detail);
+            ds.Tables.Add(detailCustomerType);
+            ds.Tables.Add(detailDepartment);
             ds.Tables.Add(Master);
 
             // Lấy tên file đầu vào và đầu ra 
-            var fileTmp = $"Template_Import_Product.xlsx";
+            var fileTmp = $"Template_Import_Customer.xlsx";
 
-            var fileOutput = $"Template_Import_Product.xlsx";
+            var fileOutput = $"Template_Import_Customer.xlsx";
             //var pathExport = Path.Combine(Environment.CurrentDirectory, @"OutputExcel\" + fileOutput);
             //var fileName = System.IO.Path.GetFileName(pathExport);
             ExcelFillData.FillReport(fileOutput, fileTmp, ds, new string[] { "{", "}" });
@@ -214,9 +229,9 @@ public class CustomerHandler : ICustomerHandler
             var result = new FileModel() { Extention = ".xlsx" };
             var currentDirectory = Directory.GetCurrentDirectory();
             var filePath = "";
-            result.Name = "Template_Import_Product";
-            result.Description = "File import san pham";
-            filePath = currentDirectory + Utils.GetConfig("ImportTemplateFilePath:Template_Import_Product");
+            result.Name = "Template_Import_Customer";
+            result.Description = "File import khach hang";
+            filePath = currentDirectory + Utils.GetConfig("ImportTemplateFilePath:Template_Import_Customer");
             if (System.IO.File.Exists(filePath))
             {
                 var bytes = System.IO.File.ReadAllBytes(filePath);
@@ -280,8 +295,8 @@ public class CustomerHandler : ICustomerHandler
                     Id = Guid.NewGuid(),
                     Name = item[CustomerExcelColumnName.col2].ToString(),
                     TaxCode = item[CustomerExcelColumnName.col3].ToString(),
-                    CreatedByUserId = new Guid(_httpContextAccessor.HttpContext.Request.Headers["IIG-User"]),
-                    LastModifiedByUserId = new Guid(_httpContextAccessor.HttpContext.Request.Headers["IIG-User"]),
+                    CreatedByUserId = _currentUser.GetUserId(),
+                    LastModifiedByUserId = _currentUser.GetUserId(),
                     Representative = item[CustomerExcelColumnName.col7].ToString(),
                     Position = item[CustomerExcelColumnName.col8].ToString(),
                     Telephone = item[CustomerExcelColumnName.col9].ToString(),

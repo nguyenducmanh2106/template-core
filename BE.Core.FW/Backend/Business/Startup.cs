@@ -1,6 +1,7 @@
 using Backend.Business.AdministrativeDivision;
 using Backend.Business.Auth;
 using Backend.Business.Branch;
+using Backend.Business.ContractType;
 using Backend.Business.Customer;
 using Backend.Business.Department;
 using Backend.Business.Mailing;
@@ -34,6 +35,7 @@ internal static class Startup
             .AddScoped<ICustomerTypeHandler, CustomerTypeHandler>()
             .AddScoped<IAdministrativeDivisionHandler, AdministrativeDivisionHandler>()
             .AddScoped<ICustomerHandler, CustomerHandler>()
+            .AddScoped<IContractTypeHandler, ContractTypeHandler>()
             .AddScoped<IDepartmentHandler, DepartmentHandler>();
     }
 }

@@ -167,7 +167,9 @@ namespace Backend.Business.Auth
             new(FSHClaims.IpAddress, ipAddress),
             //new(FSHClaims.Tenant, _currentTenant!.Id),
             //new(FSHClaims.ImageUrl, user.ImageUrl ?? string.Empty),
-            new(ClaimTypes.MobilePhone, user.Phone ?? string.Empty)
+            new(ClaimTypes.MobilePhone, user.Phone ?? string.Empty),
+            new(FSHClaims.DepartmentAccess, (user.EmployeeAccessLevels ?? string.Empty) + "," + (user.DepartmentId?.ToString() ?? string.Empty)),
+            new(FSHClaims.IsManager, user.IsAccessMaxLevel.ToString()),
             };
         private string GenerateEncryptedToken(SigningCredentials signingCredentials, IEnumerable<Claim> claims)
         {

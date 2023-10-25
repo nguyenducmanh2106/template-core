@@ -129,6 +129,8 @@ export const putDepartment = (
  * @throws ApiError
  */
 export const getDepartment2 = (
+  isCom?: boolean,
+  isAll?: boolean,
   tenant?: string
 ): CancelablePromise<ResponseData> => {
   return __request({
@@ -137,6 +139,9 @@ export const getDepartment2 = (
     headers: {
       Tenant: tenant,
     },
+    query: {
+      isCom: isCom,
+      isAll: isAll,
+    },
   });
 };
-

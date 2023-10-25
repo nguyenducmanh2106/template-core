@@ -5,6 +5,7 @@ import { RegistrationExamType } from '@/apis/models/toefl-challenge/Registration
 import { RegistrationModel } from '@/apis/models/toefl-challenge/RegistrationModel';
 import { RegistrationRound } from '@/apis/models/toefl-challenge/RegistrationRound';
 import { TemplateType } from '@/apis/models/toefl-challenge/TemplateType';
+import { getCustomer2, postCustomer1 } from '@/apis/services/CustomerService';
 import { getProduct2, postProduct1 } from '@/apis/services/ProductService';
 import { getFile } from '@/apis/services/toefl-challenge/FileService';
 import { postRegistrationPayment, postRegistrationPayment1, putRegistrationPayment } from '@/apis/services/toefl-challenge/RegistrationPaymentService';
@@ -39,7 +40,7 @@ interface Props {
     setOpen: (value: boolean) => void;
     reload: (current: number, pageSize: number) => void;
 }
-function ImportProduct({ open, setOpen, reload }: Props) {
+function ImportCustomer({ open, setOpen, reload }: Props) {
     const [searchForm] = Form.useForm();
     // Load
     const initState = {
@@ -101,7 +102,7 @@ function ImportProduct({ open, setOpen, reload }: Props) {
         // return
         let file: Blob = fieldsValue.FileUpload?.fileList[0]?.originFileObj
 
-        const response = await postProduct1("", { file: file });
+        const response = await postCustomer1("", { file: file });
         setConfirmLoading(false)
         if (response.code === Code._200) {
             message.success(response.message || "Upload file thành công")
@@ -148,7 +149,7 @@ function ImportProduct({ open, setOpen, reload }: Props) {
 
     const downloadFileTemplate = async () => {
         // console.log('download');
-        const response = await getProduct2();
+        const response = await getCustomer2();
         if (response.code === Code._200) {
             const { base64: base64Data, extention, name } = response.data as any
             // Tạo một đối tượng Blob từ dữ liệu base64
@@ -179,7 +180,7 @@ function ImportProduct({ open, setOpen, reload }: Props) {
 
     return (
         <>
-            <Modal title="Upload danh sách sản phẩm" open={open} cancelText="Bỏ qua" width={'800px'}
+            <Modal title="Upload danh sách khách hàng" open={open} cancelText="Bỏ qua" width={'800px'}
                            /* onOk={onSubmit}*/ okText={modalButtonOkText} style={{ top: 20 }} onCancel={handleCancel}
                 confirmLoading={confirmLoading}
                 okButtonProps={{ form: 'myFormCreate', htmlType: 'submit' }}
@@ -219,4 +220,4 @@ function ImportProduct({ open, setOpen, reload }: Props) {
     );
 }
 
-export default ImportProduct;
+export default ImportCustomer;

@@ -41,7 +41,7 @@ namespace Backend.Controllers
 
         [HttpGet]
         [Route("district")]
-        public ResponseData Update(Guid provinceId)
+        public ResponseData GetDistrict(Guid provinceId)
         {
             return _handler.GetDistrict(provinceId);
         }

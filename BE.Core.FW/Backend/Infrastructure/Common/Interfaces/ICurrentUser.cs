@@ -11,6 +11,8 @@ namespace Backend.Infrastructure.Common.Interfaces
         string? GetUserEmail();
 
         string? GetTenant();
+        string? GetDepartmentAccess();
+        bool IsManager();
 
         bool IsAuthenticated();
 

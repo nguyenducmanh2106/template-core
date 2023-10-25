@@ -24,6 +24,27 @@ namespace Backend.Infrastructure.EntityFramework
         public DbSet<SysCustomer> Customers { get; set; }
         public DbSet<SysProvince> Provinces { get; set; }
         public DbSet<SysDistrict> Districts { get; set; }
+        public DbSet<SysContractType> ContractTypes { get; set; }
+
+        public DbSet<SysContract> Contracts { get; set; }
+        public DbSet<SysContractFile> ContractFiles { get; set; }
+        public DbSet<SysContractProduct> ContractProducts { get; set; }
+        public DbSet<SysTarget> Targets { get; set; }
+        public DbSet<SysTargetMapping> TargetMappings { get; set; }
+        public DbSet<SysSalesPlaning> SalesPlanings { get; set; }
+        public DbSet<SysSalesPlaningProduct> SalesPlaningProducts { get; set; }
+        public DbSet<SysSalesPlaningPayment> SalesPlaningPayments { get; set; }
+        public DbSet<SysSalesPlaningCommision> SysSalesPlaningCommisions { get; set; }
+        public DbSet<SysSalesPlaningPaymentCommision> SysSalesPlaningPaymentCommisions { get; set; }
+        public DbSet<SysAcceptanceCertificate> AcceptanceCertificates { get; set; }
+        public DbSet<SysPricingDecision> PricingDecisions { get; set; }
+        public DbSet<SysTaxCategory> SysTaxCategories { get; set; }
+        public DbSet<SysHistoryTarget> HistoryTargets { get; set; }
+        public DbSet<SysSalesPlaningProductPayments> SalesPlaningProductPayments { get; set; }
+        public DbSet<SysSalesPlaningPaymentCosts> SalesPlaningPaymentCosts { get; set; }
+        public DbSet<SysSalesPlaningPaymentMapping> SalesPlaningPaymentMappings { get; set; }
+        public DbSet<SysPricingCategory> PricingCategories { get; set; }
+        public DbSet<SysWorkflowConfig> WorkflowConfigs { get; set; }
 
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

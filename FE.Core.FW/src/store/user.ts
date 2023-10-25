@@ -9,10 +9,12 @@ export interface CurrentUser {
   syncId?: string | null,
   username?: string | null;
   fullname?: string | null;
+  departmentId?: string | null;
+  departmentName?: string | null;
   avatar: string;
   roles: string[];
   permissions: PolicyModel[];
-  accessDataHeaderQuater: string[];
+  employeeAccessLevelArray: string[];
 }
 
 export const initialState: CurrentUser = {
@@ -21,9 +23,11 @@ export const initialState: CurrentUser = {
   username: '',
   fullname: '',
   avatar: '',
+  departmentId: '',
+  departmentName: '',
   roles: [],
   permissions: [],
-  accessDataHeaderQuater: []
+  employeeAccessLevelArray: []
 };
 
 export const userState = atom({
@@ -49,9 +53,11 @@ export const useUserState = selector({
         fullname: userResponse.fullname ?? "",
         username: userResponse.username ?? "",
         avatar: '',
+        departmentId: userResponse.departmentId,
+        departmentName: userResponse.departmentName,
         roles: [`${userResponse.roleName}`],
         permissions: userResponse.permissions ?? [],
-        accessDataHeaderQuater: userResponse.accessDataHeaderQuater as string[]
+        employeeAccessLevelArray: userResponse.employeeAccessLevelArray as string[]
       }
       localStorage.setItem("permissionSetting", JSON.stringify({ ...list }))
 

@@ -10,6 +10,7 @@ import {
     Row,
     Select,
     Space,
+    TreeSelect,
     Typography,
     message
 } from 'antd';
@@ -27,7 +28,9 @@ import { OptionModel, SelectOptionModel } from '@/@types/data';
 import ImportProduct from './import-customer';
 import { CustomerModel } from '@/apis/models/CustomerModel';
 import { deleteCustomer, getCustomer } from '@/apis/services/CustomerService';
-import { getAdministrativeDivision } from '@/apis/services/AdministrativeDivisionService';
+import { getAdministrativeDivision, getAdministrativeDivision2 } from '@/apis/services/AdministrativeDivisionService';
+import { getDepartment, getDepartment2 } from '@/apis/services/DepartmentService';
+import ImportCustomer from './import-customer';
 function Product() {
     const navigate = useNavigate();
     // Load
@@ -68,12 +71,14 @@ function Product() {
             const responseProvinces: ResponseData = await getAdministrativeDivision();
 
             const optionProvinces = ConvertOptionSelectModel(responseProvinces.data as OptionModel[]);
+            const responseDepartment: ResponseData = await getDepartment2();
             const stateDispatcher = {
                 provinces: [{
                     key: 'Default',
                     label: '-Chọn-',
                     value: '',
                 } as SelectOptionModel].concat(optionProvinces),
+                departments: responseDepartment.data,
                 districts: [{
                     key: 'Default',
                     label: '-Chọn-',
@@ -105,36 +110,36 @@ function Product() {
         });
     };
 
-    const onChangeProductCategory = async () => {
-        // const fieldsValue = await searchForm.validateFields();
-        // searchForm?.setFieldsValue({
-        //     "ProductTypeId": '',
-        // })
-        // const filter = {
-        //     ProductCategoryId: fieldsValue.ProductCategoryId ? fieldsValue.ProductCategoryId : undefined,
-        // }
-        // if (!fieldsValue.ProductCategoryId) {
-        //     const stateDispatcher = {
-        //         productTypes: [{
-        //             key: 'Default',
-        //             label: '-Chọn-',
-        //             value: '',
-        //         }],
-        //     }
-        //     dispatch(stateDispatcher)
-        //     return
-        // }
-        // const response: ResponseData = await getProductType(JSON.stringify(filter));
+    const onChangeProvince = async () => {
+        const fieldsValue = await searchForm.validateFields();
+        searchForm?.setFieldsValue({
+            "DistrictId": '',
+        })
+        const filter = {
+            ProvinceId: fieldsValue.ProvinceId ? fieldsValue.ProvinceId : undefined,
+        }
+        if (!fieldsValue.ProvinceId) {
+            const stateDispatcher = {
+                districts: [{
+                    key: 'Default',
+                    label: '-Chọn-',
+                    value: '',
+                }],
+            }
+            dispatch(stateDispatcher)
+            return
+        }
+        const response: ResponseData = await getAdministrativeDivision2(filter.ProvinceId);
 
-        // const options = ConvertOptionSelectModel(response.data as OptionModel[]);
-        // const stateDispatcher = {
-        //     productTypes: [{
-        //         key: 'Default',
-        //         label: '-Chọn-',
-        //         value: '',
-        //     } as SelectOptionModel].concat(options),
-        // };
-        // dispatch(stateDispatcher);
+        const options = ConvertOptionSelectModel(response.data as OptionModel[]);
+        const stateDispatcher = {
+            districts: [{
+                key: 'Default',
+                label: '-Chọn-',
+                value: '',
+            } as SelectOptionModel].concat(options),
+        };
+        dispatch(stateDispatcher);
     }
 
     const multiDeleteRecord = () => {
@@ -160,7 +165,7 @@ function Product() {
     };
 
     const onHandleShowModelCreate = async () => {
-        navigate(`/catalog/product/create`)
+        navigate(`/catalog/customer/create`)
     };
 
     // searchForm
@@ -248,7 +253,7 @@ function Product() {
             render: (_, record) => (
                 <Space>
                     <Permission noNode navigation={layoutCode.catalogProduct as string} bitPermission={PermissionAction.Edit}>
-                        <Button type="dashed" title='Cập nhật' loading={false} onClick={() => navigate(`/catalog/product/edit/${record.id}`)}>
+                        <Button type="dashed" title='Cập nhật' loading={false} onClick={() => navigate(`/catalog/customer/edit/${record.id}`)}>
                             <EditOutlined />
                         </Button>
                     </Permission>
@@ -304,13 +309,13 @@ function Product() {
                                             <Row gutter={16} justify='start'>
                                                 <Col span={6}>
                                                     <Form.Item
-                                                        label={'Tên SP'}
+                                                        label={'Tên khách hàng'}
                                                         labelCol={{ span: 24 }}
                                                         wrapperCol={{ span: 17 }}
                                                         name='TextSearch'
                                                     >
                                                         <Input
-                                                            placeholder='Tên SP'
+                                                            placeholder='Tên khách hàng'
                                                             allowClear />
                                                     </Form.Item>
                                                 </Col>
@@ -328,7 +333,7 @@ function Product() {
                                                             // filterSort={(optionA, optionB) =>
                                                             //     (optionA?.label ?? '').toString().toLowerCase().localeCompare((optionB?.label ?? '').toString().toLowerCase())
                                                             // }
-                                                            placeholder='-Chọn-' options={state.provinces} onChange={onChangeProductCategory} />
+                                                            placeholder='-Chọn-' options={state.provinces} onChange={onChangeProvince} />
                                                     </Form.Item>
                                                 </Col>
                                                 <Col span={6}>
@@ -348,7 +353,27 @@ function Product() {
                                                             placeholder='-Chọn-' options={state.districts} />
                                                     </Form.Item>
                                                 </Col>
-
+                                                <Col span={6}>
+                                                    <Form.Item
+                                                        label={'Phòng ban phụ trách'}
+                                                        labelCol={{ span: 24 }}
+                                                        wrapperCol={{ span: 24 }}
+                                                        name='DepartmentId'
+                                                    >
+                                                        <TreeSelect
+                                                            showSearch
+                                                            treeLine
+                                                            style={{ width: '100%' }}
+                                                            // value={value}
+                                                            dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+                                                            placeholder="-Chọn phòng ban-"
+                                                            allowClear
+                                                            treeDefaultExpandAll
+                                                            showCheckedStrategy={TreeSelect.SHOW_CHILD}
+                                                            treeData={state.departments}
+                                                        />
+                                                    </Form.Item>
+                                                </Col>
 
                                                 <Col span={24}>
                                                     <Button type='primary' htmlType='submit' onClick={() => searchFormSubmit()}>
@@ -401,13 +426,13 @@ function Product() {
                     dateFormatter="string"
                     headerTitle="Tiêu đề"
                     toolBarRender={() => [
-                        <Permission noNode navigation={layoutCode.catalogProduct as string} bitPermission={PermissionAction.Add}>
+                        <Permission noNode navigation={layoutCode.catalogCustomer as string} bitPermission={PermissionAction.Add}>
                             <Button htmlType='button' type='default' onClick={() => onHandleShowModelCreate()}>
                                 <PlusOutlined />
                                 Tạo mới
                             </Button>
                         </Permission>,
-                        <Permission noNode navigation={layoutCode.toeflChallengeRegistration as string} bitPermission={PermissionAction.Edit}>
+                        <Permission noNode navigation={layoutCode.catalogCustomer as string} bitPermission={PermissionAction.Add}>
                             <Button htmlType='button' type='default' onClick={() => onHandleShowImportRegistrationPayments()}>
                                 <ImportOutlined />
                                 Import
@@ -417,7 +442,7 @@ function Product() {
                 />
             </Card>
             {showModelImport && (
-                <ImportProduct
+                <ImportCustomer
                     open={showModelImport}
                     setOpen={setShowModelImport}
                     reload={searchFormSubmit}

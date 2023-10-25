@@ -50,9 +50,9 @@ namespace Backend.Controllers
 
         [HttpGet]
         [Route("tree")]
-        public ResponseData GetTree()
+        public ResponseData GetTree(bool? isCom,bool? isAll)
         {
-            return _iigDepartmentHandler.GetTree();
+            return _iigDepartmentHandler.GetTree(isCom,isAll);
         }
 
 

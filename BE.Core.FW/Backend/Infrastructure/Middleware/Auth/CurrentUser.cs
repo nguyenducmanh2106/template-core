@@ -22,6 +22,16 @@ namespace Backend.Infrastructure.Middleware.Auth
                 ? _user!.GetEmail()
                 : string.Empty;
 
+        public string? GetDepartmentAccess() =>
+            IsAuthenticated()
+                ? _user?.GetDepartmentAccess()
+                : string.Empty;
+
+        public bool IsManager() =>
+            IsAuthenticated()
+                ? _user?.IsManager() ?? false
+                : false;
+
         public bool IsAuthenticated() =>
             _user?.Identity?.IsAuthenticated is true;
 

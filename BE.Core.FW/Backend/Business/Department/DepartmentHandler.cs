@@ -1,4 +1,5 @@
 using AutoMapper;
+using Backend.Infrastructure.Common.Interfaces;
 using Backend.Infrastructure.EntityFramework.Datatables;
 using Backend.Infrastructure.EntityFramework.Repositories;
 using Backend.Infrastructure.Utils;
@@ -12,11 +13,13 @@ public class DepartmentHandler : IDepartmentHandler
 {
     private readonly IMapper _mapper;
     private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly ICurrentUser _currentUser;
 
-    public DepartmentHandler(IMapper mapper, IHttpContextAccessor httpContextAccessor)
+    public DepartmentHandler(IMapper mapper, IHttpContextAccessor httpContextAccessor, ICurrentUser currentUser)
     {
         _mapper = mapper;
         _httpContextAccessor = httpContextAccessor;
+        _currentUser = currentUser;
     }
 
     public ResponseData Create(DepartmentModel model)
@@ -127,7 +130,7 @@ public class DepartmentHandler : IDepartmentHandler
         }
     }
 
-    public ResponseData GetTree()
+    public ResponseData GetTree(bool? isCom, bool? isAll)
     {
         try
         {
@@ -136,6 +139,19 @@ public class DepartmentHandler : IDepartmentHandler
             if (root == null)
             {
                 return new ResponseDataError(Code.NotFound, "Not found");
+            }
+            if (isCom.HasValue)
+            {
+                root = root.Where(g => !g.ParentId.HasValue || g.IsCom == isCom.Value);
+            }
+            if (!isAll.HasValue)
+            {
+                string? departmentAccess = _currentUser.GetDepartmentAccess()?.ToLower();
+                if (string.IsNullOrEmpty(departmentAccess))
+                {
+                    root = new List<SysDepartment>();
+                }
+                root = root.Where(g => !g.ParentId.HasValue || departmentAccess.Contains(g.Id.ToString().ToLower()));
             }
             //var result = BuildDepartment(root);
             var result = RecursiveDepartment(root?.ToList() ?? new List<SysDepartment>(), null);

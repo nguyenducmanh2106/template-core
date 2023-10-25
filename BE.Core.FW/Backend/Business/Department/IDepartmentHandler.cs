@@ -6,7 +6,7 @@ namespace Backend.Business.Department;
 public interface IDepartmentHandler
 {
     ResponseData Get(string filter);
-    ResponseData GetTree();
+    ResponseData GetTree(bool? isCom, bool? isAll);
     ResponseData GetById(Guid id);
     ResponseData Create(DepartmentModel model);
     ResponseData Update(Guid id, DepartmentModel model);

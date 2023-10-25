@@ -8,5 +8,7 @@
         public const string ImageUrl = "image_url";
         public const string IpAddress = "ipAddress";
         public const string Expiration = "exp";
+        public const string DepartmentAccess = "departmentAccess";
+        public const string IsManager = "isManager";
     }
 }
