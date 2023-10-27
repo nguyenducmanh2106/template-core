@@ -29,7 +29,6 @@ import dayjs from 'dayjs';
 function PricingDecisionEdit() {
     const navigate = useNavigate();
     const params = useParams()
-    console.log(params);
     // Load
     const initState = {
         recordEdit: {}
@@ -44,7 +43,7 @@ function PricingDecisionEdit() {
         }),
         initState,
     );
-   
+
 
     useEffect(() => {
         const fnGetInitState = async () => {
@@ -55,8 +54,8 @@ function PricingDecisionEdit() {
                 recordEdit: responseDivision.data
             };
             const { filePath, fileName } = responseDivision.data as PricingDecisionModel;
-            const filePathList = filePath?.split(',') ?? []
-            const fileNameList = fileName?.split(',') ?? []
+            const filePathList = Boolean(filePath) ? filePath?.split(',') : []
+            const fileNameList = Boolean(fileName) ? fileName?.split(',') as string[] : []
             const files: UploadFile[] = []
             filePathList?.forEach((filePath: string, idx: number) => {
                 const fileObj: UploadFile = {

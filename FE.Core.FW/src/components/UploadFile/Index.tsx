@@ -54,11 +54,11 @@ const UploadFileComponent: React.FC<InputFormProps> = ({ fileListInit, onChangeF
     multiple: true,
     listType: 'picture',
     onChange(info: UploadChangeParam<UploadFile<any>>) {
-      // console.log(info)
+      console.log(info)
       if (info.file.status !== 'uploading') {
         // console.log(info.file, info.fileList);
       }
-      if (info.file.status === 'done') {
+      if (info.file.status === 'done' || info.file.status === "removed") {
         // message.success(`${info.file.name} file uploaded successfully`);
         // console.log(info.file.response.files[0])
         onChangeFile && onChangeFile(info.fileList)
@@ -67,7 +67,6 @@ const UploadFileComponent: React.FC<InputFormProps> = ({ fileListInit, onChangeF
       }
     },
     onPreview: (file) => {
-      console.log(file)
       const filePreview = file.response?.files?.length > 0 ? file.response.files[0] : null
       setPreviewImage(filePreview)
       setPreviewOpen(true);
