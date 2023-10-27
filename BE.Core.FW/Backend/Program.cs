@@ -211,6 +211,12 @@ app.UseStaticFiles(new StaticFileOptions()
     RequestPath = new PathString("/EmailTemplates")
 });
 
+app.UseStaticFiles(new StaticFileOptions()
+{
+    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "Upload")),
+    RequestPath = new PathString("/Upload")
+});
+
 Directory.CreateDirectory(Path.Combine(Environment.CurrentDirectory, "FileDownload"));
 app.UseStaticFiles(new StaticFileOptions()
 {

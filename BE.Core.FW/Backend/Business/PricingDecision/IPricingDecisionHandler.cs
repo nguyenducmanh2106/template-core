@@ -1,7 +1,7 @@
 using Backend.Infrastructure.Utils;
 using Backend.Model;
 
-namespace Backend.Business.Branch;
+namespace Backend.Business.PricingDecision;
 
 public interface IPricingDecisionHandler
 {

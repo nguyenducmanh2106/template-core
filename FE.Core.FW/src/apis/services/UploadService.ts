@@ -12,22 +12,44 @@ import {
 /**
  * @param tenant
  * @param formData
- * @returns ResponseData Success
+ * @returns any Success
  * @throws ApiError
  */
 export const postUpload = (
   tenant?: string,
   formData?: {
-    FileDetails?: Blob;
+    files?: Array<Blob>;
   }
-): CancelablePromise<ResponseData> => {
+): CancelablePromise<any> => {
   return __request({
     method: "POST",
-    path: `/Upload`,
+    path: `/Upload/UploadFiles`,
     headers: {
       Tenant: tenant,
     },
     formData: formData,
     mediaType: "multipart/form-data",
+  });
+};
+
+/**
+ * @param url
+ * @param tenant
+ * @returns ResponseData Success
+ * @throws ApiError
+ */
+export const deleteUpload = (
+  url?: string,
+  tenant?: string
+): CancelablePromise<ResponseData> => {
+  return __request({
+    method: "DELETE",
+    path: `/Upload/DeleteFile`,
+    headers: {
+      Tenant: tenant,
+    },
+    query: {
+      url: url,
+    },
   });
 };

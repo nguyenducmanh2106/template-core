@@ -110,6 +110,9 @@ export const layoutCode = {
   catalogContractType: "catalog-contract-type",
   catalogContractTypeCreate: "catalog-contract-type__create",
   catalogContractTypeEdit: "catalog-contract-type__edit",
+  catalogPricingDecision: "catalog-pricing-decision",
+  catalogPricingDecisionCreate: "catalog-pricing-decision__create",
+  catalogPricingDecisionEdit: "catalog-pricing-decision__edit",
 }
 export const routeArrays = [
   {
@@ -380,6 +383,18 @@ export const routeArrays = [
   {
     "Code": layoutCode.catalogContractTypeEdit,
     "ComponentPath": lazy(() => import('../pages/catalog/contract-type/edit'))
+  },
+  {
+    "Code": layoutCode.catalogPricingDecision,
+    "ComponentPath": lazy(() => import('../pages/catalog/pricing-decision'))
+  },
+  {
+    "Code": layoutCode.catalogPricingDecisionCreate,
+    "ComponentPath": lazy(() => import('../pages/catalog/pricing-decision/create'))
+  },
+  {
+    "Code": layoutCode.catalogPricingDecisionEdit,
+    "ComponentPath": lazy(() => import('../pages/catalog/pricing-decision/edit'))
   },
 ]
 //#endregion

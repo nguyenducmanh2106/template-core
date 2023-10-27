@@ -41,6 +41,7 @@ namespace Backend.Business.UploadFile
             var lstFile = new List<string>();
             //if (formFiles?.Count <= 0) return new ResponseDataError(Code.ServerError, "Bạn chưa chọn file.");
             if (formFiles?.Count <= 0) return default;
+            
             try
             {
                 //  Get all files from Request object  

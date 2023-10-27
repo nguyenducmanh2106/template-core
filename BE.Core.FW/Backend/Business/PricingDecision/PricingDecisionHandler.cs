@@ -6,27 +6,27 @@ using Backend.Model;
 using Newtonsoft.Json;
 using Serilog;
 
-namespace Backend.Business.Branch;
+namespace Backend.Business.PricingDecision;
 
-public class CustomerCategoryHandler : ICustomerCategoryHandler
+public class PricingDecisionHandler : IPricingDecisionHandler
 {
     private readonly IMapper _mapper;
     private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public CustomerCategoryHandler(IMapper mapper, IHttpContextAccessor httpContextAccessor)
+    public PricingDecisionHandler(IMapper mapper, IHttpContextAccessor httpContextAccessor)
     {
         _mapper = mapper;
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public ResponseData Create(CustomerCategoryModel model)
+    public ResponseData Create(PricingDecisionModel model)
     {
         try
         {
             using UnitOfWork unitOfWork = new(_httpContextAccessor);
             model.Id = Guid.NewGuid();
 
-            unitOfWork.Repository<SysCustomerCategory>().Insert(_mapper.Map<SysCustomerCategory>(model));
+            unitOfWork.Repository<SysPricingDecision>().Insert(_mapper.Map<SysPricingDecision>(model));
             unitOfWork.Save();
             return new ResponseData(Code.Success, "");
         }
@@ -42,12 +42,12 @@ public class CustomerCategoryHandler : ICustomerCategoryHandler
         try
         {
             using var unitOfWork = new UnitOfWork(_httpContextAccessor);
-            var iigDepartmentData = unitOfWork.Repository<SysCustomerCategory>().GetById(id);
+            var iigDepartmentData = unitOfWork.Repository<SysPricingDecision>().GetById(id);
             if (iigDepartmentData == null)
             {
                 return new ResponseDataError(Code.NotFound, "Id not found");
             }
-            unitOfWork.Repository<SysCustomerCategory>().Delete(iigDepartmentData);
+            unitOfWork.Repository<SysPricingDecision>().Delete(iigDepartmentData);
             unitOfWork.Save();
             return new ResponseData(Code.Success, "Xóa thành công");
         }
@@ -69,7 +69,7 @@ public class CustomerCategoryHandler : ICustomerCategoryHandler
             if (filterModel == null)
                 return new ResponseDataError(Code.BadRequest, "Filter invalid");
             using var unitOfWork = new UnitOfWork(_httpContextAccessor);
-            var iigDepartmentData = unitOfWork.Repository<SysCustomerCategory>().Get();
+            var iigDepartmentData = unitOfWork.Repository<SysPricingDecision>().Get();
             if (!string.IsNullOrEmpty(filterModel.TextSearch))
                 iigDepartmentData = iigDepartmentData.Where(x => x.Name.ToLower().Contains(filterModel.TextSearch.ToLower()));
             totalCount = iigDepartmentData.Count();
@@ -80,7 +80,7 @@ public class CustomerCategoryHandler : ICustomerCategoryHandler
                 pageSize = filterModel.Size.Value;
             }
 
-            var result = _mapper.Map<List<CustomerCategoryModel>>(iigDepartmentData);
+            var result = _mapper.Map<List<PricingDecisionModel>>(iigDepartmentData);
 
             var pagination = new Pagination()
             {
@@ -89,7 +89,7 @@ public class CustomerCategoryHandler : ICustomerCategoryHandler
                 TotalCount = totalCount,
                 TotalPage = (int)Math.Ceiling((decimal)totalCount / pageSize)
             };
-            return new PageableData<List<CustomerCategoryModel>>(result, pagination, Code.Success, "");
+            return new PageableData<List<PricingDecisionModel>>(result, pagination, Code.Success, "");
         }
         catch (Exception exception)
         {
@@ -103,13 +103,13 @@ public class CustomerCategoryHandler : ICustomerCategoryHandler
         try
         {
             using var unitOfWork = new UnitOfWork(_httpContextAccessor);
-            var iigDepartmentData = unitOfWork.Repository<SysCustomerCategory>().GetById(id);
+            var iigDepartmentData = unitOfWork.Repository<SysPricingDecision>().GetById(id);
             if (iigDepartmentData == null)
             {
                 return new ResponseDataError(Code.NotFound, "Id not found");
             }
-            var result = _mapper.Map<CustomerCategoryModel>(iigDepartmentData);
-            return new ResponseDataObject<CustomerCategoryModel>(result, Code.Success, "");
+            var result = _mapper.Map<PricingDecisionModel>(iigDepartmentData);
+            return new ResponseDataObject<PricingDecisionModel>(result, Code.Success, "");
         }
         catch (Exception exception)
         {
@@ -118,25 +118,29 @@ public class CustomerCategoryHandler : ICustomerCategoryHandler
         }
     }
 
-    public ResponseData Update(Guid id, CustomerCategoryModel model)
+    public ResponseData Update(Guid id, PricingDecisionModel model)
     {
         try
         {
             using var unitOfWork = new UnitOfWork(_httpContextAccessor);
-            var iigDepartmentData = unitOfWork.Repository<SysCustomerCategory>().GetById(id);
+            var iigDepartmentData = unitOfWork.Repository<SysPricingDecision>().GetById(id);
             if (iigDepartmentData == null)
             {
                 return new ResponseDataError(Code.NotFound, "Id not found");
             }
-            if (!string.IsNullOrEmpty(model.Code))
-                iigDepartmentData.Code = model.Code;
+            if (!string.IsNullOrEmpty(model.DecisionNo))
+                iigDepartmentData.DecisionNo = model.DecisionNo;
             if (!string.IsNullOrEmpty(model.Name))
                 iigDepartmentData.Name = model.Name;
 
             if (!string.IsNullOrEmpty(model.Description))
                 iigDepartmentData.Description = model.Description;
+            iigDepartmentData.Status = model.Status;
+            iigDepartmentData.EffectiveDate = model.EffectiveDate;
+            iigDepartmentData.FileName = model.FileName;
+            iigDepartmentData.FilePath = model.FilePath;
 
-            unitOfWork.Repository<SysCustomerCategory>().Update(iigDepartmentData);
+            unitOfWork.Repository<SysPricingDecision>().Update(iigDepartmentData);
 
             unitOfWork.Save();
             return new ResponseData(Code.Success, "");
