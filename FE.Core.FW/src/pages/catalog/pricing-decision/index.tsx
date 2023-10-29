@@ -4,8 +4,11 @@ import {
     Card,
     Col,
     Collapse,
+    Dropdown,
+    FloatButton,
     Form,
     Input,
+    List,
     Modal,
     Row,
     Space,
@@ -18,7 +21,7 @@ import { Code } from '@/apis';
 import { deleteManyDivision } from '@/apis/services/toefl-challenge/DivisionService';
 import Permission from '@/components/Permission';
 import { PermissionAction, layoutCode } from '@/utils/constants';
-import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
+import { CommentOutlined, CustomerServiceOutlined, DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import { ActionType, ProColumns, ProTable } from '@ant-design/pro-components';
 import { useNavigate } from 'react-router-dom';
 import { PricingDecisionModel } from '@/apis/models/PricingDecisionModel';
@@ -153,6 +156,20 @@ function PricingDecision() {
         }
     };
 
+    const data = [
+        {
+          title: 'Ant Design Title 1',
+        },
+        {
+          title: 'Ant Design Title 2',
+        },
+        {
+          title: 'Ant Design Title 3',
+        },
+        {
+          title: 'Ant Design Title 4',
+        },
+      ];
 
     const columns: ProColumns<PricingDecisionModel>[] = [
         {
@@ -175,6 +192,26 @@ function PricingDecision() {
             title: 'Trạng thái',
             dataIndex: 'status',
             render: (_, record) => <span>{record.status ? <Text type="success">Hiệu lực</Text> : <Text type="danger">Hết hiệu lực</Text>}</span>,
+        },
+        {
+            title: 'File',
+            dataIndex: 'file',
+            width: '280px',
+            render: (_, record) => (
+                <>
+                    <List
+                        itemLayout="horizontal"
+                        dataSource={data}
+                        renderItem={(item, index) => (
+                            <List.Item>
+                                <List.Item>
+                                    <Typography.Text mark>{item.title}</Typography.Text>
+                                </List.Item>
+                            </List.Item>
+                        )}
+                    />
+                </>
+            ),
         },
         {
             title: 'Mô tả',

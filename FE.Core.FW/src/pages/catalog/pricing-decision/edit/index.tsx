@@ -25,6 +25,7 @@ import type { UploadFile } from 'antd';
 import UploadFileComponent from '@/components/UploadFile/Index';
 import locale from "antd/es/date-picker/locale/vi_VN";
 import dayjs from 'dayjs';
+import useFileConvert from '@/hooks/useFileConvert';
 
 function PricingDecisionEdit() {
     const navigate = useNavigate();
@@ -44,7 +45,6 @@ function PricingDecisionEdit() {
         initState,
     );
 
-
     useEffect(() => {
         const fnGetInitState = async () => {
             setLoading(true);
@@ -54,29 +54,9 @@ function PricingDecisionEdit() {
                 recordEdit: responseDivision.data
             };
             const { filePath, fileName } = responseDivision.data as PricingDecisionModel;
-            const filePathList = Boolean(filePath) ? filePath?.split(',') : []
-            const fileNameList = Boolean(fileName) ? fileName?.split(',') as string[] : []
-            const files: UploadFile[] = []
-            filePathList?.forEach((filePath: string, idx: number) => {
-                const fileObj: UploadFile = {
-                    name: fileNameList[idx],
-                    uid: uuidv4(),
-                    url: filePath,
-                    thumbUrl: import.meta.env.VITE_HOST + '/' + filePath,
-                    status: 'done',
-                    percent: 100,
-                    type: 'image/*',
-                    response: {
-                        files: [
-                            {
-                                name: fileNameList[idx],
-                                url: filePath,
-                            }
-                        ]
-                    }
-                }
-                files.push(fileObj);
-            })
+            let files: UploadFile[] = []
+            files = filePathStringConvertToArrayFile(filePath, fileName);
+
             setFileList([...fileList, ...files])
             dispatch(stateDispatcher);
             setLoading(false);
@@ -104,20 +84,14 @@ function PricingDecisionEdit() {
             range: '${label} must be between ${min} and ${max}',
         },
     };
+    const { filePathStringConvertToArrayFile, arrayFileConvertToFilePathString } = useFileConvert();
     const [fileList, setFileList] = useState<UploadFile[]>([]);
     const handleOk = async () => {
         const fieldsValue = await formRef?.current?.validateFields();
         setButtonOkText('Đang xử lý...');
         setButtonLoading(true);
 
-        let filePath = "";
-        let fileName = "";
-        fileList?.forEach((file: UploadFile) => {
-            if (file.response?.files?.length > 0) {
-                filePath = filePath ? `${filePath},${file.response?.files[0]?.url}` : file.response?.files[0]?.url
-                fileName = fileName ? `${fileName},${file.response?.files[0]?.name}` : file.response?.files[0]?.name
-            }
-        })
+        const { filePath, fileName } = arrayFileConvertToFilePathString(fileList);
 
         const objBody: PricingDecisionModel = {
             ...fieldsValue,

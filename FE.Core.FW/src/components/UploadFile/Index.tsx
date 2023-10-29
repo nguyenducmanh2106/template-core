@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StarOutlined, UploadOutlined } from '@ant-design/icons';
+import { CloseOutlined, StarOutlined, UploadOutlined } from '@ant-design/icons';
 import { message, Modal } from 'antd';
 import { Button, Upload } from 'antd';
 import { request as __request, useRequest, UseRequestOption } from '@/apis/core/request';
@@ -93,6 +93,7 @@ const UploadFileComponent: React.FC<InputFormProps> = ({ fileListInit, onChangeF
       // removeIcon: <StarOutlined onClick={(e) => console.log(e, 'custom removeIcon event')} />,
     },
   };
+
   return (
     <>
       <Upload {...propUploads}>
@@ -101,8 +102,17 @@ const UploadFileComponent: React.FC<InputFormProps> = ({ fileListInit, onChangeF
       {
         previewOpen &&
         <Modal open={previewOpen} title={previewImage?.name ?? "Preview file"} footer={null} onCancel={handleCancel}
-          width={'100vw'}
-          style={{ top: 0, maxHeight: '100vh' }}
+          closeIcon={<CloseOutlined title="Đóng" style={{ fontSize: '24px' }} />}
+          width={'95%'}
+          style={{
+            top: '20px',
+            minHeight: '290px', height: '100%',
+            maxHeight: 'calc(100% - 20px)',
+          }}
+          styles={{
+            body: { height: '100%' },
+            content: { height: '100%' },
+          }}
         >
           {/* <iframe
             src={previewImage?.url ? `${import.meta.env.VITE_HOST}/${previewImage?.url}` : ''}
@@ -113,33 +123,36 @@ const UploadFileComponent: React.FC<InputFormProps> = ({ fileListInit, onChangeF
             display: 'flex',
             flexGrow: '1',
             overflow: 'auto',
-            position: 'relative',
+            // position: 'relative',
             background: '#444',
-            // flexDirection: 'row',
+            flexDirection: 'row',
             flexWrap: 'nowrap',
-            // alignItems: 'self-end',
-            // height: `calc(100% - 40px)`
-            height: `100vh`
+            alignItems: 'self-end',
+            height: `calc(100% - 40px)`,
+            width: '100%',
           }}>
             {/^(xls|xlsx|ppt|pps|doc|docx)$/.test(getIconFile(previewImage?.name ?? "")) ?
               <iframe className="viewer-iframe"
-                style={{
-                  flexGrow: '1',
-                  flexWrap: 'nowrap',
-                  width: '100%'
-                }}
+                width="100%"
+                height="100%"
                 allowFullScreen={true} scrolling="auto"
                 src={previewImage?.url ? `https://view.officeapps.live.com/op/view.aspx?src=${import.meta.env.VITE_HOST}/${previewImage?.url}` : ''}></iframe>
               :
-              /^(pdf)$/.test(getIconFile(previewImage?.name ?? "")) ? <iframe className="viewer-iframe"
-                style={{
-                  flexGrow: '1',
-                  flexWrap: 'nowrap',
-                  width: '100%'
-                }}
+              <iframe className="viewer-iframe"
+                width="100%"
+                height="100%"
                 allowFullScreen={true} scrolling="auto"
-                src={previewImage?.url ? `${import.meta.env.VITE_HOST}/${previewImage?.url}` : ''}></iframe> :
-                <img src={previewImage?.url ? `${import.meta.env.VITE_HOST}/${previewImage?.url}` : ''} style={{ width: '100%', height: '100%' }}></img>
+                src={previewImage?.url ? `${import.meta.env.VITE_HOST}/${previewImage?.url}` : ''}></iframe>
+              // /^(pdf)$/.test(getIconFile(previewImage?.name ?? "")) ? 
+              // <iframe className="viewer-iframe"
+              //   style={{
+              //     flexGrow: '1',
+              //     flexWrap: 'nowrap',
+              //     width: '100%'
+              //   }}
+              //   allowFullScreen={true} scrolling="auto"
+              //   src={previewImage?.url ? `${import.meta.env.VITE_HOST}/${previewImage?.url}` : ''}></iframe> :
+              //   <img src={previewImage?.url ? `${import.meta.env.VITE_HOST}/${previewImage?.url}` : ''} style={{ width: '100%', height: '100%' }}></img>
             }
           </div>
         </Modal >

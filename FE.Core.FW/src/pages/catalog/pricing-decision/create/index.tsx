@@ -2,6 +2,7 @@ import { Code } from '@/apis';
 import { PricingDecisionModel } from '@/apis/models/PricingDecisionModel';
 import { postPricingDecision } from '@/apis/services/PricingDecisionService';
 import UploadFileComponent from '@/components/UploadFile/Index';
+import useFileConvert from '@/hooks/useFileConvert';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import type { UploadFile } from 'antd';
 import {
@@ -103,14 +104,7 @@ function PricingDecisionCreate() {
         setButtonLoading(true);
         // setConfirmLoading(true);
         // searchForm.resetFields()
-        let filePath = "";
-        let fileName = "";
-        fileList?.forEach((file: UploadFile) => {
-            if (file.response?.files?.length > 0) {
-                filePath = filePath ? `${filePath},${file.response?.files[0]?.url}` : file.response?.files[0]?.url
-                fileName = fileName ? `${fileName},${file.response?.files[0]?.name}` : file.response?.files[0]?.name
-            }
-        })
+        const { filePath, fileName } = arrayFileConvertToFilePathString(fileList);
 
         const objBody: PricingDecisionModel = {
             ...fieldsValue,
@@ -133,16 +127,9 @@ function PricingDecisionCreate() {
         }
     };
 
-    function uuidv4() {
-        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'
-            .replace(/[xy]/g, function (c) {
-                const r = Math.random() * 16 | 0,
-                    v = c == 'x' ? r : (r & 0x3 | 0x8);
-                return v.toString(16);
-            });
-    }
 
     const [fileList, setFileList] = useState<UploadFile[]>([]);
+    const { filePathStringConvertToArrayFile, arrayFileConvertToFilePathString } = useFileConvert();
 
     const onHandleChangeFile = (value: UploadFile[]) => {
         // console.log(value)
