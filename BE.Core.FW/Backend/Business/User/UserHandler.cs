@@ -389,6 +389,7 @@ namespace Backend.Business.User
                 if (existData == null)
                     return new ResponseDataError(Code.BadRequest, "Id not found");
                 var result = _mapper.Map<UserModel>(existData);
+                result.DepartmentName = result.DepartmentId.HasValue ? unitOfWork.Repository<SysDepartment>().GetById(result.DepartmentId.Value)?.Name : string.Empty;
 
                 return new ResponseDataObject<UserModel>(result, Code.Success, "");
             }

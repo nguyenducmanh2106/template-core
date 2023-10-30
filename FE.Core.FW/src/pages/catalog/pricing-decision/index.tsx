@@ -9,6 +9,7 @@ import {
     Form,
     Input,
     List,
+    MenuProps,
     Modal,
     Row,
     Space,
@@ -21,7 +22,7 @@ import { Code } from '@/apis';
 import { deleteManyDivision } from '@/apis/services/toefl-challenge/DivisionService';
 import Permission from '@/components/Permission';
 import { PermissionAction, layoutCode } from '@/utils/constants';
-import { CommentOutlined, CustomerServiceOutlined, DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
+import { CommentOutlined, CustomerServiceOutlined, DeleteOutlined, DownOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import { ActionType, ProColumns, ProTable } from '@ant-design/pro-components';
 import { useNavigate } from 'react-router-dom';
 import { PricingDecisionModel } from '@/apis/models/PricingDecisionModel';
@@ -158,19 +159,42 @@ function PricingDecision() {
 
     const data = [
         {
-          title: 'Ant Design Title 1',
+            title: 'Ant Design Title 1',
         },
         {
-          title: 'Ant Design Title 2',
+            title: 'Ant Design Title 2',
         },
         {
-          title: 'Ant Design Title 3',
+            title: 'Ant Design Title 3',
         },
         {
-          title: 'Ant Design Title 4',
+            title: 'Ant Design Title 4',
         },
-      ];
+    ];
 
+    const items: MenuProps['items'] = [
+        {
+            label: (
+                <List
+                    size="small"
+                    // itemLayout="horizontal"
+                    dataSource={data}
+                    renderItem={(item, index) => (
+                        <List.Item>
+                            <List.Item>
+                                <Typography.Text mark>{item.title}</Typography.Text>
+                            </List.Item>
+                        </List.Item>
+                    )}
+                />
+            ),
+            key: '1',
+        },
+        // {
+        //   label: 'Clicking me will not close the menu also.',
+        //   key: '2',
+        // },
+    ];
     const columns: ProColumns<PricingDecisionModel>[] = [
         {
             title: 'STT',
@@ -181,11 +205,13 @@ function PricingDecision() {
         {
             title: 'Số quyết định',
             dataIndex: 'code',
+            width: 180,
             render: (_, record) => <span>{record.decisionNo}</span>,
         },
         {
             title: 'Tên quyết định',
             dataIndex: 'name',
+            width: 220,
             render: (_, record) => <span>{record.name}</span>,
         },
         {
@@ -199,8 +225,24 @@ function PricingDecision() {
             width: '280px',
             render: (_, record) => (
                 <>
-                    <List
-                        itemLayout="horizontal"
+                    <Dropdown
+                        menu={{
+                            items,
+                            // onClick: handleMenuClick,
+                        }}
+                    // onOpenChange={handleOpenChange}
+                    // open={open}
+                    >
+                        <a onClick={(e) => e.preventDefault()}>
+                            <Space>
+                                Xem file
+                                <DownOutlined />
+                            </Space>
+                        </a>
+                    </Dropdown>
+                    {/* <List
+                        size="small"
+                        // itemLayout="horizontal"
                         dataSource={data}
                         renderItem={(item, index) => (
                             <List.Item>
@@ -209,7 +251,7 @@ function PricingDecision() {
                                 </List.Item>
                             </List.Item>
                         )}
-                    />
+                    /> */}
                 </>
             ),
         },
@@ -223,7 +265,7 @@ function PricingDecision() {
             key: 'action',
             align: 'center',
             fixed: 'right',
-            width: 300,
+            width: 120,
             render: (_, record) => (
                 <Space>
                     <Permission noNode navigation={layoutCode.catalogPricingDecision as string} bitPermission={PermissionAction.Edit}>

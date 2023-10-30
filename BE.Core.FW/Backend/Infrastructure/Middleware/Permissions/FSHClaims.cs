@@ -10,5 +10,6 @@
         public const string Expiration = "exp";
         public const string DepartmentAccess = "departmentAccess";
         public const string IsManager = "isManager";
+        public const string DepartmentId = "departmentId";
     }
 }

@@ -32,6 +32,11 @@ namespace Backend.Infrastructure.Middleware.Auth
                 ? _user?.IsManager() ?? false
                 : false;
 
+        public Guid GetDepartmentdId() =>
+            IsAuthenticated()
+                ? Guid.Parse(_user?.GetDepartmentdId() ?? Guid.Empty.ToString())
+                : Guid.Empty;
+
         public bool IsAuthenticated() =>
             _user?.Identity?.IsAuthenticated is true;
 

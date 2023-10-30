@@ -7,7 +7,7 @@ import Permission from '@/components/Permission';
 import { useUserState } from '@/store/user';
 import { PermissionAction, layoutCode } from '@/utils/constants';
 import { PaginationConfig, ResponseData } from '@/utils/request';
-import { DeleteOutlined, EditOutlined, PlusOutlined, UsergroupAddOutlined } from '@ant-design/icons';
+import { DatabaseOutlined, DeleteOutlined, EditOutlined, PlusOutlined, UsergroupAddOutlined } from '@ant-design/icons';
 import { Button, Card, Col, Collapse, Form, Modal, Row, Space, Switch, Table, Tooltip, message } from 'antd';
 import Search from 'antd/lib/input/Search';
 import { ColumnsType } from 'antd/lib/table';
@@ -17,6 +17,7 @@ import { useRecoilValue } from 'recoil';
 import CreateUser from './create';
 import EditUser from './edit';
 import UserRole from './user-role';
+import UserDataAcess from './user-access-data';
 
 function User() {
 
@@ -29,13 +30,13 @@ function User() {
   const [pagination, setPagination] = useState<PaginationConfig>({
     total: 0,
     current: 1,
-    pageSize: 10,
+    pageSize: 20,
     showSizeChanger: true,
     showQuickJumper: true,
   });
 
 
-  const getList = async (current: number, pageSize: number = 10): Promise<void> => {
+  const getList = async (current: number, pageSize: number = 20): Promise<void> => {
     setLoading(true);
     searchFormSubmit(current, pageSize);
 
@@ -72,6 +73,7 @@ function User() {
   const [showEditForm, setShowEditForm] = useState<boolean>(false);
   const [userEdit, setUserEdit] = useState<UserModel>({});
   const [initLoadingModal, setInitLoadingModal] = useState<boolean>(false);
+  const [showFormUserDataAccess, setShowFormUserDataAccess] = useState<boolean>(false);
   const user = useRecoilValue(useUserState);
   const initState = {
     roles: [],
@@ -112,6 +114,15 @@ function User() {
     await getRoles()
   };
 
+  const onHandleShowFormSetDataAccess = async (id: string) => {
+    setShowFormUserDataAccess(false)
+    const response: ResponseData = await getUserById(id, "");
+    if (response && response.code === Code._200) {
+      const getUserCurrent = response.data as UserModel;
+      setUserEdit(getUserCurrent)
+      setShowFormUserDataAccess(true)
+    }
+  };
   /**
    * Lấy danh sách vai trò
    * @param id 
@@ -178,7 +189,7 @@ function User() {
 
   // searchForm
   const [searchForm] = Form.useForm();
-  const searchFormSubmit = async (current: number = 1, pageSize: number = 10): Promise<void> => {
+  const searchFormSubmit = async (current: number = 1, pageSize: number = 20): Promise<void> => {
     try {
       const fieldsValue = await searchForm.validateFields();
       // console.log(fieldsValue);
@@ -238,7 +249,7 @@ function User() {
       key: 'action',
       fixed: 'right',
       align: 'center',
-      width: 300,
+      width: 160,
       render: (_, record) => (
         <Space>
           <Permission navigation={layoutCode.user} bitPermission={PermissionAction.Edit} noNode={<></>}>
@@ -252,6 +263,12 @@ function User() {
           <Button type="default" disabled={record.id === user.id} size={"small"} loading={state.initFormUserRole} onClick={() => onHandleShowFormUserRole(true, record)}>
             <Tooltip title="Nhóm người dùng">
               <UsergroupAddOutlined />
+            </Tooltip>
+          </Button>
+
+          <Button type="default" disabled={record.id === user.id} size={"small"} loading={state.initFormUserRole} onClick={() => onHandleShowFormSetDataAccess(record.id as string)}>
+            <Tooltip title="Quyền truy cập dữ liệu">
+              <DatabaseOutlined />
             </Tooltip>
           </Button>
 
@@ -338,6 +355,15 @@ function User() {
           setOpen={() => dispatch({ showFormUserRole: false })}
           reload={searchFormSubmit}
           role={state.roles}
+          userEdit={userEdit}
+          initLoadingModal={state.initFormUserRole}
+        />
+      )}
+      {showFormUserDataAccess && (
+        <UserDataAcess
+          open={showFormUserDataAccess}
+          setOpen={setShowFormUserDataAccess}
+          reload={searchFormSubmit}
           userEdit={userEdit}
           initLoadingModal={state.initFormUserRole}
         />

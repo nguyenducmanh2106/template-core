@@ -170,6 +170,7 @@ namespace Backend.Business.Auth
             new(ClaimTypes.MobilePhone, user.Phone ?? string.Empty),
             new(FSHClaims.DepartmentAccess, (user.EmployeeAccessLevels ?? string.Empty) + "," + (user.DepartmentId?.ToString() ?? string.Empty)),
             new(FSHClaims.IsManager, user.IsAccessMaxLevel.ToString()),
+            new(FSHClaims.DepartmentId, user.DepartmentId?.ToString() ?? ""),
             };
         private string GenerateEncryptedToken(SigningCredentials signingCredentials, IEnumerable<Claim> claims)
         {

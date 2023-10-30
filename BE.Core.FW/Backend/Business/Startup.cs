@@ -7,8 +7,10 @@ using Backend.Business.Department;
 using Backend.Business.Mailing;
 using Backend.Business.Navigation;
 using Backend.Business.Policy;
+using Backend.Business.PricingCategory;
 using Backend.Business.PricingDecision;
 using Backend.Business.Role;
+using Backend.Business.Target;
 using Backend.Business.TaxCategory;
 using Backend.Business.UploadFile;
 using Backend.Business.User;
@@ -40,6 +42,8 @@ internal static class Startup
             .AddScoped<IContractTypeHandler, ContractTypeHandler>()
             .AddScoped<ITaxCategoryHandler, TaxCategoryHandler>()
             .AddScoped<IPricingDecisionHandler, PricingDecisionHandler>()
+            .AddScoped<IPricingCategoryHandler, PricingCategoryHandler>()
+            .AddScoped<ITargetHandler, TargetHandler>()
             .AddScoped<IDepartmentHandler, DepartmentHandler>();
     }
 }

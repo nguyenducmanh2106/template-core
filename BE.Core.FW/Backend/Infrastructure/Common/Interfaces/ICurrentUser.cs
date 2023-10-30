@@ -14,6 +14,8 @@ namespace Backend.Infrastructure.Common.Interfaces
         string? GetDepartmentAccess();
         bool IsManager();
 
+        Guid GetDepartmentdId();
+
         bool IsAuthenticated();
 
         bool IsInRole(string role);

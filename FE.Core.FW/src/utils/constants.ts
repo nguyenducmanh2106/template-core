@@ -113,6 +113,11 @@ export const layoutCode = {
   catalogPricingDecision: "catalog-pricing-decision",
   catalogPricingDecisionCreate: "catalog-pricing-decision__create",
   catalogPricingDecisionEdit: "catalog-pricing-decision__edit",
+  catalogPricingCategory: "catalog-pricing-category",
+  catalogPricingCategoryCreate: "catalog-pricing-category__create",
+  catalogPricingCategoryEdit: "catalog-pricing-category__edit",
+  bussinessIcom: "bussiness-icom",
+  icomTarget: "icom-target",
 }
 export const routeArrays = [
   {
@@ -271,7 +276,7 @@ export const routeArrays = [
     "Code": layoutCode.toeflChallengeRegistrationCodeCreate,
     "ComponentPath": lazy(() => import('../pages/toefl_challenge/registration-code/create'))
   },
-  //catalog
+  //#region catalog
   {
     "Code": layoutCode.catalog,
     "ComponentPath": ""
@@ -396,6 +401,30 @@ export const routeArrays = [
     "Code": layoutCode.catalogPricingDecisionEdit,
     "ComponentPath": lazy(() => import('../pages/catalog/pricing-decision/edit'))
   },
+  {
+    "Code": layoutCode.catalogPricingCategory,
+    "ComponentPath": lazy(() => import('../pages/catalog/pricing-category'))
+  },
+  {
+    "Code": layoutCode.catalogPricingCategoryCreate,
+    "ComponentPath": lazy(() => import('../pages/catalog/pricing-category/create'))
+  },
+  {
+    "Code": layoutCode.catalogPricingCategoryEdit,
+    "ComponentPath": lazy(() => import('../pages/catalog/pricing-category/edit'))
+  },
+  //#endregion
+
+  //#region Nghiệp vụ icom
+  {
+    "Code": layoutCode.bussinessIcom,
+    "ComponentPath": ""
+  },
+  {
+    "Code": layoutCode.icomTarget,
+    "ComponentPath": lazy(() => import('../pages/bussiness-icom/target'))
+  },
+  //#endregion
 ]
 //#endregion
 

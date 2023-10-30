@@ -128,20 +128,12 @@ namespace Backend.Infrastructure.Utils
             public const int Delete = 8;
         }
 
-        public struct CodeExam
+        public enum TargetType
         {
-            public const string TopikI = "7";
-            public const string TopikII = "8";
-            public const string TOEFL_ITP = "6";
-            public const string TOEIC_SPW = "4";
-            public const string IT = "3";
-            public const string TOEIC = "2";
+            Department,
+            Personal
         }
 
-        public struct CandidateInValid
-        {
-            public const string SBD = "SBD";
-        }
 
         public enum CanDownFile
         {
@@ -151,44 +143,7 @@ namespace Backend.Infrastructure.Utils
             IdNotfound = 4,
         }
 
-        public struct TypeIDCard
-        {
-            public const string CMND = "1";
-            public const string CCCD = "2";
-            public const string Passport = "3";
-            public const string DinhDanh = "4";
-        }
-        public struct TypeCheckCandown
-        {
-            public const int AllData = 1;
-            public const int ImageCard = 2;
-            public const int ImageAvatar = 3;
-            public const int StatusOfApplicants = 4;
-            public const int ModelExamRoom = 5;
-        }
 
-        public enum StatusPaid
-        {
-            UnPaid = 1,
-            Paid = 2,
-            PaymentOverdue = 3,
-            NonPayment = 4,
-            Refund
-        }
-
-        public enum StatusProfile
-        {
-            Receive = 1,
-            Approved,
-            UnApproved,
-        }
-
-        public enum StatusBlacklist
-        {
-            WaitingApprove = 1,
-            Blacklist,
-            ExpiredBlacklist,
-        }
 
         public enum StatusSendMail
         {
@@ -279,18 +234,7 @@ namespace Backend.Infrastructure.Utils
 
         public const string SQL_COLLATION_CASE_SENSITIVE = "SQL_Latin1_General_CP1_CS_AS";
 
-        public enum StockApproveType
-        {
-            Proposal = 1,
-            Receipt = 2
-        }
 
-        public enum BlacklistTopikStatus
-        {
-            NotBegin = 1,
-            Inprogress = 2,
-            Finish = 3
-        }
         public enum RegionNumber
         {
             MienBac = 1,
@@ -301,12 +245,6 @@ namespace Backend.Infrastructure.Utils
         public enum PaymentPortalType
         {
             Vnpay = 1
-        }
-
-        public enum ExamTypeFromAsc
-        {
-            English = 1,
-            IT
         }
     }
 }

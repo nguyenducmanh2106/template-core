@@ -38,6 +38,9 @@ namespace Backend.Infrastructure.Middleware.Permissions
         public static bool IsManager(this ClaimsPrincipal principal)
           => Boolean.Parse(principal.FindFirstValue(FSHClaims.IsManager));
 
+        public static string? GetDepartmentdId(this ClaimsPrincipal principal)
+          => principal.FindFirstValue(FSHClaims.DepartmentId);
+
         private static string? FindFirstValue(this ClaimsPrincipal principal, string claimType) =>
             principal is null
                 ? throw new ArgumentNullException(nameof(principal))
