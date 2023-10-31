@@ -1,21 +1,27 @@
 import { Code } from '@/apis';
+import { TargetImportModel } from '@/apis/models/TargetImportModel';
 import { postCustomer1 } from '@/apis/services/CustomerService';
-import { getTarget2 } from '@/apis/services/TargetService';
+import { getTarget2, postTarget } from '@/apis/services/TargetService';
 import { InboxOutlined } from '@ant-design/icons';
 import {
     Button,
     Col,
+    DatePicker,
     Form,
     FormInstance,
     Modal,
     Row,
+    Select,
     Space,
+    TreeSelect,
     Typography,
     Upload,
     UploadFile,
     UploadProps,
     message
 } from 'antd';
+import { DataNode } from 'antd/es/tree';
+import dayjs from 'dayjs';
 import { useReducer, useRef, useState } from 'react';
 
 
@@ -24,14 +30,22 @@ interface Props {
     open: boolean;
     setOpen: (value: boolean) => void;
     reload: (current: number, pageSize: number) => void;
+    iigdepartments: DataNode[],
 }
-function ImportTarget({ open, setOpen, reload }: Props) {
+function ImportTarget({ open, setOpen, reload, iigdepartments }: Props) {
     const [searchForm] = Form.useForm();
     // Load
     const initState = {
-        provinces: [],
-        districts: [],
-        exams: [],
+        typeTargets: [
+            {
+                label: 'Phòng ban',
+                value: '0'
+            },
+            {
+                label: 'Cá nhân',
+                value: '1'
+            }
+        ]
     };
 
     const { Title, Paragraph, Text, Link } = Typography;
@@ -80,14 +94,15 @@ function ImportTarget({ open, setOpen, reload }: Props) {
 
         const objBody = {
             ...fieldsValue,
-            FileUpload: fieldsValue.FileUpload?.fileList[0]?.originFileObj
+            Year: dayjs(fieldsValue.Year).year(),
+            Type: +fieldsValue.Type,
+            File: fieldsValue.File?.fileList[0]?.originFileObj
 
         }
-        // console.log(objBody)
+        console.log(objBody)
         // return
-        let file: Blob = fieldsValue.FileUpload?.fileList[0]?.originFileObj
 
-        const response = await postCustomer1("", { file: file });
+        const response = await postTarget("", objBody);
         setConfirmLoading(false)
         if (response.code === Code._200) {
             message.success(response.message || "Upload file thành công")
@@ -175,6 +190,9 @@ function ImportTarget({ open, setOpen, reload }: Props) {
                     name='nest-messages' id="myFormCreate"
                     onFinish={handleOk}
                     validateMessages={validateMessages}
+                    initialValues={{
+                        ['Year']: dayjs(new Date()),
+                    }}
                 >
                     <Row gutter={16} justify='start'>
                         <Col span={24}>
@@ -186,7 +204,49 @@ function ImportTarget({ open, setOpen, reload }: Props) {
                             </Form.Item>
                         </Col>
                         <Col span={24}>
-                            <Form.Item label={'Chọn file upload'} labelAlign='left' labelCol={{ span: 6 }} wrapperCol={{ span: 18 }} name='FileUpload'>
+                            <Form.Item label={'Loại mục tiêu'} labelAlign='left' labelCol={{ span: 6 }} wrapperCol={{ span: 18 }}
+                                rules={[{ required: true }]}
+                                name='Type'>
+                                <Select
+                                    showSearch
+                                    optionFilterProp="children"
+                                    filterOption={(input, option) => (option?.label ?? '').toString().toLowerCase().includes(input.toLowerCase())}
+                                    // filterSort={(optionA, optionB) =>
+                                    //     (optionA?.label ?? '').toString().toLowerCase().localeCompare((optionB?.label ?? '').toString().toLowerCase())
+                                    // }
+                                    placeholder='-Chọn-' options={state.typeTargets} />
+                            </Form.Item>
+                        </Col>
+                        <Col span={24}>
+                            <Form.Item
+                                label={'Năm thực hiện'}
+                                labelAlign='left' labelCol={{ span: 6 }} wrapperCol={{ span: 18 }}
+                                name='Year'
+                                rules={[{ required: true }]}
+                            >
+                                <DatePicker picker='year' placeholder='Chọn năm'
+                                // format={['YYYY']} 
+                                />
+                            </Form.Item>
+                        </Col>
+                        <Col span={24}>
+                            <Form.Item label={'Phòng ban'} labelAlign='left' labelCol={{ span: 6 }} wrapperCol={{ span: 18 }} name='DepartmentId' rules={[{ required: true, whitespace: true }]}>
+                                <TreeSelect
+                                    showSearch
+                                    treeLine
+                                    style={{ width: '100%' }}
+                                    // value={value}
+                                    dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+                                    placeholder="-Chọn phòng ban-"
+                                    allowClear
+                                    treeDefaultExpandAll
+                                    showCheckedStrategy={TreeSelect.SHOW_CHILD}
+                                    treeData={iigdepartments}
+                                />
+                            </Form.Item>
+                        </Col>
+                        <Col span={24}>
+                            <Form.Item label={'Chọn file upload'} labelAlign='left' labelCol={{ span: 6 }} wrapperCol={{ span: 18 }} name='File'>
                                 <Upload.Dragger {...props}>
                                     <p className="ant-upload-drag-icon">
                                         <InboxOutlined />

@@ -8,7 +8,7 @@ namespace Backend.Business.Target
         ResponseData Get(string filter);
         ResponseData GetById(Guid id);
         ResponseData Delete(Guid id);
-        ResponseData Import(int type, int year, Guid? departmentId, string username, TargetImportModel file);
+        ResponseData Import(TargetImportModel importModel);
         ResponseData Approve(Guid id, Guid documentId, string commandName, string comment, Guid userId);
 
         /// <summary>
@@ -18,7 +18,7 @@ namespace Backend.Business.Target
         /// <returns></returns>
         ResponseData UpSert(Guid? departmentId, TargetModel model);
 
-        ResponseData PracticeTarget(int type, int year, Guid departmentId, Guid id);
+        ResponseData PracticeTarget(Guid id);
         ResponseData UpSertTargetMapping(Guid targetId, TargetModel target);
 
         /// <summary>

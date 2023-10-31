@@ -118,6 +118,8 @@ export const layoutCode = {
   catalogPricingCategoryEdit: "catalog-pricing-category__edit",
   bussinessIcom: "bussiness-icom",
   icomTarget: "icom-target",
+  icomTargetNavigate: "icom-target-navigate",
+  icomTargetPractice: "icom-target-practice",
 }
 export const routeArrays = [
   {
@@ -423,6 +425,14 @@ export const routeArrays = [
   {
     "Code": layoutCode.icomTarget,
     "ComponentPath": lazy(() => import('../pages/bussiness-icom/target'))
+  },
+  {
+    "Code": layoutCode.icomTargetNavigate,
+    "ComponentPath": lazy(() => import('../pages/bussiness-icom/target'))
+  },
+  {
+    "Code": layoutCode.icomTargetPractice,
+    "ComponentPath": lazy(() => import('../pages/bussiness-icom/target/edit'))
   },
   //#endregion
 ]

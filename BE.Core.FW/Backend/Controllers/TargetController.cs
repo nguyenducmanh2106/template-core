@@ -27,9 +27,9 @@ namespace Backend.Controllers
 
         [HttpPost]
         [Route("import")]
-        public ResponseData Import([FromQuery] int type, [FromQuery] int year, [FromQuery] Guid? departmentId, [FromQuery] string username, [FromBody] TargetImportModel file)
+        public ResponseData Import([FromForm] TargetImportModel importModel)
         {
-            return _handler.Import(type, year, departmentId, username, file);
+            return _handler.Import(importModel);
         }
 
         /// <summary>
@@ -46,9 +46,9 @@ namespace Backend.Controllers
 
         [HttpGet]
         [Route("PracticeTarget")]
-        public ResponseData PracticeTarget(int type, int year, Guid departmentId, Guid id)
+        public ResponseData PracticeTarget(Guid id)
         {
-            return _handler.PracticeTarget(type, year, departmentId, id);
+            return _handler.PracticeTarget(id);
         }
 
         /// <summary>

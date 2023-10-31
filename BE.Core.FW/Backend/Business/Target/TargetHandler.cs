@@ -139,34 +139,34 @@ namespace Backend.Business.Target
                 IEnumerable<SysTarget> data = unitOfWork.Repository<SysTarget>().Get();
 
                 var employeeAll = unitOfWork.Repository<SysUser>().Get();
-                if (filterModel.CustomerId.HasValue)
-                {
-                    data = data.Where(x => x.CustomerId == filterModel.CustomerId.Value);
-                }
-                if (filterModel.DepartmentId.HasValue)
-                {
-                    data = data.Where(x => x.DepartmentId == filterModel.DepartmentId.Value);
-                }
-                if (filterModel.ProductTypeId.HasValue)
-                {
-                    data = data.Where(x => x.ProductTypeId == filterModel.ProductTypeId.Value);
-                }
-                if (!string.IsNullOrEmpty(filterModel.TextSearch))
-                {
+                //if (filterModel.CustomerId.HasValue)
+                //{
+                //    data = data.Where(x => x.CustomerId == filterModel.CustomerId.Value);
+                //}
+                //if (filterModel.DepartmentId.HasValue)
+                //{
+                //    data = data.Where(x => x.DepartmentId == filterModel.DepartmentId.Value);
+                //}
+                //if (filterModel.ProductTypeId.HasValue)
+                //{
+                //    data = data.Where(x => x.ProductTypeId == filterModel.ProductTypeId.Value);
+                //}
+                //if (!string.IsNullOrEmpty(filterModel.TextSearch))
+                //{
 
-                }
-                if (filterModel.Type.HasValue)
-                {
-                    data = data.Where(x => x.Type == filterModel.Type.Value);
-                }
-                if (!string.IsNullOrEmpty(filterModel.Username))
-                {
-                    data = data.Where(x => x.Username == filterModel.Username);
-                }
-                if (filterModel.TargetYear.HasValue)
-                {
-                    data = data.Where(x => x.Year == filterModel.TargetYear.Value);
-                }
+                //}
+                //if (filterModel.Type.HasValue)
+                //{
+                //    data = data.Where(x => x.Type == filterModel.Type.Value);
+                //}
+                //if (!string.IsNullOrEmpty(filterModel.Username))
+                //{
+                //    data = data.Where(x => x.Username == filterModel.Username);
+                //}
+                //if (filterModel.TargetYear.HasValue)
+                //{
+                //    data = data.Where(x => x.Year == filterModel.TargetYear.Value);
+                //}
 
                 //nếu đang ở mục tiêu doanh số của phòng ban
                 if (departments != null && departments.Count() > 0)
@@ -432,8 +432,7 @@ namespace Backend.Business.Target
                     //Total = iJan + iFeb + iMar + iApr + iMay + iJun + iJuly + iAug + iSep + iOct + iNov + iDec,
                     Total = iTotal,
                 };
-
-                return new ResponseDataObject<List<TargetModel>>(result, Code.Success, "Success");
+                return new ResponseDataObject<List<TargetModel>>(result, summaryTotal, Code.Success, "Success");
             }
             catch (Exception ex)
             {
@@ -447,7 +446,7 @@ namespace Backend.Business.Target
             throw new NotImplementedException();
         }
 
-        public ResponseData Import(int type, int year, Guid? departmentId, string username, TargetImportModel file)
+        public ResponseData Import(TargetImportModel importModel)
         {
             try
             {
@@ -455,14 +454,9 @@ namespace Backend.Business.Target
                 _cached.FlushNameSpace($"{this.GetType().Name}");
                 using var unitOfWork = new UnitOfWork(_httpContextAccessor);
 
-                if (string.IsNullOrEmpty(username))
-                {
-                    username = _currentUser.Name;
-                }
                 List<Dictionary<string, string>> errorDetails = new();
                 Spire.Xls.Workbook workbook = new();
-                using var temp = new FileStream(Path.Combine(Environment.CurrentDirectory, file.linkFile_Vz), FileMode.Open);
-                workbook.LoadFromStream(temp);
+                workbook.LoadFromStream(importModel.File.OpenReadStream());
                 Spire.Xls.Worksheet sheet = workbook.Worksheets[0];
 
                 var dt = sheet.ExportDataTable();
@@ -495,17 +489,17 @@ namespace Backend.Business.Target
                 //    errorDetails.Add(error);
                 //}
 
-                var infoDepartment = departmentId != default(Guid) ? unitOfWork.Repository<SysDepartment>().GetById(departmentId) : null;
+                var infoDepartment = importModel.DepartmentId.HasValue ? unitOfWork.Repository<SysDepartment>().GetById(importModel.DepartmentId.Value) : null;
                 var parentDepartment = infoDepartment != null ? infoDepartment.ParentId : Guid.Empty;
 
                 SysTarget target = null;
-                if (type == (int)Constant.TargetType.Department)
+                if (importModel.Type == (int)Constant.TargetType.Department)
                 {
-                    target = unitOfWork.Repository<SysTarget>().Get(x => x.Type == (int)Constant.TargetType.Department && x.Year == year && x.DepartmentId == departmentId)?.FirstOrDefault();
+                    target = unitOfWork.Repository<SysTarget>().Get(x => x.Type == (int)Constant.TargetType.Department && x.Year == importModel.Year && x.DepartmentId == importModel.DepartmentId.Value)?.FirstOrDefault();
                 }
                 else
                 {
-                    target = unitOfWork.Repository<SysTarget>().Get(x => x.Type == (int)Constant.TargetType.Personal && x.Username == username && x.Year == year && x.DepartmentId == departmentId)?.FirstOrDefault();
+                    target = unitOfWork.Repository<SysTarget>().Get(x => x.Type == (int)Constant.TargetType.Personal && x.Username == importModel.Username && x.Year == importModel.Year && x.DepartmentId == importModel.DepartmentId.Value)?.FirstOrDefault();
                 }
                 var targetMappings = target != null ? unitOfWork.Repository<SysTargetMapping>().Get(x => x.TargetId == target.Id) : null;
 
@@ -689,10 +683,10 @@ namespace Backend.Business.Target
                         var objSave = new SysTarget()
                         {
                             Id = Guid.NewGuid(),
-                            Type = type,
-                            Year = year,
-                            DepartmentId = departmentId,
-                            Username = username,
+                            Type = importModel.Type,
+                            Year = importModel.Year,
+                            DepartmentId = importModel.DepartmentId,
+                            Username = importModel.Username,
                             Jan = sumJan,
                             Feb = sumFeb,
                             Mar = sumMar,
@@ -887,16 +881,16 @@ namespace Backend.Business.Target
                     SysHistoryTarget insertHistoryTarget = new SysHistoryTarget()
                     {
                         Id = Guid.NewGuid(),
-                        Type = type,
-                        Year = year,
-                        DepartmentId = departmentId.Value,
+                        Type = importModel.Type,
+                        Year = importModel.Year,
+                        DepartmentId = importModel.DepartmentId.Value,
                         ActionDate = DateTime.Now,
-                        Description = file.Description
+                        Description = importModel.Description
                     };
                     unitOfWork.Repository<SysHistoryTarget>().Insert(insertHistoryTarget);
                     unitOfWork.Save();
 
-                    var userRecieveEmail = file.UserNotification;
+                    var userRecieveEmail = importModel.UserNotification;
                     if (userRecieveEmail != null && userRecieveEmail.Count() > 0)
                     {
                         ////gửi thông báo
@@ -945,15 +939,20 @@ namespace Backend.Business.Target
                 responseDataNotification = await responseNotification.Content.ReadFromJsonAsync<ResponseData>();
             }
         }
-        public ResponseData PracticeTarget(int type, int year, Guid departmentId, Guid id)
+        public ResponseData PracticeTarget(Guid id)
         {
             try
             {
                 using var unitOfWork = new UnitOfWork(_httpContextAccessor);
-                var data = unitOfWork.Repository<SysTarget>().Get(g => g.Type == type && g.Year == year && g.DepartmentId == departmentId);
+                //var data = unitOfWork.Repository<SysTarget>().Get(g => g.Type == type && g.Year == year && g.DepartmentId == departmentId);
+                //var data = unitOfWork.Repository<SysTarget>().Get(g => g.Id == id);
 
                 //var exitsData = data != null && data.Count() > 0 ? data.FirstOrDefault() : null;
                 var exitsData = unitOfWork.Repository<SysTarget>().GetById(id);
+                if (exitsData == null)
+                {
+                    return new ResponseDataError(Code.NotFound, "Id not found");
+                }
                 var username = _currentUser.Name;
 
                 var targetMappings = exitsData != null ? unitOfWork.Repository<SysTargetMapping>().Get(g => g.TargetId == exitsData.Id) : null;
@@ -965,8 +964,8 @@ namespace Backend.Business.Target
                     //CustomerId = exitsData.CustomerId,
                     //CustomerName = exitsData.CustomerId != Guid.Empty ? unitOfWork.Repository<SysCustomer>().GetById(exitsData.CustomerId.Value)?.Name : string.Empty,
                     Dec = exitsData != null ? exitsData.Dec : 0,
-                    DepartmentId = exitsData != null ? exitsData.DepartmentId : departmentId,
-                    DepartmentName = exitsData != null && exitsData.DepartmentId != Guid.Empty ? unitOfWork.Repository<SysDepartment>().GetById(exitsData.DepartmentId)?.Name : unitOfWork.Repository<SysDepartment>().GetById(departmentId)?.Name,
+                    DepartmentId = exitsData.DepartmentId,
+                    DepartmentName = exitsData != null && exitsData.DepartmentId.HasValue ? unitOfWork.Repository<SysDepartment>().GetById(exitsData.DepartmentId)?.Name : string.Empty,
                     Feb = exitsData != null ? exitsData.Feb : 0,
                     Id = exitsData != null ? exitsData.Id : default(Guid),
                     Jan = exitsData != null ? exitsData.Jan : 0,
@@ -979,10 +978,10 @@ namespace Backend.Business.Target
                     //ProductId = exitsData.ProductId,
                     //ProductName = exitsData.ProductId != Guid.Empty ? unitOfWork.Repository<SysProduct>().GetById(exitsData.ProductId.Value)?.Name : string.Empty,
                     Sep = exitsData != null ? exitsData.Sep : 0,
-                    Type = exitsData != null ? exitsData.Type : type,
-                    TypeName = type == 0 ? "Phòng ban" : exitsData.Type == 1 ? "Cá nhân" : null,
+                    Type = exitsData.Type,
+                    TypeName = exitsData.Type == 0 ? "Phòng ban" : exitsData.Type == 1 ? "Cá nhân" : null,
                     Username = exitsData != null ? exitsData.Username : string.Empty,
-                    Year = exitsData != null ? exitsData.Year : year,
+                    Year = exitsData.Year,
                     Total = exitsData != null ? exitsData.Total : 0,
 
                     CreatedByUserId = exitsData != null ? exitsData.CreatedByUserId : default(Guid),

@@ -19,6 +19,7 @@
     public class ResponseDataObject<T> : ResponseData
     {
         public T? Data { get; set; }
+        public dynamic Summary { get; set; }
         public ResponseDataObject() : base() { }
         public ResponseDataObject(Code code, string message) : base(code, message) { }
         public ResponseDataObject(T data)
@@ -29,6 +30,12 @@
         public ResponseDataObject(T data, Code code, string message) : base(code, message)
         {
             Data = data;
+        }
+
+        public ResponseDataObject(T data, dynamic summery, Code code, string message) : base(code, message)
+        {
+            Data = data;
+            Summary = summery;
         }
     }
 
@@ -48,7 +55,7 @@
         public int PageNumber { get; set; } = 1;
         public int TotalCount { get; set; }
         public int TotalPage { get; set; }
-        
+
         public Pagination() { }
         public Pagination(int pageNumber, int pageSize, int totalCount, int totalPage)
         {
@@ -58,7 +65,7 @@
             TotalPage = totalPage;
         }
     }
-    
+
     public class PageableData<T> : ResponseDataObject<T>
     {
 

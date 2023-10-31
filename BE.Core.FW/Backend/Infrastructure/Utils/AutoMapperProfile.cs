@@ -32,6 +32,8 @@ namespace Backend.Infrastructure.Utils
             CreateMap<SysTaxCategory, TaxCategoryModel>().ReverseMap();
             CreateMap<SysPricingDecision, PricingDecisionModel>().ReverseMap();
             CreateMap<SysPricingCategory, PricingCategoryModel>().ReverseMap();
+            CreateMap<SysTarget, TargetModel>().ReverseMap();
+            CreateMap<SysTargetMapping, TargetMappingModel>().ReverseMap();
             CreateMap<SysBranch, BranchModel>().ReverseMap();
         }
     }

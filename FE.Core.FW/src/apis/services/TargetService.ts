@@ -34,22 +34,22 @@ export const getTarget = (
 };
 
 /**
- * @param type
- * @param year
- * @param departmentId
- * @param username
  * @param tenant
- * @param requestBody
+ * @param formData
  * @returns ResponseData Success
  * @throws ApiError
  */
 export const postTarget = (
-  type?: number,
-  year?: number,
-  departmentId?: string,
-  username?: string,
   tenant?: string,
-  requestBody?: TargetImportModel
+  formData?: {
+    Type?: number;
+    Year?: number;
+    DepartmentId?: string;
+    Username?: string;
+    File?: Blob;
+    UserNotification?: Array<string>;
+    Description?: string;
+  }
 ): CancelablePromise<ResponseData> => {
   return __request({
     method: "POST",
@@ -57,17 +57,10 @@ export const postTarget = (
     headers: {
       Tenant: tenant,
     },
-    query: {
-      type: type,
-      year: year,
-      departmentId: departmentId,
-      username: username,
-    },
-    body: requestBody,
-    mediaType: "application/json",
+    formData: formData,
+    mediaType: "multipart/form-data",
   });
 };
-
 /**
  * @param departmentId
  * @param tenant
@@ -104,9 +97,6 @@ export const postTarget1 = (
  * @throws ApiError
  */
 export const getTarget1 = (
-  type?: number,
-  year?: number,
-  departmentId?: string,
   id?: string,
   tenant?: string
 ): CancelablePromise<ResponseData> => {
@@ -117,9 +107,6 @@ export const getTarget1 = (
       Tenant: tenant,
     },
     query: {
-      type: type,
-      year: year,
-      departmentId: departmentId,
       id: id,
     },
   });
@@ -167,4 +154,3 @@ export const getTarget2 = (
     },
   });
 };
-

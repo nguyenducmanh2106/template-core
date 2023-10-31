@@ -6,6 +6,7 @@ import { getToken, getRole } from '@/utils/localToken';
 export interface ResponseData<T = unknown> {
   code?: number;
   data?: T;
+  summary?: any;
   message?: string;
   totalPage?: number;
   totalCount?: number;

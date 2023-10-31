@@ -374,7 +374,7 @@ export default memo(() => {
         <Badge count={noticeCount} overflowCount={999}>
           <span className="notice" id="notice-center">
             {/* <NoticeSvg className="anticon" /> */}
-            <IconSvg name='notice-svg' />
+            <IconSvg name='notice-svg' style={{ fontSize: '24px' }} />
           </span>
         </Badge>
       </Tooltip>
