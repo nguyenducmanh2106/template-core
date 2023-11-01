@@ -46,9 +46,9 @@ namespace Backend.Controllers
 
         [HttpGet]
         [Route("PracticeTarget")]
-        public ResponseData PracticeTarget(Guid id)
+        public ResponseData PracticeTarget(Guid id, int type, Guid departmentId, int year, string? userName)
         {
-            return _handler.PracticeTarget(id);
+            return _handler.PracticeTarget(id, type, departmentId, year, userName);
         }
 
         /// <summary>

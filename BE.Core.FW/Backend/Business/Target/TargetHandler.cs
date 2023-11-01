@@ -251,7 +251,7 @@ namespace Backend.Business.Target
                             Sep = targetByDepartment != null ? targetByDepartment.Sep : 0,
                             Type = targetByDepartment != null ? targetByDepartment.Type : 0,
                             Username = targetByDepartment != null ? targetByDepartment.Username : null,
-                            Year = targetByDepartment != null ? targetByDepartment.Year : 0,
+                            Year = targetByDepartment != null ? targetByDepartment.Year : targetYearParse,
                             //Total = targetByDepartment != null ? targetByDepartment.Apr + targetByDepartment.Aug + targetByDepartment.Dec + targetByDepartment.Feb + targetByDepartment.Jan + targetByDepartment.July + targetByDepartment.Jun + targetByDepartment.Mar + targetByDepartment.May + targetByDepartment.Nov + targetByDepartment.Oct + targetByDepartment.Sep : 0,
                             Total = targetByDepartment != null ? targetByDepartment.Total : 0,
                             DocumentId = targetByDepartment != null ? targetByDepartment.DocumentId : default(Guid),
@@ -307,7 +307,7 @@ namespace Backend.Business.Target
                         Type = -1,
                         Username = "Chỉ tiêu được giao",
                         Fullname = "Chỉ tiêu được giao",
-                        Year = targetByEmployeeHead != null ? targetByEmployeeHead.Year : 0,
+                        Year = targetByEmployeeHead != null ? targetByEmployeeHead.Year : targetYearParse,
                         //Total = targetByEmployeeHead != null ? targetByEmployeeHead.Apr + targetByEmployeeHead.Aug + targetByEmployeeHead.Dec + targetByEmployeeHead.Feb + targetByEmployeeHead.Jan + targetByEmployeeHead.July + targetByEmployeeHead.Jun + targetByEmployeeHead.Mar + targetByEmployeeHead.May + targetByEmployeeHead.Nov + targetByEmployeeHead.Oct + targetByEmployeeHead.Sep : 0,
                         Total = targetByEmployeeHead != null ? targetByEmployeeHead.Total : 0,
                         DocumentId = targetByEmployeeHead != null ? targetByEmployeeHead.DocumentId : default(Guid),
@@ -362,7 +362,7 @@ namespace Backend.Business.Target
                                 Type = targetByEmployee != null ? targetByEmployee.Type : 1,
                                 Fullname = targetByEmployee != null && !string.IsNullOrEmpty(targetByEmployee.Username) ? employeeAll.Where(g => g.Username == targetByEmployee.Username)?.FirstOrDefault()?.Fullname : item.Fullname,
                                 Username = targetByEmployee != null && !string.IsNullOrEmpty(targetByEmployee.Username) ? targetByEmployee.Username : item.Username,
-                                Year = targetByEmployee != null ? targetByEmployee.Year : 0,
+                                Year = targetByEmployee != null ? targetByEmployee.Year : targetYearParse,
                                 //Total = targetByEmployee != null ? targetByEmployee.Apr + targetByEmployee.Aug + targetByEmployee.Dec + targetByEmployee.Feb + targetByEmployee.Jan + targetByEmployee.July + targetByEmployee.Jun + targetByEmployee.Mar + targetByEmployee.May + targetByEmployee.Nov + targetByEmployee.Oct + targetByEmployee.Sep : 0,
                                 Total = targetByEmployee != null ? targetByEmployee.Total : 0,
                                 DocumentId = targetByEmployee != null ? targetByEmployee.DocumentId : default(Guid),
@@ -939,25 +939,40 @@ namespace Backend.Business.Target
                 responseDataNotification = await responseNotification.Content.ReadFromJsonAsync<ResponseData>();
             }
         }
-        public ResponseData PracticeTarget(Guid id)
+        public ResponseData PracticeTarget(Guid id, int type, Guid departmentId, int year, string? userName)
         {
             try
             {
                 using var unitOfWork = new UnitOfWork(_httpContextAccessor);
-                //var data = unitOfWork.Repository<SysTarget>().Get(g => g.Type == type && g.Year == year && g.DepartmentId == departmentId);
-                //var data = unitOfWork.Repository<SysTarget>().Get(g => g.Id == id);
-
-                //var exitsData = data != null && data.Count() > 0 ? data.FirstOrDefault() : null;
+                var productTypeEntity = unitOfWork.Repository<SysProductType>().Get();
+                TargetModel result = new TargetModel();
                 var exitsData = unitOfWork.Repository<SysTarget>().GetById(id);
                 if (exitsData == null)
                 {
-                    return new ResponseDataError(Code.NotFound, "Id not found");
+                    result.Type = type;
+                    result.TypeName = type == 0 ? "Phòng ban" : type == 1 ? "Cá nhân" : null;
+                    result.DepartmentId = departmentId;
+                    result.DepartmentName = unitOfWork.Repository<SysDepartment>().GetById(departmentId)?.Name;
+                    result.Year = year;
+                    result.Username = userName;
+                    result.Fullname = !string.IsNullOrEmpty(userName) ? unitOfWork.Repository<SysUser>().Get(g => g.Username == userName)?.FirstOrDefault()?.Fullname : string.Empty;
+                    //return new ResponseDataError(Code.NotFound, "Id not found");
+                    return new ResponseDataObject<TargetModel>(result, Code.Success, "");
                 }
                 var username = _currentUser.Name;
 
-                var targetMappings = exitsData != null ? unitOfWork.Repository<SysTargetMapping>().Get(g => g.TargetId == exitsData.Id) : null;
-                var targets = targetMappings != null ? _mapper.Map<List<TargetMappingModel>>(targetMappings) : default;
-                var result = new TargetModel()
+                var targetMappings = exitsData != null ? unitOfWork.Repository<SysTargetMapping>().Get(g => g.TargetId == exitsData.Id)?.OrderBy(g => g.CreatedOnDate)?.ToList() : null;
+                List<TargetMappingModel> targets = new List<TargetMappingModel>();
+                if (targetMappings != null)
+                {
+                    foreach (var targetMapping in targetMappings)
+                    {
+                        var modelMapping = _mapper.Map<TargetMappingModel>(targetMapping);
+                        modelMapping.ProductTypeName = modelMapping.ProductTypeId.HasValue ? productTypeEntity.First(g => g.Id == modelMapping.ProductTypeId.Value)?.Name : string.Empty;
+                        targets.Add(modelMapping);
+                    }
+                }
+                result = new TargetModel()
                 {
                     Apr = exitsData != null ? exitsData.Apr : 0,
                     Aug = exitsData != null ? exitsData.Aug : 0,
@@ -981,6 +996,7 @@ namespace Backend.Business.Target
                     Type = exitsData.Type,
                     TypeName = exitsData.Type == 0 ? "Phòng ban" : exitsData.Type == 1 ? "Cá nhân" : null,
                     Username = exitsData != null ? exitsData.Username : string.Empty,
+                    Fullname = exitsData != null && !string.IsNullOrEmpty(exitsData.Username) ? unitOfWork.Repository<SysUser>().Get(g => g.Username == exitsData.Username)?.FirstOrDefault()?.Fullname : string.Empty,
                     Year = exitsData.Year,
                     Total = exitsData != null ? exitsData.Total : 0,
 
@@ -1002,7 +1018,9 @@ namespace Backend.Business.Target
                     QuantityDec = exitsData != null ? exitsData.QuantityDec : 0,
                     Targets = targets
                 };
-                return new ResponseDataObject<TargetModel>(result, Code.Success, "");
+
+                TargetModel summary = result;
+                return new ResponseDataObject<TargetModel>(result, summary, Code.Success, "");
             }
             catch (Exception exception)
             {
@@ -1045,6 +1063,17 @@ namespace Backend.Business.Target
 
                 var (totalJan, totalFeb, totalMar, totalApr, totalMay, totalJun, totalJuly, totalAug, totalSep, totalOct, totalNov, totalDec) = (dDefault, dDefault, dDefault, dDefault, dDefault, dDefault, dDefault, dDefault, dDefault, dDefault, dDefault, dDefault);
                 var (totalQuantityJan, totalQuantityFeb, totalQuantityMar, totalQuantityApr, totalQuantityMay, totalQuantityJun, totalQuantityJuly, totalQuantityAug, totalQuantitySep, totalQuantityOct, totalQuantityNov, totalQuantityDec) = (iDefault, iDefault, iDefault, iDefault, iDefault, iDefault, iDefault, iDefault, iDefault, iDefault, iDefault, iDefault);
+
+                if (targetEntity == null)
+                {
+                    targetId = Guid.NewGuid();
+                    targetEntity = new SysTarget();
+                    targetEntity.Id = targetId;
+                    targetEntity.DepartmentId = target.DepartmentId;
+                    targetEntity.Type = target.Type;
+                    targetEntity.Year = target.Year;
+                    targetEntity.Username = target.Username;
+                }
                 foreach (var item in model)
                 {
                     //cập nhật lại số liệu cho bảng target
@@ -1102,7 +1131,6 @@ namespace Backend.Business.Target
                     targetEntity.QuantityNov = totalQuantityNov;
                     targetEntity.QuantityDec = totalQuantityDec;
                     targetEntity.TotalQuantity = totalQuantityJan + totalQuantityFeb + totalQuantityMar + totalQuantityApr + totalQuantityMay + totalQuantityJun + totalQuantityJuly + totalQuantityAug + totalQuantitySep + totalQuantityOct + totalQuantityNov + totalQuantityDec;
-                    unitOfWork.Repository<SysTarget>().Update(targetEntity);
 
                     //update dữ liệu bảng TargetMapping
                     var existData = targetMappingBelongTargetId != null && targetMappingBelongTargetId.Count() > 0 ? targetMappingBelongTargetId.FirstOrDefault(g => g.Id == item.Id) : null;
@@ -1148,7 +1176,7 @@ namespace Backend.Business.Target
 
                         unitOfWork.Repository<SysTargetMapping>().Insert(new SysTargetMapping()
                         {
-                            TargetId = item.TargetId,
+                            TargetId = targetId,
                             Apr = item.Apr,
                             Aug = item.Aug,
                             CustomerCategoryId = item.CustomerCategoryId,
@@ -1183,6 +1211,14 @@ namespace Backend.Business.Target
                         });
                     }
 
+                }
+
+                if (targetEntity != null)
+                {
+                    if (model.Count() == 0)
+                        unitOfWork.Repository<SysTarget>().Delete(targetEntity);
+                    else
+                        unitOfWork.Repository<SysTarget>().InsertOrUpdate(targetEntity);
                 }
 
                 //tiến hành xóa những bản ghi bị thừa

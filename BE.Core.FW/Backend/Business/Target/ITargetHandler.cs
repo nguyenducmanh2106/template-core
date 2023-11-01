@@ -18,7 +18,7 @@ namespace Backend.Business.Target
         /// <returns></returns>
         ResponseData UpSert(Guid? departmentId, TargetModel model);
 
-        ResponseData PracticeTarget(Guid id);
+        ResponseData PracticeTarget(Guid id, int type, Guid departmentId, int year, string? userName);
         ResponseData UpSertTargetMapping(Guid targetId, TargetModel target);
 
         /// <summary>

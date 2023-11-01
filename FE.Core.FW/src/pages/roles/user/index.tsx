@@ -17,7 +17,7 @@ import { useRecoilValue } from 'recoil';
 import CreateUser from './create';
 import EditUser from './edit';
 import UserRole from './user-role';
-import UserDataAcess from './user-access-data';
+import { DataNode } from 'antd/es/tree';
 
 function User() {
 
@@ -74,6 +74,7 @@ function User() {
   const [userEdit, setUserEdit] = useState<UserModel>({});
   const [initLoadingModal, setInitLoadingModal] = useState<boolean>(false);
   const [showFormUserDataAccess, setShowFormUserDataAccess] = useState<boolean>(false);
+  const [departments, setDepartments] = useState<DataNode[]>([]);
   const user = useRecoilValue(useUserState);
   const initState = {
     roles: [],
@@ -110,19 +111,28 @@ function User() {
   };
 
   const onHandleShowFormUserRole = async (status: boolean, userEdit: UserModel) => {
-    setUserEdit(userEdit)
-    await getRoles()
-  };
-
-  const onHandleShowFormSetDataAccess = async (id: string) => {
-    setShowFormUserDataAccess(false)
-    const response: ResponseData = await getUserById(id, "");
+    const response: ResponseData = await getUserById(userEdit.id as string, "");
+    const responseDepartment: ResponseData = await getDepartment2();
+    setDepartments(responseDepartment?.data as DataNode[] ?? [])
     if (response && response.code === Code._200) {
       const getUserCurrent = response.data as UserModel;
       setUserEdit(getUserCurrent)
       setShowFormUserDataAccess(true)
     }
+    await getRoles()
   };
+
+  // const onHandleShowFormSetDataAccess = async (id: string) => {
+  //   setShowFormUserDataAccess(false)
+  //   const response: ResponseData = await getUserById(id, "");
+  //   const responseDepartment: ResponseData = await getDepartment2();
+  //   setDepartments(responseDepartment?.data as DataNode[] ?? [])
+  //   if (response && response.code === Code._200) {
+  //     const getUserCurrent = response.data as UserModel;
+  //     setUserEdit(getUserCurrent)
+  //     setShowFormUserDataAccess(true)
+  //   }
+  // };
   /**
    * Lấy danh sách vai trò
    * @param id 
@@ -193,10 +203,13 @@ function User() {
     try {
       const fieldsValue = await searchForm.validateFields();
       // console.log(fieldsValue);
+      const filter = {
+        ...fieldsValue,
+        page: current,
+        size: pageSize,
+      }
       const response: ResponseData = await getUser(
-        fieldsValue.Name,
-        current,
-        pageSize,
+        JSON.stringify(filter)
       );
       setList((response.data || []) as UserModel[]);
       setPagination({
@@ -266,12 +279,6 @@ function User() {
             </Tooltip>
           </Button>
 
-          <Button type="default" disabled={record.id === user.id} size={"small"} loading={state.initFormUserRole} onClick={() => onHandleShowFormSetDataAccess(record.id as string)}>
-            <Tooltip title="Quyền truy cập dữ liệu">
-              <DatabaseOutlined />
-            </Tooltip>
-          </Button>
-
           <Permission navigation={layoutCode.user} bitPermission={PermissionAction.Delete} noNode={<></>}>
             <Button type='dashed' disabled={record.id === user.id} size={"small"} loading={false} onClick={() => deleteRecord(record.id || '')}>
               <Tooltip title="Xóa">
@@ -294,12 +301,12 @@ function User() {
           <Col span={12} className='gutter-row' style={{ marginBottom: '8px' }}>
             <Form form={searchForm} name='search'
               initialValues={{
-                ["Name"]: '',
+                ["TextSearch"]: '',
               }}
             >
               <Row gutter={16} justify='start'>
                 <Col span={24}>
-                  <Form.Item label={''} labelCol={{ span: 0 }} wrapperCol={{ span: 17 }} name='Name'>
+                  <Form.Item label={''} labelCol={{ span: 0 }} wrapperCol={{ span: 17 }} name='TextSearch'>
                     <Search placeholder="Tìm kiếm" allowClear onSearch={() => searchFormSubmit()} />
                   </Form.Item>
                 </Col>
@@ -356,18 +363,20 @@ function User() {
           reload={searchFormSubmit}
           role={state.roles}
           userEdit={userEdit}
+          departments={departments}
           initLoadingModal={state.initFormUserRole}
         />
       )}
-      {showFormUserDataAccess && (
+      {/* {showFormUserDataAccess && (
         <UserDataAcess
           open={showFormUserDataAccess}
           setOpen={setShowFormUserDataAccess}
           reload={searchFormSubmit}
           userEdit={userEdit}
+          departments={departments}
           initLoadingModal={state.initFormUserRole}
         />
-      )}
+      )} */}
     </div>
   );
 }

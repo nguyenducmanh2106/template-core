@@ -430,27 +430,36 @@ function Target() {
             width: 80,
             render: (_, record) => (
                 <Space>
-                    <Dropdown menu={{
-                        items,
-                        onClick: ({ key }) => {
-                            console.log(key)
-                            switch (key) {
-                                case '0':
-                                    break;
-                                case '1':
-                                    navigate(`/icom/target/edit/${record.id}`)
-                                    break;
-                                default:
-                                    break;
+                    {record.type != -1 ?
+                        <Dropdown menu={{
+                            items,
+                            onClick: ({ key }) => {
+                                // console.log(key)
+                                switch (key) {
+                                    case '0':
+                                        if (type == '0')
+                                            navigate(`/icom/target/detail/${record.id}?type=${type}&departmentId=${record.departmentId}&year=${record.year}`);
+                                        else if (type == '1')
+                                            navigate(`/icom/target/detail/${record.id}?type=${type}&departmentId=${record.departmentId}&year=${record.year}&userName=${record.username}`);
+                                        break;
+                                    case '1':
+                                        if (type == '0')
+                                            navigate(`/icom/target/edit/${record.id}?type=${type}&departmentId=${record.departmentId}&year=${record.year}`);
+                                        else if (type == '1')
+                                            navigate(`/icom/target/edit/${record.id}?type=${type}&departmentId=${record.departmentId}&year=${record.year}&userName=${record.username}`);
+                                        break;
+                                    default:
+                                        break;
+                                }
                             }
-                        }
-                    }} trigger={['click']}>
-                        <a onClick={(e) => e.preventDefault()}>
-                            <Space>
-                                <SettingOutlined />
-                            </Space>
-                        </a>
-                    </Dropdown>
+                        }} trigger={['click']}>
+                            <a onClick={(e) => e.preventDefault()}>
+                                <Space>
+                                    <SettingOutlined />
+                                </Space>
+                            </a>
+                        </Dropdown> : <></>
+                    }
                 </Space>
             ),
         },
@@ -459,7 +468,7 @@ function Target() {
     const items: MenuProps['items'] = [
         {
             label: <Link>
-                Xem
+                Chi tiết
             </Link>,
             key: '0',
         },

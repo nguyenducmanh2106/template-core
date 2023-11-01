@@ -76,5 +76,4 @@ namespace Backend.Model
         public Guid? ProductTypeId { get; set; }
         public Guid? CustomerId { get; set; }
     }
-
 }

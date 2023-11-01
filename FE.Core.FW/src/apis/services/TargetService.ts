@@ -88,16 +88,21 @@ export const postTarget1 = (
 };
 
 /**
- * @param type
- * @param year
- * @param departmentId
  * @param id
+ * @param type
+ * @param departmentId
+ * @param year
+ * @param userName
  * @param tenant
  * @returns ResponseData Success
  * @throws ApiError
  */
 export const getTarget1 = (
   id?: string,
+  type?: number,
+  departmentId?: string,
+  year?: number,
+  userName?: string,
   tenant?: string
 ): CancelablePromise<ResponseData> => {
   return __request({
@@ -108,6 +113,10 @@ export const getTarget1 = (
     },
     query: {
       id: id,
+      type: type,
+      departmentId: departmentId,
+      year: year,
+      userName: userName,
     },
   });
 };

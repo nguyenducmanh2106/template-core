@@ -5,6 +5,7 @@ using Backend.Infrastructure.Common.Interfaces;
 using Backend.Infrastructure.EntityFramework.Datatables;
 using Backend.Infrastructure.EntityFramework.Repositories;
 using Backend.Infrastructure.Middleware;
+using Backend.Infrastructure.Middleware.Auth;
 using Backend.Infrastructure.Utils;
 using Backend.Model;
 using DocumentFormat.OpenXml.Office2010.Excel;
@@ -41,12 +42,14 @@ namespace Backend.Business.User
         private readonly string _password = Backend.Infrastructure.Utils.Utils.GetConfig("Authentication:WSO2:Admin:Password");
         private readonly string _tenant = Backend.Infrastructure.Utils.Utils.GetConfig("Authentication:WSO2:Tenants:iig");
         // private static readonly string apiBasicUriCatalog = Backend.Infrastructure.Utils.Utils.GetConfig("Catalog");
+        private readonly ICurrentUser _currentUser;
 
-        public UserHandler(IMapper mapper, IHttpContextAccessor httpContextAccessor, ICached cached)
+        public UserHandler(IMapper mapper, IHttpContextAccessor httpContextAccessor, ICached cached, ICurrentUser currentUser)
         {
             _mapper = mapper;
             _httpContextAccessor = httpContextAccessor;
             _cached = cached;
+            _currentUser = currentUser;
         }
 
         public ResponseData Create(UserModel model)
@@ -323,6 +326,8 @@ namespace Backend.Business.User
                 }
                 // update db
                 existData.RoleId = model.RoleId.HasValue && model.RoleId.Value != Guid.Empty ? model.RoleId : null;
+                existData.IsAccessMaxLevel = model.IsAccessMaxLevel;
+                existData.EmployeeAccessLevels = model.EmployeeAccessLevels;
                 unitOfWork.Repository<SysUser>().Update(existData);
                 unitOfWork.Save();
                 return new ResponseData(Code.Success, "Thay đổi thành công");
@@ -334,43 +339,88 @@ namespace Backend.Business.User
             }
         }
 
-        public async Task<ResponseData> Get(string? name, string accessToken = "", int pageIndex = 1, int pageSize = 10)
+        public async Task<ResponseData> Get(string filter = "{}")
         {
             try
             {
-                using UnitOfWork unitOfWork = new(_httpContextAccessor);
+                //using UnitOfWork unitOfWork = new(_httpContextAccessor);
+                //var filterModel = JsonConvert.DeserializeObject<UserFilterModel>(filter);
+                //if (filterModel == null)
+                //    return new ResponseDataError(Code.BadRequest, "Filter invalid");
+                //var iigDepartmentQuery = unitOfWork.Repository<SysDepartment>().GetAll();
 
-                var iigDepartmentQuery = unitOfWork.Repository<SysDepartment>().GetAll();
+                ////var userData = unitOfWork.Repository<SysUser>().GetQueryable(
+                ////    g => string.IsNullOrEmpty(filterModel.TextSearch) || (!string.IsNullOrEmpty(filterModel.TextSearch) && (g.Fullname.ToLower().Contains(filterModel.TextSearch.Trim().ToLower()) || g.Username.ToLower().Contains(filterModel.TextSearch.Trim().ToLower())))
+                ////    ).OrderByDescending(g => g.CreatedOnDate).Skip((filterModel.Page - 1) * filterModel.Size).Take(filterModel.Size);
+                //var result = (from user in unitOfWork.Repository<SysUser>().dbSet
+                //              join role in unitOfWork.Repository<SysRole>().dbSet on user.RoleId equals role.Id into userRoleDefault
+                //              from userRoleTable in userRoleDefault.DefaultIfEmpty()
+                //              where string.IsNullOrEmpty(name) || (!string.IsNullOrEmpty(name) && (user.Fullname.ToLower().Contains(name.Trim().ToLower()) || user.Username.ToLower().Contains(name.Trim().ToLower())))
+                //              select new UserModel()
+                //              {
+                //                  Username = user.Username,
+                //                  Fullname = user.Fullname,
+                //                  RoleId = user.RoleId,
+                //                  RoleName = userRoleTable.Name,
+                //                  IsLocked = user.IsLocked,
+                //                  Id = user.Id,
+                //                  DepartmentId = user.DepartmentId,
+                //                  SyncId = user.SyncId,
+                //                  CreatedOnDate = user.CreatedOnDate,
+                //              })?.OrderByDescending(g => g.CreatedOnDate).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList() ?? new List<UserModel>();
 
-                var userData = unitOfWork.Repository<SysUser>().GetQueryable(
-                    g => string.IsNullOrEmpty(name) || (!string.IsNullOrEmpty(name) && (g.Fullname.ToLower().Contains(name.Trim().ToLower()) || g.Username.ToLower().Contains(name.Trim().ToLower())))
-                    ).OrderByDescending(g => g.CreatedOnDate).Skip((pageIndex - 1) * pageSize).Take(pageSize);
-                var result = (from user in unitOfWork.Repository<SysUser>().dbSet
-                              join role in unitOfWork.Repository<SysRole>().dbSet on user.RoleId equals role.Id into userRoleDefault
-                              from userRoleTable in userRoleDefault.DefaultIfEmpty()
-                              where string.IsNullOrEmpty(name) || (!string.IsNullOrEmpty(name) && (user.Fullname.ToLower().Contains(name.Trim().ToLower()) || user.Username.ToLower().Contains(name.Trim().ToLower())))
-                              select new UserModel()
-                              {
-                                  Username = user.Username,
-                                  Fullname = user.Fullname,
-                                  RoleId = user.RoleId,
-                                  RoleName = userRoleTable.Name,
-                                  IsLocked = user.IsLocked,
-                                  Id = user.Id,
-                                  DepartmentId = user.DepartmentId,
-                                  SyncId = user.SyncId,
-                                  CreatedOnDate = user.CreatedOnDate,
-                              })?.OrderByDescending(g => g.CreatedOnDate).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList() ?? new List<UserModel>();
+                //int countTotal = unitOfWork.Repository<SysUser>().GetQueryable(
+                //    g => string.IsNullOrEmpty(name) || (!string.IsNullOrEmpty(name) && (g.Fullname.ToLower().Contains(name.Trim().ToLower()) || g.Username.ToLower().Contains(name.Trim().ToLower())))
+                //    )?.Count() ?? 0;
+                //int totalPage = (int)Math.Ceiling((decimal)countTotal / pageSize);
+                //var pagination = new Pagination(pageIndex, pageSize, countTotal, totalPage);
 
-                int countTotal = unitOfWork.Repository<SysUser>().GetQueryable(
-                    g => string.IsNullOrEmpty(name) || (!string.IsNullOrEmpty(name) && (g.Fullname.ToLower().Contains(name.Trim().ToLower()) || g.Username.ToLower().Contains(name.Trim().ToLower())))
-                    )?.Count() ?? 0;
-                int totalPage = (int)Math.Ceiling((decimal)countTotal / pageSize);
-                var pagination = new Pagination(pageIndex, pageSize, countTotal, totalPage);
-                foreach (var item in result)
+
+                int pageNumber = 0;
+                int pageSize = 20;
+                int totalCount = 0;
+                string? departmentAccess = _currentUser.GetDepartmentAccess()?.ToLower();
+                var filterModel = JsonConvert.DeserializeObject<UserFilterModel>(filter);
+                if (filterModel == null)
+                    return new ResponseDataError(Code.BadRequest, "Filter invalid");
+                using var unitOfWork = new UnitOfWork(_httpContextAccessor);
+                var iigDepartmentData = unitOfWork.Repository<SysUser>().Get();
+                //var iigDepartmentQuery = unitOfWork.Repository<SysDepartment>().Get();
+
+                if (!string.IsNullOrEmpty(filterModel.TextSearch))
+                    iigDepartmentData = iigDepartmentData.Where(x => x.Fullname.ToLower().Contains(filterModel.TextSearch.ToLower()));
+                if (filterModel.DepartmentId.HasValue)
+                    iigDepartmentData = iigDepartmentData.Where(x => x.DepartmentId == filterModel.DepartmentId.Value);
+                else
+                    iigDepartmentData = iigDepartmentData.Where(x => x.DepartmentId.HasValue && !string.IsNullOrEmpty(departmentAccess) && departmentAccess.Contains(x.DepartmentId.Value.ToString().ToLower()));
+
+                totalCount = iigDepartmentData.Count();
+                if (filterModel.Page.HasValue && filterModel.Size.HasValue)
                 {
-                    item.DepartmentName = iigDepartmentQuery.FirstOrDefault(g => g.Id == item.DepartmentId)?.Name;
+                    iigDepartmentData = iigDepartmentData.OrderBy(g => g.CreatedOnDate).Skip((filterModel.Page.Value - 1) * filterModel.Size.Value).Take(filterModel.Size.Value);
+                    pageNumber = filterModel.Page.Value;
+                    pageSize = filterModel.Size.Value;
                 }
+                var result = new List<UserModel>();
+                foreach (var item in iigDepartmentData)
+                {
+                    var modelMapping = _mapper.Map<UserModel>(item);
+                    modelMapping.RoleName = modelMapping.RoleId.HasValue ? unitOfWork.Repository<SysRole>().GetById(modelMapping.RoleId)?.Name : null;
+                    modelMapping.DepartmentName = modelMapping.DepartmentId.HasValue ? unitOfWork.Repository<SysDepartment>().GetById(modelMapping.DepartmentId)?.Name : null;
+                    result.Add(modelMapping);
+                }
+
+                var pagination = new Pagination()
+                {
+                    PageNumber = pageNumber,
+                    PageSize = pageSize,
+                    TotalCount = totalCount,
+                    TotalPage = (int)Math.Ceiling((decimal)totalCount / pageSize)
+                };
+                //foreach (var item in result)
+                //{
+                //    item.DepartmentName = iigDepartmentQuery.FirstOrDefault(g => g.Id == item.DepartmentId)?.Name;
+                //}
                 return new PageableData<List<UserModel>>(result, pagination, Code.Success, "");
             }
             catch (Exception exception)
@@ -390,6 +440,18 @@ namespace Backend.Business.User
                     return new ResponseDataError(Code.BadRequest, "Id not found");
                 var result = _mapper.Map<UserModel>(existData);
                 result.DepartmentName = result.DepartmentId.HasValue ? unitOfWork.Repository<SysDepartment>().GetById(result.DepartmentId.Value)?.Name : string.Empty;
+                List<Guid> employeeAccessLevelArray = new List<Guid>();
+                if (!string.IsNullOrEmpty(result.EmployeeAccessLevels))
+                {
+                    var accessLevels = result.EmployeeAccessLevels.Split(',');
+                    for (int idx = 0; idx < accessLevels.Length; idx++)
+                    {
+                        Guid.TryParse(accessLevels[idx], out Guid departmentId);
+                        employeeAccessLevelArray.Add(departmentId);
+                    }
+
+                }
+                result.EmployeeAccessLevelArray = employeeAccessLevelArray;
 
                 return new ResponseDataObject<UserModel>(result, Code.Success, "");
             }

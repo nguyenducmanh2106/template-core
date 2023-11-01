@@ -1,10 +1,11 @@
 import React, { useEffect, useReducer, useState } from 'react';
-import { Button, Col, Form, Modal, Row, Select, message, Input, DatePicker, Spin, Typography } from 'antd';
+import { Button, Col, Form, Modal, Row, Select, message, Input, DatePicker, Spin, Typography, TreeSelect, Checkbox } from 'antd';
 import { Code, ResponseData, RoleModel, UserModel } from '@/apis';
 import dayjs from 'dayjs';
 import { asignRole, getUserById, postUser, putUser } from '@/apis/services/UserService';
 import moment from 'moment';
 import { SelectOptionModel } from '@/@types/data';
+import { DataNode } from 'antd/es/tree';
 const { Text } = Typography;
 interface Props {
     open: boolean;
@@ -12,9 +13,10 @@ interface Props {
     userEdit: UserModel;
     initLoadingModal: boolean;
     setOpen: (value: boolean) => void;
+    departments: DataNode[];
     reload: (current: number, pageSize: number) => void;
 }
-const UserRole: React.FC<Props> = ({ open, setOpen, reload, userEdit, role, initLoadingModal }) => {
+const UserRole: React.FC<Props> = ({ open, setOpen, reload, userEdit, role, initLoadingModal, departments }) => {
     console.log(role)
     const [searchForm] = Form.useForm();
     const [confirmLoading, setConfirmLoading] = useState(false);
@@ -32,6 +34,7 @@ const UserRole: React.FC<Props> = ({ open, setOpen, reload, userEdit, role, init
 
         const objBody = {
             ...fieldsValue,
+            EmployeeAccessLevels: fieldsValue.EmployeeAccessLevels?.toString()
         }
         // console.log(objBody)
         // return
@@ -88,6 +91,8 @@ const UserRole: React.FC<Props> = ({ open, setOpen, reload, userEdit, role, init
                             ["Username"]: userEdit.username ?? '',
                             ["Fullname"]: userEdit.fullname ?? '',
                             ["RoleId"]: userEdit.roleId?.toLowerCase(),
+                            ["IsAccessMaxLevel"]: userEdit.isAccessMaxLevel,
+                            ["EmployeeAccessLevels"]: userEdit.employeeAccessLevelArray,
                         }}
                     >
                         <Row gutter={16} justify='start'>
@@ -112,6 +117,32 @@ const UserRole: React.FC<Props> = ({ open, setOpen, reload, userEdit, role, init
                                             (optionA?.label ?? '').toString().toLowerCase().localeCompare((optionB?.label ?? '').toString().toLowerCase())
                                         }
                                         placeholder='Tìm kiếm' options={role} />
+                                </Form.Item>
+                            </Col>
+                            <Col span={24}>
+                                <Form.Item label={<Text strong>Phòng ban</Text>} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name='EmployeeAccessLevels'>
+                                    <TreeSelect
+                                        showSearch
+                                        treeLine
+                                        style={{ width: '100%' }}
+                                        // value={value}
+                                        treeCheckable
+                                        dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+                                        placeholder="-Chọn phòng ban-"
+                                        allowClear
+                                        treeDefaultExpandAll
+                                        showCheckedStrategy={TreeSelect.SHOW_CHILD}
+                                        treeData={departments}
+                                    />
+                                </Form.Item>
+                            </Col>
+                            <Col span={24}>
+                                <Form.Item
+                                    valuePropName="checked"
+                                    labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name='IsAccessMaxLevel'>
+                                    <Checkbox>
+                                        Là tài khoản quản lý
+                                    </Checkbox>
                                 </Form.Item>
                             </Col>
 

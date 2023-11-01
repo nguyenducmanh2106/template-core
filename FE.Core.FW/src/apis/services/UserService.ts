@@ -11,14 +11,15 @@ import {
 } from "../core/request";
 
 /**
+ * @param filter
  * @param tenant
  * @returns ResponseData Success
  * @throws ApiError
  */
-export const getUser = (name?: string,
-  pageIndex: number = 1,
-  pageSize: number = 10,
-  tenant?: string): CancelablePromise<ResponseData> => {
+export const getUser = (
+  filter: string = "{}",
+  tenant?: string
+): CancelablePromise<ResponseData> => {
   return __request({
     method: "GET",
     path: `/User`,
@@ -26,9 +27,7 @@ export const getUser = (name?: string,
       Tenant: tenant,
     },
     query: {
-      name: name,
-      pageIndex: pageIndex,
-      pageSize: pageSize,
+      filter: filter,
     },
   });
 };

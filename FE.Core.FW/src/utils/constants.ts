@@ -4,12 +4,13 @@ import { lazy } from 'react';
 
 //#region Dùng để phân quyền
 export const PermissionAction = {
-  View: 1,
-  ViewDetail: 2,
-  Add: 4,
-  Edit: 8,
-  Delete: 16,
-  Import: 32
+  View: 1,//0
+  ViewDetail: 2,//1
+  Add: 4,//2
+  Edit: 8,//3
+  Delete: 16,//4
+  Import: 32,//5
+  ImportDepartment: 64,//6
 }
 
 export const permissionOptions: CheckboxOptionType[] = [
@@ -36,6 +37,10 @@ export const permissionOptions: CheckboxOptionType[] = [
   {
     "label": "Import",
     "value": PermissionAction.Import
+  },
+  {
+    "label": "Import mục tiêu phòng",
+    "value": PermissionAction.ImportDepartment
   }
 ];
 //#endregion
@@ -120,6 +125,7 @@ export const layoutCode = {
   icomTarget: "icom-target",
   icomTargetNavigate: "icom-target-navigate",
   icomTargetPractice: "icom-target-practice",
+  icomTargetDetail: "icom-target-detail",
 }
 export const routeArrays = [
   {
@@ -433,6 +439,10 @@ export const routeArrays = [
   {
     "Code": layoutCode.icomTargetPractice,
     "ComponentPath": lazy(() => import('../pages/bussiness-icom/target/edit'))
+  },
+  {
+    "Code": layoutCode.icomTargetDetail,
+    "ComponentPath": lazy(() => import('../pages/bussiness-icom/target/detail'))
   },
   //#endregion
 ]

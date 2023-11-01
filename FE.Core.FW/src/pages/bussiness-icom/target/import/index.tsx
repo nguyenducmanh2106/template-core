@@ -1,7 +1,10 @@
-import { Code } from '@/apis';
+import { OptionModel, SelectOptionModel } from '@/@types/data';
+import { Code, ResponseData, UserModel } from '@/apis';
 import { TargetImportModel } from '@/apis/models/TargetImportModel';
 import { postCustomer1 } from '@/apis/services/CustomerService';
 import { getTarget2, postTarget } from '@/apis/services/TargetService';
+import { getUser } from '@/apis/services/UserService';
+import { ConvertOptionSelectModel } from '@/utils/convert';
 import { InboxOutlined } from '@ant-design/icons';
 import {
     Button,
@@ -45,6 +48,12 @@ function ImportTarget({ open, setOpen, reload, iigdepartments }: Props) {
                 label: 'Cá nhân',
                 value: '1'
             }
+        ],
+        employees: [
+            {
+                label: '-Chọn-',
+                value: ''
+            },
         ]
     };
 
@@ -99,7 +108,7 @@ function ImportTarget({ open, setOpen, reload, iigdepartments }: Props) {
             File: fieldsValue.File?.fileList[0]?.originFileObj
 
         }
-        console.log(objBody)
+        // console.log(objBody)
         // return
 
         const response = await postTarget("", objBody);
@@ -130,21 +139,7 @@ function ImportTarget({ open, setOpen, reload, iigdepartments }: Props) {
             return false;
         },
         defaultFileList: []
-        // onChange(info) {
-        //     // console.log(info)
-        //     // const { status } = info.file;
-        //     // if (status !== 'uploading') {
-        //     //     console.log(info.file, info.fileList);
-        //     // }
-        //     // if (status === 'done') {
-        //     //     message.success(`${info.file.name} file uploaded successfully.`);
-        //     // } else if (status === 'error') {
-        //     //     message.error(`${info.file.name} file upload failed.`);
-        //     // }
-        // },
-        // onDrop(e) {
-        //     console.log('Dropped files', e.dataTransfer.files);
-        // },
+
     };
 
     const downloadFileTemplate = async () => {
@@ -178,6 +173,35 @@ function ImportTarget({ open, setOpen, reload, iigdepartments }: Props) {
         }
     };
 
+    const onHandleChangeDepartment = async () => {
+        const fieldsValue = await searchForm.getFieldsValue();
+        const filter = {
+            ...fieldsValue,
+            // page: current,
+            // size: pageSize,
+        }
+        const response: ResponseData<UserModel[]> = await getUser(
+            JSON.stringify(filter)
+        ) as ResponseData<UserModel[]>;
+
+        const items: SelectOptionModel[] = [];
+
+        response.data?.forEach((item: UserModel) => {
+            items.push({
+                value: item.username as string,
+                label: item.fullname as string,
+                key: item.id as string,
+            });
+        });
+        const stateDispatcher = {
+            employees: [{
+                key: 'Default',
+                label: '-Chọn-',
+                value: '',
+            } as SelectOptionModel].concat(items)
+        }
+        dispatch(stateDispatcher)
+    }
     return (
         <>
             <Modal title="Upload danh sách mục tiêu" open={open} cancelText="Bỏ qua" width={'800px'}
@@ -242,7 +266,20 @@ function ImportTarget({ open, setOpen, reload, iigdepartments }: Props) {
                                     treeDefaultExpandAll
                                     showCheckedStrategy={TreeSelect.SHOW_CHILD}
                                     treeData={iigdepartments}
+                                    onChange={onHandleChangeDepartment}
                                 />
+                            </Form.Item>
+                        </Col>
+                        <Col span={24}>
+                            <Form.Item label={'Nhân viên'} labelAlign='left' labelCol={{ span: 6 }} wrapperCol={{ span: 18 }}
+                                rules={[{ required: true }]}
+                                name='Username'>
+                                <Select
+                                    showSearch
+                                    optionFilterProp="children"
+                                    filterOption={(input, option) => (option?.label ?? '').toString().toLowerCase().includes(input.toLowerCase())}
+
+                                    placeholder='-Chọn-' options={state.employees} />
                             </Form.Item>
                         </Col>
                         <Col span={24}>

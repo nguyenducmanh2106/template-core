@@ -1,4 +1,5 @@
 ﻿using Backend.Business.Policy;
+using Backend.Infrastructure.Utils;
 using System.ComponentModel.DataAnnotations;
 
 namespace Backend.Business.User
@@ -74,5 +75,10 @@ namespace Backend.Business.User
     {
         public string Username { get; set; }
         public string Password { get; set; }
+    }
+
+    public class UserFilterModel : RequestData
+    {
+        public Guid? DepartmentId { get; set; }
     }
 }
