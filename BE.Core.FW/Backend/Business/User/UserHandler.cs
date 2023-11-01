@@ -71,6 +71,7 @@ namespace Backend.Business.User
                 model.Id = Guid.NewGuid();
                 var user = _mapper.Map<SysUser>(model);
                 user.SyncId = Guid.Empty;
+                user.Password = "1234567890";
 
                 unitOfWork.Repository<SysUser>().Insert(user);
                 unitOfWork.Save();

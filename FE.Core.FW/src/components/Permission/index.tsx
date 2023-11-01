@@ -1,10 +1,9 @@
+import { useUserState } from '@/store/user';
+import { hasPermissionRoles } from '@/utils/router';
+import { Button, Result } from 'antd';
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Result, Button } from 'antd';
 import { useRecoilValue } from 'recoil';
-import { userState, useUserState } from '@/store/user';
-import { hasPermissionRoles } from '@/utils/router';
-import { IRouter } from '@/@types/router';
 
 const Forbidden = (
   <Result
@@ -26,6 +25,12 @@ export interface ALinkProps {
   noNode?: React.ReactNode;
 }
 
+/**
+ * 
+ * @param navigation: mã của navigation
+ * @param bitPermission: mã của mã bit của action
+ * @returns 
+ */
 const Permission: React.FC<ALinkProps> = ({ navigation, bitPermission, noNode = Forbidden, children }) => {
   const user = useRecoilValue(useUserState);
   const permissions = user.permissions

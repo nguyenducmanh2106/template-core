@@ -99,7 +99,7 @@ const Create: React.FC<Props> = ({ open, setOpen, reload, iigdepartments }) => {
             >
                 <Space>
                     <Paragraph strong>Mật khẩu mặc định:</Paragraph>
-                    <Paragraph copyable>12345678</Paragraph>
+                    <Paragraph copyable>1234567890</Paragraph>
                 </Space>
                 <Form
                     form={searchForm}

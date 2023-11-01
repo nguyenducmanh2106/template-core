@@ -32,6 +32,7 @@ import { EditableProTable, ProColumns } from '@ant-design/pro-components';
 import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
 function TargetEdit() {
+    console.log('render component')
     const navigate = useNavigate();
     const params = useParams()
     let [searchParams, setSearchParams] = useSearchParams();

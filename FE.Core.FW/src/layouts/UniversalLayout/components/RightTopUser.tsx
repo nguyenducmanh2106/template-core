@@ -45,29 +45,39 @@ export default memo(() => {
         </div>
         <div>{user.roles[0]}</div>
         <Divider style={{ margin: '8px 0' }} />
+      </div>,
+    },
+    {
+      key: '2',
+      label: (
         <Button
-          type="text"
+          type="link"
           icon={<UserOutlined />}
           loading={false}
           onClick={() => setShowForm(true)}
         >
           Đổi mật khẩu
         </Button>
-        <Divider style={{ margin: '8px 0' }} />
+      ),
+    },
+    {
+      key: '3',
+      label: (
         <Button
-          type="text"
+          type="link"
           icon={<PoweroffOutlined />}
           loading={false}
           onClick={logOut}
         >
           Đăng xuất
         </Button>
-      </div>,
+      ),
     },
   ];
   return (
     <>
-      <Dropdown menu={{ items }} trigger={['click']} placement="topRight">
+      <Dropdown menu={{ items }} trigger={['click']} placement="topRight"
+      >
         <a className='universallayout-top-usermenu ant-dropdown-link' onClick={(e) => e.preventDefault()}>
           {/* {user.name} */}
           <Tooltip title={user.fullname}>

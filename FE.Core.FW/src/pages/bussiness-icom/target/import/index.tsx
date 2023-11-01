@@ -4,7 +4,10 @@ import { TargetImportModel } from '@/apis/models/TargetImportModel';
 import { postCustomer1 } from '@/apis/services/CustomerService';
 import { getTarget2, postTarget } from '@/apis/services/TargetService';
 import { getUser } from '@/apis/services/UserService';
+import { useUserState } from '@/store/user';
+import { PermissionAction, layoutCode } from '@/utils/constants';
 import { ConvertOptionSelectModel } from '@/utils/convert';
+import { hasPermissionRoles } from '@/utils/router';
 import { InboxOutlined } from '@ant-design/icons';
 import {
     Button,
@@ -26,6 +29,7 @@ import {
 import { DataNode } from 'antd/es/tree';
 import dayjs from 'dayjs';
 import { useReducer, useRef, useState } from 'react';
+import { useRecoilValue } from 'recoil';
 
 
 
@@ -202,6 +206,8 @@ function ImportTarget({ open, setOpen, reload, iigdepartments }: Props) {
         }
         dispatch(stateDispatcher)
     }
+    const user = useRecoilValue(useUserState);
+    const permissions = user.permissions
     return (
         <>
             <Modal title="Upload danh sách mục tiêu" open={open} cancelText="Bỏ qua" width={'800px'}
@@ -216,6 +222,7 @@ function ImportTarget({ open, setOpen, reload, iigdepartments }: Props) {
                     validateMessages={validateMessages}
                     initialValues={{
                         ['Year']: dayjs(new Date()),
+                        ['Type']: hasPermissionRoles(permissions, layoutCode.icomTarget as string, PermissionAction.ImportDepartment) ? '0' : '1',
                     }}
                 >
                     <Row gutter={16} justify='start'>
@@ -234,6 +241,7 @@ function ImportTarget({ open, setOpen, reload, iigdepartments }: Props) {
                                 <Select
                                     showSearch
                                     optionFilterProp="children"
+                                    disabled
                                     filterOption={(input, option) => (option?.label ?? '').toString().toLowerCase().includes(input.toLowerCase())}
                                     // filterSort={(optionA, optionB) =>
                                     //     (optionA?.label ?? '').toString().toLowerCase().localeCompare((optionB?.label ?? '').toString().toLowerCase())
@@ -270,18 +278,22 @@ function ImportTarget({ open, setOpen, reload, iigdepartments }: Props) {
                                 />
                             </Form.Item>
                         </Col>
-                        <Col span={24}>
-                            <Form.Item label={'Nhân viên'} labelAlign='left' labelCol={{ span: 6 }} wrapperCol={{ span: 18 }}
-                                rules={[{ required: true }]}
-                                name='Username'>
-                                <Select
-                                    showSearch
-                                    optionFilterProp="children"
-                                    filterOption={(input, option) => (option?.label ?? '').toString().toLowerCase().includes(input.toLowerCase())}
+                        {
+                            !hasPermissionRoles(permissions, layoutCode.icomTarget as string, PermissionAction.ImportDepartment) ?
+                                <Col span={24}>
+                                    <Form.Item label={'Nhân viên'} labelAlign='left' labelCol={{ span: 6 }} wrapperCol={{ span: 18 }}
+                                        rules={[{ required: true }]}
+                                        name='Username'>
+                                        <Select
+                                            showSearch
+                                            optionFilterProp="children"
+                                            filterOption={(input, option) => (option?.label ?? '').toString().toLowerCase().includes(input.toLowerCase())}
 
-                                    placeholder='-Chọn-' options={state.employees} />
-                            </Form.Item>
-                        </Col>
+                                            placeholder='-Chọn-' options={state.employees} />
+                                    </Form.Item>
+                                </Col> : <></>
+                        }
+
                         <Col span={24}>
                             <Form.Item label={'Chọn file upload'} labelAlign='left' labelCol={{ span: 6 }} wrapperCol={{ span: 18 }} name='File'>
                                 <Upload.Dragger {...props}>

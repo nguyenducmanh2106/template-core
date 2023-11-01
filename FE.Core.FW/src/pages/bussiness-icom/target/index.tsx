@@ -27,6 +27,9 @@ import { ActionType, ProColumns, ProTable } from '@ant-design/pro-components';
 import dayjs from 'dayjs';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import ImportTarget from './import';
+import { useRecoilValue } from 'recoil';
+import { useUserState } from '@/store/user';
+import { hasPermissionRoles } from '@/utils/router';
 function Target() {
     const navigate = useNavigate();
     const params = useParams()
@@ -65,6 +68,8 @@ function Target() {
         initState,
     );
 
+    const user = useRecoilValue(useUserState);
+    const permissions = user.permissions
     const getList = async (current: number, pageSize: number = 20): Promise<void> => {
         setLoading(true);
         searchFormSubmit(current, pageSize);
@@ -428,44 +433,49 @@ function Target() {
             align: 'center',
             fixed: 'right',
             width: 80,
-            render: (_, record) => (
-                <Space>
-                    {record.type != -1 ?
-                        <Dropdown menu={{
-                            items,
-                            onClick: ({ key }) => {
-                                // console.log(key)
-                                switch (key) {
-                                    case '0':
-                                        if (type == '0')
-                                            navigate(`/icom/target/detail/${record.id}?type=${type}&departmentId=${record.departmentId}&year=${record.year}`);
-                                        else if (type == '1')
-                                            navigate(`/icom/target/detail/${record.id}?type=${type}&departmentId=${record.departmentId}&year=${record.year}&userName=${record.username}`);
-                                        break;
-                                    case '1':
-                                        if (type == '0')
-                                            navigate(`/icom/target/edit/${record.id}?type=${type}&departmentId=${record.departmentId}&year=${record.year}`);
-                                        else if (type == '1')
-                                            navigate(`/icom/target/edit/${record.id}?type=${type}&departmentId=${record.departmentId}&year=${record.year}&userName=${record.username}`);
-                                        break;
-                                    default:
-                                        break;
+            render: (_, record) => {
+                const permissionEdit = hasPermissionRoles(permissions, layoutCode.icomTarget as string, PermissionAction.Edit)
+                const permissionImportDepartment = hasPermissionRoles(permissions, layoutCode.icomTarget as string, PermissionAction.ImportDepartment)
+                const permissionFull = permissionImportDepartment && type == '0' ? true : !permissionImportDepartment && type == '1' ? true : false
+                return (
+                    <Space>
+                        {record.type != -1 ?
+                            <Dropdown menu={{
+                                items: !permissionEdit ? itemActionMins : permissionFull ? itemActionFulls : itemActionMins,
+                                onClick: ({ key }) => {
+                                    // console.log(key)
+                                    switch (key) {
+                                        case '0':
+                                            if (type == '0')
+                                                navigate(`/icom/target/detail/${record.id}?type=${type}&departmentId=${record.departmentId}&year=${record.year}`);
+                                            else if (type == '1')
+                                                navigate(`/icom/target/detail/${record.id}?type=${type}&departmentId=${record.departmentId}&year=${record.year}&userName=${record.username}`);
+                                            break;
+                                        case '1':
+                                            if (type == '0')
+                                                navigate(`/icom/target/edit/${record.id}?type=${type}&departmentId=${record.departmentId}&year=${record.year}`);
+                                            else if (type == '1')
+                                                navigate(`/icom/target/edit/${record.id}?type=${type}&departmentId=${record.departmentId}&year=${record.year}&userName=${record.username}`);
+                                            break;
+                                        default:
+                                            break;
+                                    }
                                 }
-                            }
-                        }} trigger={['click']}>
-                            <a onClick={(e) => e.preventDefault()}>
-                                <Space>
-                                    <SettingOutlined />
-                                </Space>
-                            </a>
-                        </Dropdown> : <></>
-                    }
-                </Space>
-            ),
+                            }} trigger={['click']}>
+                                <a onClick={(e) => e.preventDefault()}>
+                                    <Space>
+                                        <SettingOutlined />
+                                    </Space>
+                                </a>
+                            </Dropdown> : <></>
+                        }
+                    </Space>
+                )
+            }
         },
     ];
 
-    const items: MenuProps['items'] = [
+    const itemActionFulls: MenuProps['items'] = [
         {
             label: <Link>
                 Chi tiết
@@ -477,6 +487,14 @@ function Target() {
                 Cập nhật
             </Link>,
             key: '1',
+        },
+    ];
+    const itemActionMins: MenuProps['items'] = [
+        {
+            label: <Link>
+                Chi tiết
+            </Link>,
+            key: '0',
         },
     ];
     const [columnInit, setColumnInit] = useState<ProColumns<TargetModel>[]>(columns)
@@ -592,8 +610,9 @@ function Target() {
                                             labelCol={{ span: 0 }}
                                             wrapperCol={{ span: 24 }}
                                             name='TargetYear'
+                                            rules={[{ required: true }]}
                                         >
-                                            <DatePicker picker='year' placeholder='Chọn năm' format={['YYYY']} onChange={onHandleChangeFilterTargetYear} />
+                                            <DatePicker allowClear={false} picker='year' placeholder='Chọn năm' format={['YYYY']} onChange={onHandleChangeFilterTargetYear} />
                                         </Form.Item>
                                     </Col>
                                 </Row>

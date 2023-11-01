@@ -120,7 +120,7 @@ const UserRole: React.FC<Props> = ({ open, setOpen, reload, userEdit, role, init
                                 </Form.Item>
                             </Col>
                             <Col span={24}>
-                                <Form.Item label={<Text strong>Phòng ban</Text>} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name='EmployeeAccessLevels'>
+                                <Form.Item label={<Text strong>Quyền truy cập dữ liệu</Text>} labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} name='EmployeeAccessLevels'>
                                     <TreeSelect
                                         showSearch
                                         treeLine

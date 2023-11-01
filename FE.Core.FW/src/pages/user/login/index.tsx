@@ -40,6 +40,7 @@ export default memo(() => {
     number: {
       range: '${label} must be between ${min} and ${max}',
     },
+    min: '${label} ít nhất 8 ký tự'
   };
   const [searchForm] = Form.useForm();
 
@@ -68,7 +69,7 @@ export default memo(() => {
         <Form.Item
           label="Mật khẩu"
           name="password"
-          rules={[{ required: true }]}
+          rules={[{ required: true, min: 8 }]}
         >
           <Input.Password />
         </Form.Item>

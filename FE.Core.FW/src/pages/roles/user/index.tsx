@@ -112,7 +112,7 @@ function User() {
 
   const onHandleShowFormUserRole = async (status: boolean, userEdit: UserModel) => {
     const response: ResponseData = await getUserById(userEdit.id as string, "");
-    const responseDepartment: ResponseData = await getDepartment2();
+    const responseDepartment: ResponseData = await getDepartment2(undefined,true);
     setDepartments(responseDepartment?.data as DataNode[] ?? [])
     if (response && response.code === Code._200) {
       const getUserCurrent = response.data as UserModel;
@@ -254,7 +254,7 @@ function User() {
     },
     {
       title: 'Trạng thái',
-      dataIndex: 'isDisabled',
+      dataIndex: 'isLocked',
       render: (status, record) => <Switch size="small" checked={!status} onChange={(checked, event) => onHandleSwitchStatusUser(checked, event, record.id ?? "")} />,
     },
     {

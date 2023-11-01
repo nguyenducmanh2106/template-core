@@ -76,6 +76,10 @@ const PermissionModule: React.FC<Props> = ({ module, role, permissions, getPermi
      * @param modules : code của phân hệ
      */
     const updatePermissions = async (checkedListMapUpdate: RoleState[], modules: string) => {
+        const userFromLocalStorage = localStorage.getItem("permissionSetting") ? JSON.parse(localStorage.getItem("permissionSetting") as string) : ''
+        if (userFromLocalStorage) {
+            localStorage.removeItem("permissionSetting");
+        }
         const checkExist = checkedListMapUpdate.find((item: RoleState) => item.layoutCode === modules)
         if (!checkExist) {
             messageApi.open({

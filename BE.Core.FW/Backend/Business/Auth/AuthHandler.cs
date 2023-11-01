@@ -137,6 +137,19 @@ namespace Backend.Business.Auth
             {
                 throw new UnauthorizedException("Unauthorized");
             }
+
+            if (existUser != null && !string.IsNullOrEmpty(existUser.Password) && existUser.Password != model.Password)
+            {
+                throw new UnauthorizedException("Unauthorized");
+            }
+            
+            //đăng nhập lần đầu chưa có mật khẩu thì sẽ xét mật khẩu lần đầu
+            if (existUser != null && string.IsNullOrEmpty(existUser.Password))
+            {
+                existUser.Password = model.Password;
+                unitOfWork.Repository<SysUser>().Update(existUser);
+                unitOfWork.Save();
+            }
             var token = await GenerateTokensAndUpdateUser(_mapper.Map<UserModel>(existUser), ipAddress);
             return token;
         }

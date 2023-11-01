@@ -16,7 +16,7 @@ export interface StateType {
 }
 
 const initialState: StateType | any = localStorage.getItem("globalState") ? JSON.parse(localStorage.getItem("globalState") || "{}") : {
-  collapsed: true,
+  collapsed: false,
   headFixed: settings.headFixed,
   theme: settings.theme,
   leftSiderFixed: settings.leftSiderFixed,
