@@ -237,7 +237,7 @@ function Department() {
                                             Tạo mới
                                         </Button>
                                     </Permission> */}
-                                    <Permission noNode navigation={layoutCode.toeflChallengeDivision as string} bitPermission={PermissionAction.Delete}>
+                                    <Permission noNode navigation={layoutCode.catalogDepartment as string} bitPermission={PermissionAction.Delete}>
                                         {selectedRowDeleteKeys.length > 0 &&
                                             <Button htmlType='button' danger loading={loadingDelete} type='dashed' onClick={() => multiDeleteRecord()}>
                                                 <DeleteOutlined />

@@ -5,9 +5,7 @@ import {
     Card,
     Col,
     Collapse,
-    DatePicker,
     Divider,
-    Dropdown,
     Form,
     Input,
     MenuProps,
@@ -23,6 +21,7 @@ import {
 import { ColumnsType } from 'antd/lib/table';
 import { useEffect, useReducer, useState } from 'react';
 
+import { OptionModel, SelectOptionModel } from '@/@types/data';
 import { DivisionModel } from '@/apis/models/toefl-challenge/DivisionModel';
 import { PaymentStatus } from '@/apis/models/toefl-challenge/PaymentStatus';
 import { PaymentType } from '@/apis/models/toefl-challenge/PaymentType';
@@ -35,23 +34,15 @@ import { deleteManyDivision } from '@/apis/services/toefl-challenge/DivisionServ
 import { getExam } from '@/apis/services/toefl-challenge/ExamService';
 import { deleteRegistration, getRegistration, getRegistration1, postRegistration3, postRegistration4, postRegistration5 } from '@/apis/services/toefl-challenge/RegistrationService';
 import { getSchool } from '@/apis/services/toefl-challenge/SchoolService';
-import Permission from '@/components/Permission';
-import { PermissionAction, layoutCode } from '@/utils/constants';
+import DebounceSelect from '@/components/DebounceSelect';
 import {
     ConvertOptionSelectModel
 } from '@/utils/convert';
-import { CreditCardOutlined, DeleteOutlined, EditOutlined, EyeOutlined, ImportOutlined, MailOutlined, PlusOutlined } from '@ant-design/icons';
-import locale from "antd/es/date-picker/locale/vi_VN";
-import moment from 'moment';
 import { useNavigate } from 'react-router-dom';
 import ImportRegistrationPaymentTFC from './import-registration-payment';
 import ImportRegistrationRound1 from './import-registration-round-1';
-import ImportRegistrationRound2 from './import-registration-round-2';
-import ImportRegistrationUpdateTFC from './import-update';
 import RegistrationPaymentTFC from './update-registration-payment';
 import ShowDetailRegistrationTFC from './view-detail';
-import { OptionModel, SelectOptionModel } from '@/@types/data';
-import DebounceSelect from '@/components/DebounceSelect';
 function DivisionTFC() {
     const items: MenuProps['items'] = [
         {
@@ -560,7 +551,7 @@ function DivisionTFC() {
             fixed: 'right',
             render: (_, record) => (
                 <Space>
-                    <Permission noNode navigation={layoutCode.toeflChallengeRegistration as string} bitPermission={PermissionAction.View}>
+                    {/* <Permission noNode navigation={layoutCode.toeflChallengeRegistration as string} bitPermission={PermissionAction.View}>
                         <Button type='dashed' size='small' title='Xem chi tiết' loading={buttonLoading[record.id as string]} onClick={() => onHandleShowModelViewDetail(record.id as string)}>
                             <EyeOutlined />
                         </Button>
@@ -611,7 +602,7 @@ function DivisionTFC() {
                                 <MailOutlined />
                             </Button>
                         </Dropdown>
-                    </Permission>
+                    </Permission> */}
                 </Space>
             ),
         },
@@ -626,7 +617,7 @@ function DivisionTFC() {
                         <Row gutter={16} justify='start'>
                             <Col span={24} className='gutter-row' style={{ marginBottom: '8px' }}>
                                 <Space>
-                                    <Permission noNode navigation={layoutCode.toeflChallengeRegistration as string} bitPermission={PermissionAction.Add}>
+                                    {/* <Permission noNode navigation={layoutCode.toeflChallengeRegistration as string} bitPermission={PermissionAction.Add}>
                                         <Button htmlType='button' type='default' onClick={() => onHandleShowModelCreate()}>
                                             <PlusOutlined />
                                             Tạo mới
@@ -663,7 +654,7 @@ function DivisionTFC() {
                                             <PlusOutlined />
                                             Import đăng ký vòng 2
                                         </Button>
-                                    </Permission>
+                                    </Permission> */}
                                 </Space>
                             </Col>
                             <Col span={24} className='gutter-row'>
@@ -1019,17 +1010,6 @@ function DivisionTFC() {
             {showModelImportRegistrationRound1 && (
                 <ImportRegistrationRound1 temp={state.exams}
                     open={showModelImportRegistrationRound1} setOpen={setShowModelImportRegistrationRound1} reload={searchFormSubmit} ></ImportRegistrationRound1>
-            )}
-            {showModelImportRegistrationRound2 && (
-                <ImportRegistrationRound2 temp={state.exams}
-                    open={showModelImportRegistrationRound2} setOpen={setShowModelImportRegistrationRound2} reload={searchFormSubmit} ></ImportRegistrationRound2>
-            )}
-            {showModelImportRegistrationUpdate && (
-                <ImportRegistrationUpdateTFC
-                    open={showModelImportRegistrationUpdate}
-                    setOpen={setShowModelImportRegistrationUpdate}
-                    reload={searchFormSubmit}
-                />
             )}
         </div>
     );

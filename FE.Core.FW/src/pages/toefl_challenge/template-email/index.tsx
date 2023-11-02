@@ -205,7 +205,7 @@ function DepartmentTFC() {
             width: 300,
             render: (_, record) => (
                 <Space>
-                    <Permission noNode navigation={layoutCode.toeflChallengeTemplateEmail as string} bitPermission={PermissionAction.Edit}>
+                    {/* <Permission noNode navigation={layoutCode.toeflChallengeTemplateEmail as string} bitPermission={PermissionAction.Edit}>
                         <Button type='dashed' title='Cập nhật' loading={false} onClick={() => onHandleEdit(record.id as string)}>
                             <EditOutlined />
                         </Button>
@@ -214,7 +214,7 @@ function DepartmentTFC() {
                         <Button danger title='Xóa' loading={false} onClick={() => deleteRecord(record.id || '')}>
                             <DeleteOutlined />
                         </Button>
-                    </Permission>
+                    </Permission> */}
                 </Space>
             ),
         },
@@ -229,7 +229,7 @@ function DepartmentTFC() {
                         <Row gutter={16} justify='start'>
                             <Col span={24} className='gutter-row' style={{ marginBottom: '8px' }}>
                                 <Space>
-                                    <Permission noNode navigation={layoutCode.toeflChallengeTemplateEmail as string} bitPermission={PermissionAction.Add}>
+                                    {/* <Permission noNode navigation={layoutCode.toeflChallengeTemplateEmail as string} bitPermission={PermissionAction.Add}>
                                         <Button htmlType='button' type='default' onClick={() => onHandleShowModelCreate()}>
                                             <PlusOutlined />
                                             Tạo mới
@@ -242,7 +242,7 @@ function DepartmentTFC() {
                                                 Xóa
                                             </Button>
                                         }
-                                    </Permission>
+                                    </Permission> */}
                                 </Space>
                             </Col>
                             <Col span={24} className='gutter-row'>

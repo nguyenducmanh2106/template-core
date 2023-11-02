@@ -3,24 +3,6 @@ import { CurrentUser } from '@/store/user';
 import dayjs from 'dayjs';
 
 
-export const ConvertHeaderQuarterOptionModel = (list: HeadQuarterModel[]) => {
-  const items: SelectOptionModel[] = [];
-
-  list.forEach((item: HeadQuarterModel) => {
-    const access = getAcessHeaderQuater() as string[]
-    if (access?.includes(item.id as string))
-      items.push({
-        value: item.id as string,
-        label: item.name as string,
-        key: item.id as string,
-        parrentId: item.area.id as string
-      });
-  });
-
-  return items;
-};
-
-
 export const ConvertIntToCurrencyFormat = (input: number) => {
   if (input == undefined) input = 0;
   const inputT = input.toString();
@@ -90,14 +72,14 @@ export const base64toBlob = (b64Data: string, contentType = 'application/octet-s
   return blob;
 }
 
-export const getAcessHeaderQuater = () => {
-  const userFromLocalStorage: CurrentUser = localStorage.getItem("permissionSetting") ? JSON.parse(localStorage.getItem("permissionSetting") as string) : ''
+// export const getAcessHeaderQuater = () => {
+//   const userFromLocalStorage: CurrentUser = localStorage.getItem("permissionSetting") ? JSON.parse(localStorage.getItem("permissionSetting") as string) : ''
 
-  if (userFromLocalStorage.accessDataHeaderQuater.length > 0)
-    return userFromLocalStorage.accessDataHeaderQuater
-  else
-    return []
-}
+//   if (userFromLocalStorage.accessDataHeaderQuater.length > 0)
+//     return userFromLocalStorage.accessDataHeaderQuater
+//   else
+//     return []
+// }
 
 export const SumPriceString = (priceString: string) => {
   var sum = 0

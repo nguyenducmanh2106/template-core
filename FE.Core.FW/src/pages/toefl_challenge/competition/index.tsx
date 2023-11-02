@@ -235,7 +235,7 @@ function CompetitionTFC() {
             width: 300,
             render: (_, record) => (
                 <Space>
-                    <Permission noNode navigation={layoutCode.toeflChallengeCompetition as string} bitPermission={PermissionAction.Edit}>
+                    {/* <Permission noNode navigation={layoutCode.toeflChallengeCompetition as string} bitPermission={PermissionAction.Edit}>
                         <Button type='dashed' title='Cập nhật' loading={false} onClick={() => navigate(`/toefl-challenge/competition/edit/${record.id}`)}>
                             <EditOutlined />
                         </Button>
@@ -244,7 +244,7 @@ function CompetitionTFC() {
                         <Button danger title='Xóa' loading={false} onClick={() => deleteRecord(record.id || '')}>
                             <DeleteOutlined />
                         </Button>
-                    </Permission>
+                    </Permission> */}
                 </Space>
             ),
         },
@@ -267,12 +267,12 @@ function CompetitionTFC() {
                         <Row gutter={16} justify='start'>
                             <Col span={24} className='gutter-row' style={{ marginBottom: '8px' }}>
                                 <Space>
-                                    <Permission noNode navigation={layoutCode.toeflChallengeCompetition as string} bitPermission={PermissionAction.Add}>
+                                    {/* <Permission noNode navigation={layoutCode.toeflChallengeCompetition as string} bitPermission={PermissionAction.Add}>
                                         <Button htmlType='button' type='default' onClick={() => onHandleShowModelCreate()}>
                                             <PlusOutlined />
                                             Tạo mới
                                         </Button>
-                                    </Permission>
+                                    </Permission> */}
                                     {/* <Permission noNode navigation={layoutCode.toeflChallengeDepartment as string} bitPermission={PermissionAction.Add}>
                                         {selectedRowDeleteKeys.length > 0 &&
                                             <Button htmlType='button' danger loading={loadingDelete} type='dashed' onClick={() => multiDeleteRecord()}>

@@ -394,7 +394,7 @@ function Product() {
                                 Tạo mới
                             </Button>
                         </Permission>,
-                        <Permission noNode navigation={layoutCode.toeflChallengeRegistration as string} bitPermission={PermissionAction.Edit}>
+                        <Permission noNode navigation={layoutCode.catalogProduct as string} bitPermission={PermissionAction.Edit}>
                             <Button htmlType='button' type='default' onClick={() => onHandleShowImportRegistrationPayments()}>
                                 <ImportOutlined />
                                 Import

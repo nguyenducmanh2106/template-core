@@ -265,7 +265,7 @@ function SchoolTFC() {
             width: 300,
             render: (_, record) => (
                 <Space>
-                    <Permission noNode navigation={layoutCode.toeflChallengeSchool as string} bitPermission={PermissionAction.Edit}>
+                    {/* <Permission noNode navigation={layoutCode.toeflChallengeSchool as string} bitPermission={PermissionAction.Edit}>
                         <Button type='dashed' title='Cập nhật' loading={false} onClick={() => navigate(`/toefl-challenge/school/edit/${record.id}`)}>
                             <EditOutlined />
                         </Button>
@@ -274,7 +274,7 @@ function SchoolTFC() {
                         <Button danger title='Xóa' loading={false} onClick={() => deleteRecord(record.id || '')}>
                             <DeleteOutlined />
                         </Button>
-                    </Permission>
+                    </Permission> */}
                 </Space>
             ),
         },
@@ -333,7 +333,7 @@ function SchoolTFC() {
             width: 300,
             render: (_, record) => (
                 <Space>
-                    <Permission noNode navigation={layoutCode.toeflChallengeSchool as string} bitPermission={PermissionAction.Edit}>
+                    {/* <Permission noNode navigation={layoutCode.toeflChallengeSchool as string} bitPermission={PermissionAction.Edit}>
                         <Button type='dashed' title='Cập nhật' loading={false} onClick={() => navigate(`/toefl-challenge/school/edit/${record.id}`)}>
                             <EditOutlined />
                         </Button>
@@ -342,7 +342,7 @@ function SchoolTFC() {
                         <Button danger title='Xóa' loading={false} onClick={() => deleteRecord(record.id || '')}>
                             <DeleteOutlined />
                         </Button>
-                    </Permission>
+                    </Permission> */}
                 </Space>
             ),
         },
@@ -365,7 +365,7 @@ function SchoolTFC() {
                         <Row gutter={16} justify='start'>
                             <Col span={24} className='gutter-row' style={{ marginBottom: '8px' }}>
                                 <Space>
-                                    <Permission noNode navigation={layoutCode.toeflChallengeSchool as string} bitPermission={PermissionAction.Add}>
+                                    {/* <Permission noNode navigation={layoutCode.toeflChallengeSchool as string} bitPermission={PermissionAction.Add}>
                                         <Button htmlType='button' type='default' onClick={() => onHandleShowModelCreate()}>
                                             <PlusOutlined />
                                             Tạo mới
@@ -376,7 +376,7 @@ function SchoolTFC() {
                                             <GatewayOutlined />
                                             Điều phối trường
                                         </Button>
-                                    </Permission>
+                                    </Permission> */}
                                     {/* <Permission noNode navigation={layoutCode.toeflChallengeDepartment as string} bitPermission={PermissionAction.Add}>
                                         {selectedRowDeleteKeys.length > 0 &&
                                             <Button htmlType='button' danger loading={loadingDelete} type='dashed' onClick={() => multiDeleteRecord()}>

@@ -66,27 +66,6 @@ export const layoutCode = {
   workplace: "workplace",
   navigations: "navigations",
   pages: "pages",
-  toeflChallenge: "TOEFL_CHALLENGE",
-  toeflChallengeDepartment: "toefl-challenge-department",
-  toeflChallengeDivision: "toefl-challenge-division",
-  toeflChallengeDivisionCreate: "toefl-challenge-division__create",
-  toeflChallengeDivisionEdit: "toefl-challenge-division__edit",
-  toeflChallengeSchool: "toefl-challenge-school",
-  toeflChallengeSchoolCreate: "toefl-challenge-school__create",
-  toeflChallengeSchoolEdit: "toefl-challenge-school__edit",
-  toeflChallengeCompetition: "toefl-challenge-competition",
-  toeflChallengeCompetitionCreate: "toefl-challenge-competition__create",
-  toeflChallengeCompetitionEdit: "toefl-challenge-competition__edit",
-  toeflChallengeTemplateEmail: "toefl-challenge-template-email",
-  toeflChallengeRegistration: "toefl-challenge-registration",
-  toeflChallengeRegistrationCreate: "toefl-challenge-registration__create",
-  toeflChallengeRegistrationEdit: "toefl-challenge-registration__edit",
-  toeflChallengeExamSchedule: "toefl-challenge-exam-schedule",
-  toeflChallengeExamScheduleCreate: "toefl-challenge-exam-schedule__create",
-  toeflChallengeExamScheduleEdit: "toefl-challenge-exam-schedule__edit",
-  toeflChallengeRegistrationCode: "toefl-challenge-registration-code",
-  toeflChallengeRegistrationCodeCreate: "toefl-challenge-registration-code__create",
-  toeflChallengeRegistrationCodeEdit: "toefl-challenge-registration-code__edit",
   catalog: "catalog",
   catalogBranch: "catalog-branch",
   catalogBranchCreate: "catalog-branch__create",
@@ -203,86 +182,6 @@ export const routeArrays = [
   {
     "Code": layoutCode.pages,
     "ComponentPath": ""
-  },
-  {
-    "Code": layoutCode.toeflChallenge,
-    "ComponentPath": ""
-  },
-  {
-    "Code": layoutCode.toeflChallengeDepartment,
-    "ComponentPath": lazy(() => import('../pages/toefl_challenge/department'))
-  },
-  {
-    "Code": layoutCode.toeflChallengeDivision,
-    "ComponentPath": lazy(() => import('../pages/toefl_challenge/division'))
-  },
-  {
-    "Code": layoutCode.toeflChallengeDivisionCreate,
-    "ComponentPath": lazy(() => import('../pages/toefl_challenge/division/create'))
-  },
-  {
-    "Code": layoutCode.toeflChallengeDivisionEdit,
-    "ComponentPath": lazy(() => import('../pages/toefl_challenge/division/edit'))
-  },
-  {
-    "Code": layoutCode.toeflChallengeSchool,
-    "ComponentPath": lazy(() => import('../pages/toefl_challenge/school'))
-  },
-  {
-    "Code": layoutCode.toeflChallengeSchoolCreate,
-    "ComponentPath": lazy(() => import('../pages/toefl_challenge/school/create'))
-  },
-  {
-    "Code": layoutCode.toeflChallengeSchoolEdit,
-    "ComponentPath": lazy(() => import('../pages/toefl_challenge/school/edit'))
-  },
-  {
-    "Code": layoutCode.toeflChallengeCompetition,
-    "ComponentPath": lazy(() => import('../pages/toefl_challenge/competition'))
-  },
-  {
-    "Code": layoutCode.toeflChallengeCompetitionCreate,
-    "ComponentPath": lazy(() => import('../pages/toefl_challenge/competition/create'))
-  },
-  {
-    "Code": layoutCode.toeflChallengeCompetitionEdit,
-    "ComponentPath": lazy(() => import('../pages/toefl_challenge/competition/edit'))
-  },
-  {
-    "Code": layoutCode.toeflChallengeTemplateEmail,
-    "ComponentPath": lazy(() => import('../pages/toefl_challenge/template-email'))
-  },
-  {
-    "Code": layoutCode.toeflChallengeRegistration,
-    "ComponentPath": lazy(() => import('../pages/toefl_challenge/registration'))
-  },
-  {
-    "Code": layoutCode.toeflChallengeRegistrationCreate,
-    "ComponentPath": lazy(() => import('../pages/toefl_challenge/registration/create'))
-  },
-  {
-    "Code": layoutCode.toeflChallengeRegistrationEdit,
-    "ComponentPath": lazy(() => import('../pages/toefl_challenge/registration/edit'))
-  },
-  {
-    "Code": layoutCode.toeflChallengeExamSchedule,
-    "ComponentPath": lazy(() => import('../pages/toefl_challenge/exam-schedule'))
-  },
-  {
-    "Code": layoutCode.toeflChallengeExamScheduleCreate,
-    "ComponentPath": lazy(() => import('../pages/toefl_challenge/exam-schedule/create'))
-  },
-  {
-    "Code": layoutCode.toeflChallengeExamScheduleEdit,
-    "ComponentPath": lazy(() => import('../pages/toefl_challenge/exam-schedule/edit'))
-  },
-  {
-    "Code": layoutCode.toeflChallengeRegistrationCode,
-    "ComponentPath": lazy(() => import('../pages/toefl_challenge/registration-code'))
-  },
-  {
-    "Code": layoutCode.toeflChallengeRegistrationCodeCreate,
-    "ComponentPath": lazy(() => import('../pages/toefl_challenge/registration-code/create'))
   },
   //#region catalog
   {
