@@ -281,15 +281,19 @@ export function useRequest(
     run: any;
     data: any;
     loading: boolean;
-    error?: Error | null;
+    error?: Error;
     params?: any;
 } {
     const [data, setData] = useState(undefined);
     const [params, setParams] = useState({});
     const [loading, setLoading] = useState(false);
+    // const [error, setError]: [
+    //     Error | null | undefined,
+    //     React.Dispatch<React.SetStateAction<Error | null | undefined>>,
+    // ] = useState();
     const [error, setError]: [
-        Error | null | undefined,
-        React.Dispatch<React.SetStateAction<Error | null | undefined>>,
+        Error | undefined,
+        React.Dispatch<React.SetStateAction<Error | undefined>>,
     ] = useState();
 
     const {
@@ -318,7 +322,8 @@ export function useRequest(
 
                     if (response.data && response.data !== undefined) {
                         setData(response.data);
-                        onSuccess(response.data);
+                        // onSuccess(response.data);
+                        onSuccess(response);
                     }
                 })
                 .catch((e: Error) => {

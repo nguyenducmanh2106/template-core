@@ -24,52 +24,21 @@ namespace Backend.Infrastructure.Utils
             List,
         }
 
-        /// <summary>
-        /// Kiểu dữ liệu tiêu chí sắp xếp
-        /// </summary>
-        public enum TypeOrdering
+        public struct TabContract
         {
-            /// <summary>
-            /// không sắp xếp
-            /// </summary>
-            NoSort,
-
-            /// <summary>
-            /// tên tăng dần
-            /// </summary>
-            Name_Ascing,//
-
-            /// <summary>
-            /// tên giảm dần
-            /// </summary>
-            Name_Descing,//
-
-            /// <summary>
-            /// ngày sinh tăng dần
-            /// </summary>
-            Birthday_Ascing,//
-
-            /// <summary>
-            /// ngày sinh giảm dần
-            /// </summary>
-            Birthday_Descing,//
-
-            /// <summary>
-            /// ngày đăng ký tăng dần
-            /// </summary>
-            RegistrationDate_Ascing,//
-
-            /// <summary>
-            /// ngày đăng ký giảm dần
-            /// </summary>
-            RegistrationDate_Descing,//
+            public const string Waiting = "waiting";
+            public const string All = "all";
+            public const string Approved = "approved";
+            public const string No_Approved = "no_approver";
         }
 
-        public enum TypeExamFee
+        public struct WorkflowState
         {
-            ServiceAlong = 1,
-            ExamPrice = 2,
-        }
+            public const string Start = "Trình ký";
+            public const string Approve = "Phê duyệt";
+            public const string Reject = "Từ chối";
+            public const string Finish = "Hoàn thành";
+        };
 
         public enum StatusExamShedule
         {

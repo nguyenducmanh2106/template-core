@@ -10,8 +10,8 @@ export interface ResponseData<T = unknown> {
   message?: string;
   totalPage?: number;
   totalCount?: number;
-  page?: number;
-  size?: number
+  pageNumber?: number;
+  pageSize?: number
 }
 
 export interface IResponseData {

@@ -105,6 +105,8 @@ export const layoutCode = {
   icomTargetNavigate: "icom-target-navigate",
   icomTargetPractice: "icom-target-practice",
   icomTargetDetail: "icom-target-detail",
+  icomContract: "icom-contract",
+  icomContractCreate: "icom-contract__create",
 }
 export const routeArrays = [
   {
@@ -343,6 +345,14 @@ export const routeArrays = [
     "Code": layoutCode.icomTargetDetail,
     "ComponentPath": lazy(() => import('../pages/bussiness-icom/target/detail'))
   },
+  {
+    "Code": layoutCode.icomContract,
+    "ComponentPath": lazy(() => import('../pages/bussiness-icom/contract'))
+  },
+  {
+    "Code": layoutCode.icomContractCreate,
+    "ComponentPath": lazy(() => import('../pages/bussiness-icom/contract/create'))
+  },
   //#endregion
 ]
 //#endregion
@@ -356,3 +366,18 @@ export const errorMessage: Map<string, string> = new Map([
 export const patternValidate: Map<string, RegExp> = new Map([
   ['code', /^[a-zA-Z0-9-_]+$/g]
 ]);
+
+export const tabContract = {
+  Waiting: 'waiting',
+  All: 'all',
+  Approved: 'approved',
+  No_Approved: 'no_approver',
+}
+
+export const paginationDefault = {
+  total: 0,
+  current: 1,
+  pageSize: 20,
+  showSizeChanger: true,
+  showQuickJumper: true,
+}

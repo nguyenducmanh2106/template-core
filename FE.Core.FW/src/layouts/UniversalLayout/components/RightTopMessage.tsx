@@ -216,7 +216,7 @@ export default memo(() => {
   };
   const [data, setData] = useState<any[]>([]);
   const loadMoreData = () => {
-    console.log('loading more data')
+    // console.log('loading more data')
     if (loading) {
       return;
     }

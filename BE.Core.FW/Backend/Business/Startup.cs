@@ -1,6 +1,7 @@
 using Backend.Business.AdministrativeDivision;
 using Backend.Business.Auth;
 using Backend.Business.Branch;
+using Backend.Business.Contract;
 using Backend.Business.ContractType;
 using Backend.Business.Customer;
 using Backend.Business.Department;
@@ -44,6 +45,7 @@ internal static class Startup
             .AddScoped<IPricingDecisionHandler, PricingDecisionHandler>()
             .AddScoped<IPricingCategoryHandler, PricingCategoryHandler>()
             .AddScoped<ITargetHandler, TargetHandler>()
+            .AddScoped<IContractHandler, ContractHandler>()
             .AddScoped<IDepartmentHandler, DepartmentHandler>();
     }
 }
