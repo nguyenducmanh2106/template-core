@@ -4,6 +4,7 @@ namespace Backend.Model
 {
     public class ContractModel
     {
+        public SalesPlaningModel? SalesPlaning { get; set; }
         public Guid Id { get; set; }
         public string? ContractNumber { get; set; }
         public Guid? CustomerId { get; set; }

@@ -11,19 +11,21 @@ import {
     Input,
     MenuProps,
     Row,
+    Select,
     Space,
     Table,
     Tabs,
     Tooltip,
+    TreeSelect,
     Typography
 } from 'antd';
 import { useEffect, useReducer, useRef, useState } from 'react';
 
-import { getDepartment2 } from '@/apis/services/DepartmentService';
+import { getDepartment, getDepartment2 } from '@/apis/services/DepartmentService';
 import { getTarget } from '@/apis/services/TargetService';
 import Permission from '@/components/Permission';
-import { PermissionAction, layoutCode, paginationDefault, tabContract } from '@/utils/constants';
-import { ArrowLeftOutlined, DeleteOutlined, DownloadOutlined, EditOutlined, ImportOutlined, PlusOutlined, SettingOutlined } from '@ant-design/icons';
+import { PermissionAction, layoutCode, paginationDefault, tabContract, uuidv4 } from '@/utils/constants';
+import { ArrowLeftOutlined, DeleteOutlined, DownOutlined, DownloadOutlined, EditOutlined, ImportOutlined, PlusOutlined, SettingOutlined } from '@ant-design/icons';
 import { ActionType, ProCard, ProColumns, ProTable } from '@ant-design/pro-components';
 import dayjs from 'dayjs';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
@@ -33,6 +35,12 @@ import { hasPermissionRoles } from '@/utils/router';
 import { useGetContractService } from '@/apis/services/ContractService';
 import { UseRequestOption } from '@/apis/core/request';
 import { ContractModel } from '@/apis/models/ContractModel';
+import { debounce } from 'lodash';
+import { getCustomer } from '@/apis/services/CustomerService';
+import { OptionModel, SelectOptionModel } from '@/@types/data';
+import { ConvertOptionSelectModel } from '@/utils/convert';
+import { ContractFileModel } from '@/apis/models/ContractFileModel';
+import { ItemType } from 'antd/es/menu/hooks/useItems';
 function Contract() {
     const navigate = useNavigate();
     // Load
@@ -42,6 +50,13 @@ function Contract() {
         districts: [],
         departmentEdit: {},
         departments: [],
+        customers: [
+            {
+                key: 'Default',
+                label: '-Chọn-',
+                value: ''
+            }
+        ],
     };
     // const [typeState, setTypeState] = useState<string | undefined>('');
     // const [departmentIdState, setDepartmentIdState] = useState<string | undefined>('');
@@ -69,23 +84,14 @@ function Contract() {
     useEffect(() => {
         const fnGetInitState = async () => {
             // const responseProvinces: ResponseData = await getAministrativeDivisions();
-            // const responseDepartment: ResponseData = await getDepartment();
+            const responseDepartment: ResponseData = await getDepartment2(true);
 
             // const provinceOptions = ConvertOptionSelectModel(responseProvinces.data as ProvinceModel[]);
             // const departmentOptions = ConvertOptionSelectModel(responseDepartment.data as OptionModel[]);
-            // const stateDispatcher = {
-            //     provinces: [{
-            //         key: 'Default',
-            //         label: '-Chọn-',
-            //         value: '',
-            //     }].concat(provinceOptions),
-            //     departments: [{
-            //         key: 'Default',
-            //         label: '-Chọn-',
-            //         value: '',
-            //     }].concat(departmentOptions)
-            // };
-            // dispatch(stateDispatcher);
+            const stateDispatcher = {
+                departments: responseDepartment.data,
+            };
+            dispatch(stateDispatcher);
         }
         fnGetInitState()
         searchFormSubmit(1, 20);
@@ -150,6 +156,7 @@ function Contract() {
                 textSearch: fieldsValue.TextSearch,
                 tab
             }
+            // console.log(filter)
 
             response1.run(JSON.stringify(filter))
 
@@ -179,12 +186,7 @@ function Contract() {
             width: 180,
             render: (_, record) => <span>{record.contractNumber ?? "-"}</span>,
         },
-        {
-            title: 'Người sở hữu',
-            dataIndex: 'uploadUser',
-            width: 180,
-            render: (_, record) => <span>{record.uploadUser}</span>,
-        },
+
         {
             title: 'Phòng ban',
             dataIndex: 'departmentName',
@@ -202,34 +204,73 @@ function Contract() {
             title: 'Khách hàng',
             dataIndex: 'provinceName',
             width: 220,
-            render: (_, record) => <span>{record.customerName}</span>,
+            render: (_, record) => <Paragraph
+                ellipsis={{
+                    rows: 1,
+                    expandable: true,
+                    // suffix: '--William Shakespeare',
+                    onEllipsis: (ellipsis) => {
+                        // console.log('Ellipsis changed:', ellipsis);
+                    },
+                }}
+                title={record.customerName ?? "-"}
+            >
+                {record.customerName ?? "-"}
+            </Paragraph>,
         },
         {
             title: 'File',
             dataIndex: 'fileFormPath',
-            width: 220,
-            render: (_, record) => <Paragraph
-                ellipsis={{
-                    rows: 2,
-                    expandable: true,
-                    // suffix: '--William Shakespeare',
-                    onEllipsis: (ellipsis) => {
-                        console.log('Ellipsis changed:', ellipsis);
-                    },
-                }}
-                title={record.fileFormPath ?? "-"}
-            >
-                {record.fileFormPath ?? "-"}
-            </Paragraph>,
+            width: 300,
+            render: (_, record) => {
+                const items: MenuProps['items'] = [];
+                const { contractFiles } = record;
+                contractFiles?.forEach((item: ContractFileModel) => {
+                    const option: ItemType = {
+                        label: <Link>
+                            {item.fileName}
+                        </Link>,
+                        key: item.filePath ?? uuidv4(),
+                    }
+                    items.push(option);
+                })
+
+
+                return (
+                    <Space>
+                        <Dropdown menu={{
+                            items: items,
+                            onClick: ({ key }) => {
+                                // console.log(key)
+                                switch (key) {
+                                    case '0':
+                                        break;
+                                    case '1':
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }
+                        }} trigger={['click']}>
+                            <a title="Click để xem file" onClick={(e) => e.preventDefault()}>
+                                <Space>
+                                    Xem file đính kèm
+                                    <DownOutlined />
+                                </Space>
+                            </a>
+                        </Dropdown>
+                    </Space>
+                )
+            }
         },
         {
             title: 'Ghi chú',
             dataIndex: 'description',
-            width: 220,
+            width: 300,
             render: (_, record) =>
                 <Paragraph
                     ellipsis={{
-                        rows: 2,
+                        rows: 1,
                         expandable: true,
                         // suffix: '--William Shakespeare',
                         onEllipsis: (ellipsis) => {
@@ -246,6 +287,12 @@ function Contract() {
             dataIndex: 'state',
             width: 180,
             render: (_, record) => <span>{record.state ?? "-"}</span>,
+        },
+        {
+            title: 'Người sở hữu',
+            dataIndex: 'uploadUser',
+            width: 180,
+            render: (_, record) => <span>{record.uploadUser}</span>,
         },
         {
             title: 'Thao tác',
@@ -364,22 +411,56 @@ function Contract() {
 
     ];
 
-    const contentList: Record<string, React.ReactNode> = {
-        tab1: <p>content1</p>,
-        tab2: <p>content2</p>,
-    };
 
     const [activeTabKey, setActiveTabKey] = useState<string>(tabContract.All);
 
     const onTabChange = (key: string) => {
         setActiveTabKey(key);
+        searchForm.resetFields();
         searchFormSubmit(1, 20, key);
     };
+
+    const onChangeSearch = () => {
+        searchFormSubmit(1, 20, activeTabKey);
+    }
+
+    const onChangeDepartments = async () => {
+        const fieldsValue = await searchForm.getFieldsValue();
+        searchForm.setFieldValue('CustomerId', '')
+
+        searchFormSubmit(1, 20, activeTabKey);
+
+        if (!fieldsValue.DepartmentId) {
+            const stateDispatcher = {
+                customers: [{
+                    key: 'Default',
+                    label: '-Chọn-',
+                    value: '',
+                } as SelectOptionModel],
+            };
+            dispatch(stateDispatcher);
+            return
+        }
+        const filter = {
+            departmentId: fieldsValue.DepartmentId ? fieldsValue.DepartmentId : undefined
+        }
+        const responseCustomer: ResponseData = await getCustomer(JSON.stringify(filter));
+
+        const customerOptions = ConvertOptionSelectModel(responseCustomer.data as OptionModel[]);
+        const stateDispatcher = {
+            customers: [{
+                key: 'Default',
+                label: '-Chọn-',
+                value: '',
+            } as SelectOptionModel].concat(customerOptions),
+        };
+        dispatch(stateDispatcher);
+    }
 
     return (
         <div className='layout-main-content'>
             <Card
-                style={{ width: '100%' }}
+                style={{ width: '100%', padding: '0' }}
                 title={
                     <>
                         <Space className="title">
@@ -428,63 +509,127 @@ function Contract() {
                             searchFormSubmit(page, pageSize, activeTabKey);
                         },
                     }}
-                    scroll={{ x: '100vw', y: '500px' }}
+                    scroll={{ x: '100vw', y: '460px' }}
                     bordered
-                    summary={() => (
-                        <Table.Summary fixed>
-                            <Table.Summary.Row>
-                                <Table.Summary.Cell index={0} align='center'><Text strong>Tổng</Text></Table.Summary.Cell>
-                                {/* <Table.Summary.Cell index={1} align='right'><Text strong>{summaries?.total?.toLocaleString('vi-VN') ?? "-"}</Text></Table.Summary.Cell>
-                                <Table.Summary.Cell index={2} align='right'><Text strong>{summaries?.jan?.toLocaleString('vi-VN') ?? "-"}</Text></Table.Summary.Cell>
-                                <Table.Summary.Cell index={3} align='right'><Text strong>{summaries?.feb?.toLocaleString('vi-VN') ?? "-"}</Text></Table.Summary.Cell>
-                                <Table.Summary.Cell index={4} align='right'><Text strong>{summaries?.mar?.toLocaleString('vi-VN') ?? "-"}</Text></Table.Summary.Cell>
-                                <Table.Summary.Cell index={5} align='right'><Text strong>{summaries?.apr?.toLocaleString('vi-VN') ?? "-"}</Text></Table.Summary.Cell>
-                                <Table.Summary.Cell index={6} align='right'><Text strong>{summaries?.may?.toLocaleString('vi-VN') ?? "-"}</Text></Table.Summary.Cell>
-                                <Table.Summary.Cell index={7} align='right'><Text strong>{summaries?.jun?.toLocaleString('vi-VN') ?? "-"}</Text></Table.Summary.Cell>
-                                <Table.Summary.Cell index={8} align='right'><Text strong>{summaries?.july?.toLocaleString('vi-VN') ?? "-"}</Text></Table.Summary.Cell>
-                                <Table.Summary.Cell index={9} align='right'><Text strong>{summaries?.aug?.toLocaleString('vi-VN') ?? "-"}</Text></Table.Summary.Cell>
-                                <Table.Summary.Cell index={10} align='right'><Text strong>{summaries?.sep?.toLocaleString('vi-VN') ?? "-"}</Text></Table.Summary.Cell>
-                                <Table.Summary.Cell index={11} align='right'><Text strong>{summaries?.oct?.toLocaleString('vi-VN') ?? "-"}</Text></Table.Summary.Cell>
-                                <Table.Summary.Cell index={12} align='right'><Text strong>{summaries?.nov?.toLocaleString('vi-VN') ?? "-"}</Text></Table.Summary.Cell>
-                                <Table.Summary.Cell index={13} align='right'><Text strong>{summaries?.dec?.toLocaleString('vi-VN') ?? "-"}</Text></Table.Summary.Cell> */}
-                            </Table.Summary.Row>
-                        </Table.Summary>
-                    )}
+                    // summary={() => (
+                    //     <Table.Summary fixed>
+                    //         <Table.Summary.Row>
+                    //             <Table.Summary.Cell index={0} align='center'><Text strong>Tổng</Text></Table.Summary.Cell>
+                    //             {/* <Table.Summary.Cell index={1} align='right'><Text strong>{summaries?.total?.toLocaleString('vi-VN') ?? "-"}</Text></Table.Summary.Cell>
+                    //             <Table.Summary.Cell index={2} align='right'><Text strong>{summaries?.jan?.toLocaleString('vi-VN') ?? "-"}</Text></Table.Summary.Cell>
+                    //             <Table.Summary.Cell index={3} align='right'><Text strong>{summaries?.feb?.toLocaleString('vi-VN') ?? "-"}</Text></Table.Summary.Cell>
+                    //             <Table.Summary.Cell index={4} align='right'><Text strong>{summaries?.mar?.toLocaleString('vi-VN') ?? "-"}</Text></Table.Summary.Cell>
+                    //             <Table.Summary.Cell index={5} align='right'><Text strong>{summaries?.apr?.toLocaleString('vi-VN') ?? "-"}</Text></Table.Summary.Cell>
+                    //             <Table.Summary.Cell index={6} align='right'><Text strong>{summaries?.may?.toLocaleString('vi-VN') ?? "-"}</Text></Table.Summary.Cell>
+                    //             <Table.Summary.Cell index={7} align='right'><Text strong>{summaries?.jun?.toLocaleString('vi-VN') ?? "-"}</Text></Table.Summary.Cell>
+                    //             <Table.Summary.Cell index={8} align='right'><Text strong>{summaries?.july?.toLocaleString('vi-VN') ?? "-"}</Text></Table.Summary.Cell>
+                    //             <Table.Summary.Cell index={9} align='right'><Text strong>{summaries?.aug?.toLocaleString('vi-VN') ?? "-"}</Text></Table.Summary.Cell>
+                    //             <Table.Summary.Cell index={10} align='right'><Text strong>{summaries?.sep?.toLocaleString('vi-VN') ?? "-"}</Text></Table.Summary.Cell>
+                    //             <Table.Summary.Cell index={11} align='right'><Text strong>{summaries?.oct?.toLocaleString('vi-VN') ?? "-"}</Text></Table.Summary.Cell>
+                    //             <Table.Summary.Cell index={12} align='right'><Text strong>{summaries?.nov?.toLocaleString('vi-VN') ?? "-"}</Text></Table.Summary.Cell>
+                    //             <Table.Summary.Cell index={13} align='right'><Text strong>{summaries?.dec?.toLocaleString('vi-VN') ?? "-"}</Text></Table.Summary.Cell> */}
+                    //         </Table.Summary.Row>
+                    //     </Table.Summary>
+                    // )}
                     search={false}
+                    debounceTime={10}
                     dateFormatter="string"
                     headerTitle={
                         <Space>
-                            {/* <Permission noNode navigation={layoutCode.icomContract as string} bitPermission={PermissionAction.Add}>
-                                <Button htmlType='button' type='default' onClick={onHandleShowModelCreate}>
-                                    <PlusOutlined />
-                                    Thêm mới
-                                </Button>
-                            </Permission> */}
-                        </Space>
-                    }
-                    toolBarRender={() => [
-                        <Space>
                             <Form
+                                // style={{ width: '800px' }}
                                 form={searchForm}
                                 name='search'
                                 initialValues={{
                                 }}
                             >
-                                <Row gutter={16} justify='start'>
-                                    <Col span={24}>
+                                <Row gutter={16} justify='start' wrap>
+                                    <Col span={8}>
                                         <Form.Item
-                                            style={{ marginBottom: 0 }}
                                             labelCol={{ span: 0 }}
                                             wrapperCol={{ span: 24 }}
-                                            name='textSearch'
+                                            name='TextSearch'
                                         // rules={[{ required: true }]}
                                         >
-                                            <Input placeholder='Nhập số hiệu, ghi chú' />
+                                            <Input
+                                                allowClear
+                                                onChange={debounce(() => {
+                                                    onChangeSearch()
+                                                }, 800)}
+                                                placeholder='Nhập số hiệu, ghi chú' />
+                                        </Form.Item>
+                                    </Col>
+                                    <Col span={8}>
+                                        <Form.Item
+                                            labelCol={{ span: 0 }}
+                                            wrapperCol={{ span: 24 }}
+                                            name='DepartmentId'
+                                        >
+                                            <TreeSelect
+                                                showSearch
+                                                treeLine
+                                                style={{ width: '100%' }}
+                                                dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+                                                placeholder="-Chọn phòng ban-"
+                                                allowClear
+                                                treeDefaultExpandAll
+                                                showCheckedStrategy={TreeSelect.SHOW_CHILD}
+                                                treeData={state.departments}
+                                                onChange={debounce(() => {
+                                                    onChangeDepartments()
+                                                }, 800)}
+                                            />
+                                        </Form.Item>
+                                    </Col>
+
+                                    <Col span={8}>
+                                        <Form.Item
+                                            labelCol={{ span: 0 }}
+                                            wrapperCol={{ span: 24 }}
+                                            name='CustomerId'
+                                        >
+                                            <Select
+                                                style={{ width: '100%' }}
+                                                showSearch
+                                                allowClear
+                                                optionFilterProp="children"
+                                                filterOption={(input, option) => (option?.label ?? '').toString().toLowerCase().includes(input.toLowerCase())}
+                                                // filterSort={(optionA, optionB) =>
+                                                //     (optionA?.label ?? '').toString().toLowerCase().localeCompare((optionB?.label ?? '').toString().toLowerCase())
+                                                // }
+                                                onChange={debounce(() => {
+                                                    onChangeSearch()
+                                                }, 800)}
+                                                placeholder='-Chọn khách hàng-' options={state.customers} />
                                         </Form.Item>
                                     </Col>
                                 </Row>
                             </Form>
                         </Space>
+                    }
+                    toolBarRender={() => [
+                        // <Space>
+                        //     <Form
+                        //         form={searchForm}
+                        //         name='search'
+                        //         initialValues={{
+                        //         }}
+                        //     >
+                        //         <Row gutter={16} justify='start'>
+                        //             <Col span={24}>
+                        //                 <Form.Item
+                        //                     style={{ marginBottom: 0 }}
+                        //                     labelCol={{ span: 0 }}
+                        //                     wrapperCol={{ span: 24 }}
+                        //                     name='textSearch'
+                        //                 // rules={[{ required: true }]}
+                        //                 >
+                        //                     <Input placeholder='Nhập số hiệu, ghi chú' />
+                        //                 </Form.Item>
+                        //             </Col>
+                        //         </Row>
+                        //     </Form>
+                        // </Space>
                     ]}
                 />
             </Card>

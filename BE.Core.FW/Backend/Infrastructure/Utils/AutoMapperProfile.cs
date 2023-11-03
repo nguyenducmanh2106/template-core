@@ -36,7 +36,9 @@ namespace Backend.Infrastructure.Utils
             CreateMap<SysTargetMapping, TargetMappingModel>().ReverseMap();
             CreateMap<SysContract, ContractModel>().ReverseMap();
             CreateMap<SysContractFile, ContractFileModel>().ReverseMap();
-            CreateMap<SysContractProduct, ContractProductModel>().ReverseMap();
+            CreateMap<SysSalesPlaning, SalesPlaningModel>().ReverseMap();
+            CreateMap<SysSalesPlaningProduct, SalesPlaningProductModel>().ReverseMap();
+            CreateMap<SysSalesPlaningCommision, SalesPlaningCommisionModel>().ReverseMap();
             CreateMap<SysBranch, BranchModel>().ReverseMap();
         }
     }
