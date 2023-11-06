@@ -17,7 +17,8 @@ import {
     Tabs,
     Tooltip,
     TreeSelect,
-    Typography
+    Typography,
+    UploadFile
 } from 'antd';
 import { useEffect, useReducer, useRef, useState } from 'react';
 
@@ -41,6 +42,7 @@ import { OptionModel, SelectOptionModel } from '@/@types/data';
 import { ConvertOptionSelectModel } from '@/utils/convert';
 import { ContractFileModel } from '@/apis/models/ContractFileModel';
 import { ItemType } from 'antd/es/menu/hooks/useItems';
+import FileComponent from '@/components/CustomFile/Index';
 function Contract() {
     const navigate = useNavigate();
     // Load
@@ -226,10 +228,14 @@ function Contract() {
                 const items: MenuProps['items'] = [];
                 const { contractFiles } = record;
                 contractFiles?.forEach((item: ContractFileModel) => {
+                    const fileProp: UploadFile = {
+                        fileName: item.fileName as string,
+                        name: item.fileName as string,
+                        url: item.filePath as string,
+                        uid: uuidv4()
+                    }
                     const option: ItemType = {
-                        label: <Link>
-                            {item.fileName}
-                        </Link>,
+                        label: <FileComponent fileListInit={fileProp} />,
                         key: item.filePath ?? uuidv4(),
                     }
                     items.push(option);

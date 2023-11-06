@@ -65,7 +65,7 @@ export default memo(({ menuData, jsonMenuData, routeItem, userRoles = [], breadC
             <div className='universallayout-right-top-logo'>
               <Link to='/' className='logo-url'>
                 <img alt='' src={logo} width='30' />
-                <h3 className='logo-title'>AdminAntdVue</h3>
+                <h3 className='logo-title'>ICom</h3>
               </Link>
             </div>
             <div className='universallayout-top-menu'>

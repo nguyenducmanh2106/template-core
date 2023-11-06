@@ -28,6 +28,10 @@ import dayjs from 'dayjs';
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ProductAndCom from './product-com';
+import { getCustomer, getCustomer1 } from '@/apis/services/CustomerService';
+import { getContractType } from '@/apis/services/ContractTypeService';
+import { getAdministrativeDivision, getAdministrativeDivision2 } from '@/apis/services/AdministrativeDivisionService';
+import { CustomerModel } from '@/apis/models/CustomerModel';
 
 const waitTime = (time: number = 0) => {
     return new Promise((resolve) => {
@@ -56,9 +60,10 @@ function ContractCreate() {
     const navigate = useNavigate();
     const [fileList, setFileList] = useState<UploadFile[]>([]);
     const initState = {
-        // products: [],
-        // pricingCategories: [],
-        // pricingDecisions: [],
+        customers: [],
+        contractTypes: [],
+        provinces: [],
+        districts: [],
     };
     const [loading, setLoading] = useState<boolean>(false);
     const [state, dispatch] = useReducer<(prevState: any, updatedProperty: any) => any>(
@@ -75,8 +80,35 @@ function ContractCreate() {
     useEffect(() => {
         const fnGetInitState = async () => {
             setLoading(true);
-
-
+            const responseCustomer: ResponseData = await getCustomer();
+            const customerOptions = ConvertOptionSelectModel(responseCustomer.data as OptionModel[]);
+            const responseContractType: ResponseData = await getContractType();
+            const contractTypeOptions = ConvertOptionSelectModel(responseContractType.data as OptionModel[]);
+            const responseProvinces: ResponseData = await getAdministrativeDivision();
+            const optionProvinces = ConvertOptionSelectModel(responseProvinces.data as OptionModel[]);
+            const stateDispatcher = {
+                customers: [{
+                    key: 'Default',
+                    label: '-Chọn-',
+                    value: '',
+                } as SelectOptionModel].concat(customerOptions),
+                contractTypes: [{
+                    key: 'Default',
+                    label: '-Chọn-',
+                    value: '',
+                } as SelectOptionModel].concat(contractTypeOptions),
+                provinces: [{
+                    key: 'Default',
+                    label: '-Chọn-',
+                    value: '',
+                } as SelectOptionModel].concat(optionProvinces),
+                districts: [{
+                    key: 'Default',
+                    label: '-Chọn-',
+                    value: '',
+                } as SelectOptionModel],
+            };
+            dispatch(stateDispatcher);
             setLoading(false);
         }
         fnGetInitState()
@@ -380,7 +412,7 @@ function ContractCreate() {
             },
         },
         {
-            title: 'Diễn giải',
+            title: 'Ghi chú',
             dataIndex: 'description',
             key: 'description',
             width: '260px',
@@ -499,6 +531,76 @@ function ContractCreate() {
         tab2: <p>content2</p>,
     };
 
+    const onChangeProvince = async (value: string) => {
+
+        const filter = {
+            ProvinceId: value ? value : undefined,
+        }
+        if (!value) {
+            const stateDispatcher = {
+                districts: [{
+                    key: 'Default',
+                    label: '-Chọn-',
+                    value: '',
+                }],
+            }
+            dispatch(stateDispatcher)
+            return
+        }
+        const response: ResponseData = await getAdministrativeDivision2(filter.ProvinceId);
+
+        const options = ConvertOptionSelectModel(response.data as OptionModel[]);
+        const stateDispatcher = {
+            districts: [{
+                key: 'Default',
+                label: '-Chọn-',
+                value: '',
+            } as SelectOptionModel].concat(options),
+        };
+        dispatch(stateDispatcher);
+    }
+    const onChangeCustomer = async (value: string) => {
+        console.log(value);
+
+        // const fieldsValue = await formMapRef.current[0]?.current.getFieldsValue();
+        const fields = formMapRef.current[0].current?.getFieldsValue()
+        const salePlanningFields = formMapRef.current[1].current?.getFieldsValue()
+
+        console.log(fields)
+        // formRef?.current?.setFieldsValue({
+        //     "DistrictId": '',
+        // })
+        // const filter = {
+        //     ProvinceId: fieldsValue.ProvinceId ? fieldsValue.ProvinceId : undefined,
+        // }
+        // if (!value) {
+        //     const stateDispatcher = {
+        //         districts: [{
+        //             key: 'Default',
+        //             label: '-Chọn-',
+        //             value: '',
+        //         }],
+        //     }
+        //     dispatch(stateDispatcher)
+        //     return
+        // }
+        const response: ResponseData<CustomerModel> = await getCustomer1(value) as ResponseData<CustomerModel>;
+        formMapRef.current[0].current?.setFieldValue('ProvinceId', response.data?.provinceId)
+        formMapRef.current[0].current?.setFieldValue('DistrictId', response.data?.districtId)
+        formMapRef.current[1].current?.setFieldValue('CustomerName', response.data?.name)
+        formMapRef.current[1].current?.setFieldValue('CustomerCategory', response.data?.customerCategoryId)
+        await onChangeProvince(response.data?.provinceId ?? "")
+        // const options = ConvertOptionSelectModel(response.data as OptionModel[]);
+        // const stateDispatcher = {
+        //     districts: [{
+        //         key: 'Default',
+        //         label: '-Chọn-',
+        //         value: '',
+        //     } as SelectOptionModel].concat(options),
+        // };
+        // dispatch(stateDispatcher);
+    };
+
     return (
         <ProCard
             title={
@@ -528,7 +630,7 @@ function ContractCreate() {
                 name: string;
             }>
                 onCurrentChange={(current: number) => {
-                    console.log(current)
+                    // console.log(current)
                     stepChange.current = current
                 }}
                 formMapRef={formMapRef}
@@ -546,7 +648,8 @@ function ContractCreate() {
                         description: 'Nội dung cơ bản',
                     }}
                     onFinish={async () => {
-                        // console.log(formRef.current?.getFieldsValue());
+                        const fields = formMapRef.current[0].current?.getFieldsValue()
+                        console.log(fields)
                         return true;
                     }}
                     initialValues={{
@@ -568,10 +671,10 @@ function ContractCreate() {
                         <Col span={12}>
                             <ProFormText
                                 name="Description"
-                                label="Diễn giải"
+                                label="Ghi chú"
                                 style={{ width: '100%' }}
-                                tooltip="Diễn giải"
-                                placeholder="Nhập diễn giải"
+                                tooltip="Ghi chú"
+                                placeholder="Nhập ghi chú"
                                 rules={[{ required: true }]}
                             />
                         </Col>
@@ -584,14 +687,7 @@ function ContractCreate() {
                                         required: true,
                                     },
                                 ]}
-                                initialValue="1"
-                                options={[
-                                    {
-                                        value: '1',
-                                        label: 'Nguyên tắc',
-                                    },
-                                    { value: '2', label: 'HĐ sử dụng thực tế' },
-                                ]}
+                                options={state.contractTypes}
                             />
                         </Col>
                         <Col span={12}>
@@ -603,52 +699,36 @@ function ContractCreate() {
                                         required: true,
                                     },
                                 ]}
-                                initialValue="1"
-                                options={[
-                                    {
-                                        value: '1',
-                                        label: 'Nguyên tắc',
-                                    },
-                                    { value: '2', label: 'HĐ sử dụng thực tế' },
-                                ]}
+                                onChange={onChangeCustomer}
+                                // initialValue="1"
+                                options={state.customers}
                             />
                         </Col>
                         <Col span={12}>
                             <ProFormSelect
                                 label="Tỉnh/TP"
                                 name="ProvinceId"
+                                disabled
                                 rules={[
                                     {
                                         required: true,
                                     },
                                 ]}
-                                initialValue="1"
-                                options={[
-                                    {
-                                        value: '1',
-                                        label: 'Nguyên tắc',
-                                    },
-                                    { value: '2', label: 'HĐ sử dụng thực tế' },
-                                ]}
+                                onChange={onChangeProvince}
+                                options={state.provinces}
                             />
                         </Col>
                         <Col span={12}>
                             <ProFormSelect
                                 label="Quận/Huyện"
                                 name="DistrictId"
+                                disabled
                                 rules={[
                                     {
                                         required: true,
                                     },
                                 ]}
-                                initialValue="1"
-                                options={[
-                                    {
-                                        value: '1',
-                                        label: 'Nguyên tắc',
-                                    },
-                                    { value: '2', label: 'HĐ sử dụng thực tế' },
-                                ]}
+                                options={state.districts}
                             />
                         </Col>
                         <Col span={12}>
@@ -747,7 +827,7 @@ function ContractCreate() {
                         description: 'Thông tin kế hoạch bán hàng',
                     }}
                     onFinish={async () => {
-                        const fields = formMapRef.current[2].current?.getFieldsValue()
+                        const fields = formMapRef.current[1].current?.getFieldsValue()
                         console.log(fields);
                         return true;
                     }}

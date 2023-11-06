@@ -20,14 +20,19 @@ export const ConvertIntToCurrencyFormat = (input: number) => {
 };
 
 
-
-export function ConvertOptionSelectModel<T extends OptionModel>(list: T[]): SelectOptionModel[] {
+/**
+ * 
+ * @param list mảng cần chuyển đổi
+ * @param fieldBindValue trường để làm giá trị chọn của select
+ * @returns 
+ */
+export function ConvertOptionSelectModel<T extends OptionModel>(list: T[], fieldBindValue?: string): SelectOptionModel[] {
   if (!list) return [];
   const items: SelectOptionModel[] = [];
 
   list.forEach((item: T) => {
     items.push({
-      value: item.id as string,
+      value: fieldBindValue ? fieldBindValue : item.id as string,
       label: item.name as string,
       key: item.id as string,
     });
