@@ -1,6 +1,8 @@
 import { OptionModel, SelectOptionModel } from '@/@types/data';
 import { ResponseData } from '@/apis';
+import { PricingDecisionModel } from '@/apis/models/PricingDecisionModel';
 import { SalesPlaningProductModel } from '@/apis/models/SalesPlaningProductModel';
+import { TaxCategoryModel } from '@/apis/models/TaxCategoryModel';
 import { getCustomerCategory } from '@/apis/services/CustomerCategoryService';
 import { getCustomerType } from '@/apis/services/CustomerTypeService';
 import { getPricingCategory } from '@/apis/services/PricingCategoryService';
@@ -13,11 +15,12 @@ import { DeleteOutlined } from '@ant-design/icons';
 import type { ProColumns, ProFormInstance } from '@ant-design/pro-components';
 import {
     EditableProTable,
+    ProFormCheckbox,
     ProFormItem,
     ProFormSelect,
     ProFormText
 } from '@ant-design/pro-components';
-import { Button, Card, Col, Row, Select, Tooltip, Typography, UploadFile } from 'antd';
+import { Button, Card, Checkbox, Col, Row, Select, Tooltip, Typography, UploadFile } from 'antd';
 import { useCallback, useEffect, useReducer, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -72,11 +75,21 @@ function ProductAndCom() {
         const responsePricingCategories: ResponseData = await getPricingCategory();
         const pricingCategoryOptions = ConvertOptionSelectModel(responsePricingCategories.data as OptionModel[]);
 
-        const responsePricingDecisions: ResponseData = await getPricingDecision();
+        const responsePricingDecisions: ResponseData<PricingDecisionModel[]> = await getPricingDecision() as ResponseData<PricingDecisionModel[]>;
         const pricingDecisionOptions = ConvertOptionSelectModel(responsePricingDecisions.data as OptionModel[]);
+        // const pricingDecisionOptions: SelectOptionModel[] | any = responsePricingDecisions.data?.map((item, idx) => ({
+        //     ...item,
+        //     label2: item.name,
+        //     label: (
+        //         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+        //             <span>{item.name}</span>
+        //             <span>Xem</span>
+        //         </div>
+        //     ),
+        // }));
 
-        const responseVAT: ResponseData = await getTaxCategory();
-        const VATOptions = ConvertOptionSelectModel(responseVAT.data as OptionModel[]);
+        const responseVAT: ResponseData<TaxCategoryModel[]> = await getTaxCategory() as ResponseData<TaxCategoryModel[]>;
+        const VATOptions = ConvertOptionSelectModel(responseVAT.data as OptionModel[], 'value');
 
         const responseCustomerCategory: ResponseData = await getCustomerCategory();
         const customerCategoryOptions = ConvertOptionSelectModel(responseCustomerCategory.data as OptionModel[]);
@@ -98,7 +111,7 @@ function ProductAndCom() {
                 key: 'Default',
                 label: '-Chọn-',
                 value: '',
-            } as SelectOptionModel].concat(pricingDecisionOptions),
+            } as SelectOptionModel].concat(pricingDecisionOptions as SelectOptionModel[]),
             vats: [{
                 key: 'Default',
                 label: '-Chọn-',
@@ -153,6 +166,9 @@ function ProductAndCom() {
         const l3RateToFix = ((contractIndex.l3Cost ?? 0) * 100 / ((contractIndex.implementationPrice ?? 0) * (contractIndex.amount ?? 0))).toFixed(6)
         const l4RateToFix = ((contractIndex.l4Cost ?? 0) * 100 / ((contractIndex.implementationPrice ?? 0) * (contractIndex.amount ?? 0))).toFixed(6)
 
+        const totalPrice = (contractIndex.implementationPrice ?? 0) * (contractIndex.amount ?? 0)
+        let totalRate = (contractIndex.l1Rate ?? 0) + (contractIndex.l2Rate ?? 0) + (contractIndex.l3Rate ?? 0) + (contractIndex.l4Rate ?? 0)
+
         let objReplce = {}
         switch (_.field.split('.')[2]) {
             case 'l1CostDefault':
@@ -188,35 +204,43 @@ function ProductAndCom() {
             case 'l4Rate':
                 objReplce = {
                     ...contractIndex,
-                    l1Cost: Math.round((contractIndex.l1Rate ?? 0) * (contractIndex.implementationPrice ?? 0) * (contractIndex.amount ?? 0) * 0.01),
-                    l2Cost: Math.round((contractIndex.l2Rate ?? 0) * (contractIndex.implementationPrice ?? 0) * (contractIndex.amount ?? 0) * 0.01),
-                    l3Cost: Math.round((contractIndex.l3Rate ?? 0) * (contractIndex.implementationPrice ?? 0) * (contractIndex.amount ?? 0) * 0.01),
-                    l4Cost: Math.round((contractIndex.l4Rate ?? 0) * (contractIndex.implementationPrice ?? 0) * (contractIndex.amount ?? 0) * 0.01),
-                    totalRate: (contractIndex.l1Rate ?? 0) + (contractIndex.l2Rate ?? 0) + (contractIndex.l3Rate ?? 0) + (contractIndex.l4Rate ?? 0)
+                    l1Cost: Math.round((contractIndex.l1Rate ?? 0) * totalPrice * 0.01),
+                    l2Cost: Math.round((contractIndex.l2Rate ?? 0) * totalPrice * 0.01),
+                    l3Cost: Math.round((contractIndex.l3Rate ?? 0) * totalPrice * 0.01),
+                    l4Cost: Math.round((contractIndex.l4Rate ?? 0) * totalPrice * 0.01),
+                    totalRate: totalRate,
+                    totalPriceWithRate: Math.round(totalRate * totalPrice * 0.01),
+                    totalPriceComExcludingVAT: Math.round((100 - totalRate) * totalPrice * 0.01)
                 }
                 break;
             case 'l1Cost':
             case 'l2Cost':
             case 'l3Cost':
             case 'l4Cost':
+                totalRate = Number.parseFloat(l1RateToFix) + Number.parseFloat(l2RateToFix) + Number.parseFloat(l3RateToFix) + Number.parseFloat(l4RateToFix);
                 objReplce = {
                     ...contractIndex,
                     l1Rate: Number.parseFloat(l1RateToFix),
                     l2Rate: Number.parseFloat(l2RateToFix),
                     l3Rate: Number.parseFloat(l3RateToFix),
                     l4Rate: Number.parseFloat(l4RateToFix),
+                    totalRate: totalRate,
+                    totalPriceWithRate: Math.round(totalRate * totalPrice * 0.01),
+                    totalPriceComExcludingVAT: Math.round((100 - totalRate) * totalPrice * 0.01)
                 }
                 break;
             case 'implementationPrice':
-
                 objReplce = {
                     ...contractIndex,
-                    l1Cost: Math.round((contractIndex.l1Rate ?? 0) * (contractIndex.implementationPrice ?? 0) * (contractIndex.amount ?? 0) * 0.01),
-                    l2Cost: Math.round((contractIndex.l2Rate ?? 0) * (contractIndex.implementationPrice ?? 0) * (contractIndex.amount ?? 0) * 0.01),
-                    l3Cost: Math.round((contractIndex.l3Rate ?? 0) * (contractIndex.implementationPrice ?? 0) * (contractIndex.amount ?? 0) * 0.01),
-                    l4Cost: Math.round((contractIndex.l4Rate ?? 0) * (contractIndex.implementationPrice ?? 0) * (contractIndex.amount ?? 0) * 0.01),
+                    l1Cost: Math.round((contractIndex.l1Rate ?? 0) * totalPrice * 0.01),
+                    l2Cost: Math.round((contractIndex.l2Rate ?? 0) * totalPrice * 0.01),
+                    l3Cost: Math.round((contractIndex.l3Rate ?? 0) * totalPrice * 0.01),
+                    l4Cost: Math.round((contractIndex.l4Rate ?? 0) * totalPrice * 0.01),
                     totalPrice: (contractIndex.implementationPrice ?? 0) * (contractIndex.amount ?? 0),
-                    totalRate: (contractIndex.l1Rate ?? 0) + (contractIndex.l2Rate ?? 0) + (contractIndex.l3Rate ?? 0) + (contractIndex.l4Rate ?? 0)
+                    totalRate: totalRate,
+                    vatCost: Math.round(totalPrice * (contractIndex.vat ?? 0) / ((contractIndex.vat ?? 0) + 100)),
+                    totalPriceWithRate: Math.round(totalRate * totalPrice * 0.01),
+                    totalPriceComExcludingVAT: Math.round((100 - totalRate) * totalPrice * 0.01)
                 }
                 break;
             case 'defaultPrice':
@@ -230,22 +254,29 @@ function ProductAndCom() {
                 }
                 break;
             case 'amount':
+            case 'vat':
                 objReplce = {
                     ...contractIndex,
-                    l1Cost: Math.round((contractIndex.l1Rate ?? 0) * (contractIndex.implementationPrice ?? 0) * (contractIndex.amount ?? 0) * 0.01),
-                    l2Cost: Math.round((contractIndex.l2Rate ?? 0) * (contractIndex.implementationPrice ?? 0) * (contractIndex.amount ?? 0) * 0.01),
-                    l3Cost: Math.round((contractIndex.l3Rate ?? 0) * (contractIndex.implementationPrice ?? 0) * (contractIndex.amount ?? 0) * 0.01),
-                    l4Cost: Math.round((contractIndex.l4Rate ?? 0) * (contractIndex.implementationPrice ?? 0) * (contractIndex.amount ?? 0) * 0.01),
-                    totalPrice: (contractIndex.implementationPrice ?? 0) * (contractIndex.amount ?? 0),
+                    l1Cost: Math.round((contractIndex.l1Rate ?? 0) * totalPrice * 0.01),
+                    l2Cost: Math.round((contractIndex.l2Rate ?? 0) * totalPrice * 0.01),
+                    l3Cost: Math.round((contractIndex.l3Rate ?? 0) * totalPrice * 0.01),
+                    l4Cost: Math.round((contractIndex.l4Rate ?? 0) * totalPrice * 0.01),
+                    totalPrice: totalPrice,
                     l1CostDefault: Math.round((contractIndex.l1RateDefault ?? 0) * (contractIndex.defaultPrice ?? 0) * (contractIndex.amount ?? 0) * 0.01),
                     l2CostDefault: Math.round((contractIndex.l2RateDefault ?? 0) * (contractIndex.defaultPrice ?? 0) * (contractIndex.amount ?? 0) * 0.01),
                     l3CostDefault: Math.round((contractIndex.l3RateDefault ?? 0) * (contractIndex.defaultPrice ?? 0) * (contractIndex.amount ?? 0) * 0.01),
                     l4CostDefault: Math.round((contractIndex.l4RateDefault ?? 0) * (contractIndex.defaultPrice ?? 0) * (contractIndex.amount ?? 0) * 0.01),
                     totalRate: (contractIndex.l1Rate ?? 0) + (contractIndex.l2Rate ?? 0) + (contractIndex.l3Rate ?? 0) + (contractIndex.l4Rate ?? 0),
-                    totalRateDefault: (contractIndex.l1RateDefault ?? 0) + (contractIndex.l2RateDefault ?? 0) + (contractIndex.l3RateDefault ?? 0) + (contractIndex.l4RateDefault ?? 0)
+                    totalRateDefault: (contractIndex.l1RateDefault ?? 0) + (contractIndex.l2RateDefault ?? 0) + (contractIndex.l3RateDefault ?? 0) + (contractIndex.l4RateDefault ?? 0),
+                    vatCost: Math.round(totalPrice * (contractIndex.vat ?? 0) / ((contractIndex.vat ?? 0) + 100)),
+                    totalPriceWithRate: Math.round(totalRate * totalPrice * 0.01),
+                    totalPriceComExcludingVAT: Math.round((100 - totalRate) * totalPrice * 0.01)
                 }
                 break;
             default:
+                objReplce = {
+                    ...contractIndex,
+                }
                 break;
         }
 
@@ -512,9 +543,45 @@ function ProductAndCom() {
             },
         },
         {
+            title: 'Tỷ lệ hưởng Com phần giá chênh lệch(%)',
+            dataIndex: 'compareRate',
+            key: 'compareRate',
+            width: '180px',
+            valueType: 'digit',
+            fieldProps: {
+                formatter: (value: any) => `${value.replace('.', ',')}`,
+                parser: (value: any) => Number.parseFloat(value!.replace(',', '.')).toFixed(6),
+                style: { width: '100%' },
+                // value: 0,
+                addonAfter: "%",
+                controls: false
+            },
+            formItemProps: {
+                rules: [
+                    // {
+                    //     max: 100
+                    // },
+                    ({ getFieldValue, getFieldsValue, setFieldValue, setFieldsValue }: any) => ({
+                        validator(_: any, value: any) {
+                            if (value > 100) {
+                                return Promise.reject(new Error('Tỷ lệ không hợp lệ'));
+                            }
+                            const contractProducts = onChangeTable(getFieldsValue, _)
+                            setFieldValue('SalesPlaningProducts', [...contractProducts])
+
+                            if (true) {
+                                return Promise.resolve();
+                            }
+                            return Promise.reject(new Error('Đã tồn tại'));
+                        },
+                    }),
+                ],
+            },
+        },
+        {
             title: 'Thuế VAT',
-            dataIndex: 'VAT',
-            key: 'VAT',
+            dataIndex: 'vat',
+            key: 'vat',
             width: '220px',
             valueType: 'select',
             renderFormItem: (schema, config, form) => {
@@ -530,6 +597,35 @@ function ProductAndCom() {
                         options={state.vats}
                     />
                 )
+            },
+            formItemProps: {
+                rules: [
+                    ({ getFieldValue, getFieldsValue, setFieldValue, setFieldsValue }: any) => ({
+                        validator(_: any, value: any) {
+                            const contractProducts = onChangeTable(getFieldsValue, _)
+                            setFieldValue('SalesPlaningProducts', [...contractProducts])
+                            if (true) {
+                                return Promise.resolve();
+                            }
+                            return Promise.reject(new Error('Đã tồn tại'));
+                        },
+                    }),
+                ],
+            },
+        },
+
+        {
+            title: 'Tiền VAT',
+            dataIndex: 'vatCost',
+            key: 'vatCost',
+            width: '180px',
+            valueType: 'digit',
+            fieldProps: {
+                formatter: (value: any) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, '.'),
+                parser: (value: any) => value!.replace(/(\.*)/g, '').replace('.', ','),
+                style: { width: '100%' },
+                disabled: true,
+                controls: false
             },
         },
         //#region CP CSVC theo quy định
@@ -1131,6 +1227,83 @@ function ProductAndCom() {
                 ],
             },
         },
+        {
+            title: 'Tiền CP hỗ trợ CSVC',
+            dataIndex: 'totalPriceWithRate',
+            key: 'totalPriceWithRate',
+            width: '180px',
+            valueType: 'digit',
+            fieldProps: {
+                formatter: (value: any) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, '.'),
+                parser: (value: any) => value!.replace(/(\.*)/g, '').replace('.', ','),
+                style: { width: '100%' },
+                disabled: true,
+                controls: false
+            },
+        },
+        {
+            title: 'Doanh thu tính Com(chưa trừ VAT)',
+            dataIndex: 'totalPriceComExcludingVAT',
+            key: 'totalPriceComExcludingVAT',
+            width: '180px',
+            valueType: 'digit',
+            fieldProps: {
+                formatter: (value: any) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, '.'),
+                parser: (value: any) => value!.replace(/(\.*)/g, '').replace('.', ','),
+                style: { width: '100%' },
+                disabled: true,
+                controls: false
+            },
+        },
+        {
+            title: 'Tỷ lệ ghi nhận Com(%)',
+            dataIndex: 'comRate',
+            key: 'comRate',
+            width: '180px',
+            // disable: true,
+            valueType: 'digit',
+            fieldProps: {
+                formatter: (value: any) => `${value.replace('.', ',')}`,
+                parser: (value: any) => Number.parseFloat(value!.replace(',', '.')).toFixed(6),
+                style: { width: '100%' },
+                addonAfter: "%",
+                controls: false
+            },
+            formItemProps: {
+                rules: [
+                    // {
+                    //     max: 100
+                    // },
+                    ({ getFieldValue, getFieldsValue, setFieldValue, setFieldsValue }: any) => ({
+                        validator(_: any, value: any) {
+                            if (value > 100) {
+                                return Promise.reject(new Error('Tỷ lệ không hợp lệ'));
+                            }
+                            const contractProducts = onChangeTable(getFieldsValue, _)
+                            setFieldValue('SalesPlaningProducts', [...contractProducts])
+                            if (true) {
+                                return Promise.resolve();
+                            }
+                            return Promise.reject(new Error('Đã tồn tại'));
+                        },
+                    }),
+                ],
+            },
+        },
+        {
+            title: 'Tiền Com',
+            dataIndex: 'totalCom',
+            key: 'totalCom',
+            width: '180px',
+            valueType: 'digit',
+            fieldProps: {
+                formatter: (value: any) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, '.'),
+                parser: (value: any) => value!.replace(/(\.*)/g, '').replace('.', ','),
+                style: { width: '100%' },
+                disabled: true,
+                controls: false
+            },
+        },
         //#endregion
         {
             title: 'Hành động',
@@ -1340,6 +1513,11 @@ function ProductAndCom() {
                         // initialValue="1"
                         options={state.customerCategories}
                     />
+                </Col>
+                <Col span={12}>
+                    <ProFormItem labelCol={{ span: 0 }} wrapperCol={{ span: 24 }} name='isMOU' valuePropName="checked">
+                        <Checkbox>Tính chất MOU</Checkbox>
+                    </ProFormItem>
                 </Col>
 
             </Row>
