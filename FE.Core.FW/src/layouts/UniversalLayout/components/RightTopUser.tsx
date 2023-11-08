@@ -81,7 +81,7 @@ export default memo(() => {
         <a className='universallayout-top-usermenu ant-dropdown-link' onClick={(e) => e.preventDefault()}>
           {/* {user.name} */}
           <Tooltip title={user.fullname}>
-            <UserOutlined style={{ fontSize: '24px' }} />
+            <UserOutlined style={{ fontSize: '18px' }} />
           </Tooltip>
           {/* <IconSvg name='arrow-down' /> */}
         </a>

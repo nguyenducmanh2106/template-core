@@ -197,7 +197,7 @@ export default memo(() => {
   const [visible, setVisible] = useState(false);
   const [noticeList, setNoticeList] = useState<Notice[]>([]);
   const [loading, setLoading] = useState(false);
-  const { noticeCount } = { noticeCount: 16 };
+  const { noticeCount } = { noticeCount: 100 };
 
   const noticeListFilter = <T extends Notice['type']>(type: T) => {
     return noticeList.filter(notice => notice.type === type) as Notice<T>[];
@@ -371,10 +371,10 @@ export default memo(() => {
       <Tooltip
         title="Thông báo"
       >
-        <Badge count={noticeCount} overflowCount={999}>
-          <span className="notice" id="notice-center">
+        <Badge count={noticeCount} size="small" overflowCount={99} offset={[10, 10]}>
+          <span className="notice universallayout-top-usermenu ant-dropdown-link" id="notice-center">
             {/* <NoticeSvg className="anticon" /> */}
-            <IconSvg name='notice-svg' style={{ fontSize: '24px' }} />
+            <IconSvg name='notice-svg' style={{ fontSize: '18px', color: 'inherit' }} />
           </span>
         </Badge>
       </Tooltip>

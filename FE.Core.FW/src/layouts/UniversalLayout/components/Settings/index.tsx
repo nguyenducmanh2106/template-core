@@ -144,7 +144,7 @@ export default memo(() => {
       placement='bottomRight'
     >
       <span className='universallayout-top-settings'>
-        <IconSvg name='theme' />
+        <IconSvg name='theme' style={{ fontSize: '18px' }} />
       </span>
     </Popover>
   );

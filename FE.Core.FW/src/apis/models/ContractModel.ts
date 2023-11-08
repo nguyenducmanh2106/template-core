@@ -6,8 +6,10 @@ import type { ContractFileModel } from "./ContractFileModel";
 import type { ContractProductModel } from "./ContractProductModel";
 import type { CustomerModel } from "./CustomerModel";
 import type { DocumentCommandModel } from "./DocumentCommandModel";
+import { SalesPlaningModel } from "./SalesPlaningModel";
 
 export type ContractModel = {
+  salesPlaning?: SalesPlaningModel;
   id?: string;
   contractNumber?: string | null;
   customerId?: string | null;

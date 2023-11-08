@@ -32,6 +32,8 @@ import { getCustomer, getCustomer1 } from '@/apis/services/CustomerService';
 import { getContractType } from '@/apis/services/ContractTypeService';
 import { getAdministrativeDivision, getAdministrativeDivision2 } from '@/apis/services/AdministrativeDivisionService';
 import { CustomerModel } from '@/apis/models/CustomerModel';
+import { contractState } from '@/store/contract-atom';
+import { useRecoilState } from 'recoil';
 
 const waitTime = (time: number = 0) => {
     return new Promise((resolve) => {
@@ -559,6 +561,7 @@ function ContractCreate() {
         };
         dispatch(stateDispatcher);
     }
+    const [contractAtom, setContractAtom] = useRecoilState(contractState);
     const onChangeCustomer = async (value: string) => {
         console.log(value);
 
@@ -585,10 +588,10 @@ function ContractCreate() {
         //     return
         // }
         const response: ResponseData<CustomerModel> = await getCustomer1(value) as ResponseData<CustomerModel>;
-        formMapRef.current[0].current?.setFieldValue('ProvinceId', response.data?.provinceId)
-        formMapRef.current[0].current?.setFieldValue('DistrictId', response.data?.districtId)
-        formMapRef.current[1].current?.setFieldValue('CustomerName', response.data?.name)
-        formMapRef.current[1].current?.setFieldValue('CustomerCategory', response.data?.customerCategoryId)
+        formMapRef.current[0].current?.setFieldValue('provinceId', response.data?.provinceId)
+        formMapRef.current[0].current?.setFieldValue('districtId', response.data?.districtId)
+        formMapRef.current[1].current?.setFieldValue('customerName', response.data?.name)
+        formMapRef.current[1].current?.setFieldValue('customerCategory', response.data?.customerCategoryId)
         await onChangeProvince(response.data?.provinceId ?? "")
         // const options = ConvertOptionSelectModel(response.data as OptionModel[]);
         // const stateDispatcher = {
@@ -600,6 +603,11 @@ function ContractCreate() {
         // };
         // dispatch(stateDispatcher);
     };
+
+    const onChangeContractNumber = (e: any) => {
+        // console.log(e.target.value)
+        formMapRef.current[1].current?.setFieldValue('contractNumber', e.target.value)
+    }
 
     return (
         <ProCard
@@ -649,28 +657,40 @@ function ContractCreate() {
                     }}
                     onFinish={async () => {
                         const fields = formMapRef.current[0].current?.getFieldsValue()
-                        console.log(fields)
+                        const newValue: ContractModel = {
+                            ...contractAtom,
+                            ...fields
+                        }
+                        setContractAtom(newValue)
+                        // console.log(newValue)
                         return true;
                     }}
                     initialValues={{
-                        'ContractDate': [dayjs(new Date()), dayjs(new Date())]
+                        'contractDate': [dayjs(new Date()), dayjs(new Date())]
                     }}
 
                 >
                     <Row gutter={16}>
                         <Col span={12}>
-                            <ProFormText
+                            {/* <ProFormText
                                 style={{ width: '100%' }}
-                                name="ContractNumber"
+                                name="contractNumber"
                                 label="Số hiệu hợp đồng"
                                 // width="lg"
                                 tooltip="Số hiệu hợp đồng"
                                 placeholder="Nhập số hiệu hợp đồng"
-                            />
+                            /> */}
+                            <ProFormItem style={{ width: '100%' }}
+                                name="contractNumber"
+                                label="Số hiệu hợp đồng"
+                                // width="lg"
+                                tooltip="Số hiệu hợp đồng">
+                                <Input onBlur={onChangeContractNumber} />
+                            </ProFormItem>
                         </Col>
                         <Col span={12}>
                             <ProFormText
-                                name="Description"
+                                name="description"
                                 label="Ghi chú"
                                 style={{ width: '100%' }}
                                 tooltip="Ghi chú"
@@ -681,7 +701,7 @@ function ContractCreate() {
                         <Col span={12}>
                             <ProFormSelect
                                 label="Loại hợp đồng"
-                                name="ContractTypeId"
+                                name="contractTypeId"
                                 rules={[
                                     {
                                         required: true,
@@ -693,7 +713,7 @@ function ContractCreate() {
                         <Col span={12}>
                             <ProFormSelect
                                 label="Khách hàng"
-                                name="CustomerId"
+                                name="customerId"
                                 rules={[
                                     {
                                         required: true,
@@ -707,7 +727,7 @@ function ContractCreate() {
                         <Col span={12}>
                             <ProFormSelect
                                 label="Tỉnh/TP"
-                                name="ProvinceId"
+                                name="provinceId"
                                 disabled
                                 rules={[
                                     {
@@ -721,7 +741,7 @@ function ContractCreate() {
                         <Col span={12}>
                             <ProFormSelect
                                 label="Quận/Huyện"
-                                name="DistrictId"
+                                name="districtId"
                                 disabled
                                 rules={[
                                     {
@@ -733,7 +753,7 @@ function ContractCreate() {
                         </Col>
                         <Col span={12}>
                             <ProFormText
-                                name="ContractValue"
+                                name="contractValue"
                                 label="Giá trị hợp đồng"
                                 style={{ width: '100%' }}
                             />
@@ -742,7 +762,7 @@ function ContractCreate() {
                             <ProFormItem
                                 style={{ width: '100%' }}
                                 label="Thời hạn hợp đồng"
-                                name="ContractDate">
+                                name="contractDate">
                                 <DatePicker.RangePicker
                                     style={{ width: '100%' }}
                                     // defaultValue={[dayjs('2015/01/01', dateFormat), dayjs('2015/01/01', dateFormat)]}
@@ -828,11 +848,11 @@ function ContractCreate() {
                     }}
                     onFinish={async () => {
                         const fields = formMapRef.current[1].current?.getFieldsValue()
-                        console.log(fields);
+                        console.log(contractAtom);
                         return true;
                     }}
                 >
-                    <ProductAndCom />
+                    <ProductAndCom formMapRef={formMapRef} />
                 </StepsForm.StepForm>
                 <StepsForm.StepForm
                     name="step-4"
