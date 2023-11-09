@@ -45,6 +45,7 @@ const validateMessages = {
 function ComAndRevenue() {
     // const formRef = useRef<ProFormInstance>();
     const [contractAtom, setContractAtom] = useRecoilState(contractState);
+    console.log('re-render')
     const initState = {
         products: [],
         pricingCategories: [],
@@ -165,8 +166,8 @@ function ComAndRevenue() {
     const columnTab3s: ProColumns<SalesPlaningCommisionModel>[] = [
         {
             title: 'Sản phẩm',
-            dataIndex: 'productIdCommission',
-            key: 'productIdCommission',
+            dataIndex: 'productId',
+            key: 'productId',
             width: '220px',
             valueType: 'select',
             fixed: 'left',
@@ -184,32 +185,32 @@ function ComAndRevenue() {
                     />
                 )
             },
-            // formItemProps: {
-            //     rules: [
-            //         // {
-            //         //     required: true,
-            //         //     whitespace: true,
-            //         //     message: 'Không được để trống',
-            //         // },
-            //         ({ getFieldValue, getFieldsValue }: any) => ({
-            //             validator(_: any, value: any) {
-            //                 return Promise.resolve();
-            //                 console.log(getFieldsValue())
-            //                 const contractProducts: SalesPlaningProductModel[] = getFieldsValue()?.salesPlaningProducts
-            //                 const checkDuplication = findDuplicateObjects(contractProducts, "productId", "pricingCategoryId")
-            //                 if (checkDuplication.length < 1) {
-            //                     return Promise.resolve();
-            //                 }
-            //                 return Promise.reject(new Error('Đã tồn tại'));
-            //             },
-            //         }),
-            //     ],
-            // },
+            formItemProps: {
+                rules: [
+                    // {
+                    //     required: true,
+                    //     whitespace: true,
+                    //     message: 'Không được để trống',
+                    // },
+                    ({ getFieldValue, getFieldsValue }: any) => ({
+                        validator(_: any, value: any) {
+                            return Promise.resolve();
+                            console.log(getFieldsValue())
+                            const contractProducts: SalesPlaningProductModel[] = getFieldsValue()?.salesPlaningProducts
+                            const checkDuplication = findDuplicateObjects(contractProducts, "productId", "pricingCategoryId")
+                            if (checkDuplication.length < 1) {
+                                return Promise.resolve();
+                            }
+                            return Promise.reject(new Error('Đã tồn tại'));
+                        },
+                    }),
+                ],
+            },
         },
         {
             title: 'Quy định giá bán',
-            dataIndex: 'pricingCategoryIdCommission',
-            key: 'pricingCategoryIdCommission',
+            dataIndex: 'pricingCategoryId',
+            key: 'pricingCategoryId',
             width: '220px',
             valueType: 'select',
             renderFormItem: (schema, config, form) => {
@@ -226,27 +227,27 @@ function ComAndRevenue() {
                     />
                 )
             },
-            // formItemProps: {
-            //     rules: [
-            //         // {
-            //         //     required: true,
-            //         //     whitespace: true,
-            //         //     message: 'Không được để trống',
-            //         // },
-            //         ({ getFieldValue, getFieldsValue }: any) => ({
-            //             validator(_: any, value: any) {
-            //                 return Promise.resolve();
-            //                 const contractProducts: SalesPlaningProductModel[] = getFieldsValue()?.salesPlaningProducts
-            //                 const checkDuplication = findDuplicateObjects(contractProducts, "productId", "pricingCategoryId")
-            //                 if (checkDuplication.length < 1) {
-            //                     return Promise.resolve();
-            //                 }
-            //                 return Promise.reject(new Error('Đã tồn tại'));
-            //             },
-            //         }),
+            formItemProps: {
+                rules: [
+                    // {
+                    //     required: true,
+                    //     whitespace: true,
+                    //     message: 'Không được để trống',
+                    // },
+                    ({ getFieldValue, getFieldsValue }: any) => ({
+                        validator(_: any, value: any) {
+                            return Promise.resolve();
+                            const contractProducts: SalesPlaningProductModel[] = getFieldsValue()?.salesPlaningProducts
+                            const checkDuplication = findDuplicateObjects(contractProducts, "productId", "pricingCategoryId")
+                            if (checkDuplication.length < 1) {
+                                return Promise.resolve();
+                            }
+                            return Promise.reject(new Error('Đã tồn tại'));
+                        },
+                    }),
 
-            //     ],
-            // },
+                ],
+            },
         },
         {
             title: 'Tỷ lệ hoa hồng(%)',

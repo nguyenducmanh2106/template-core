@@ -1,47 +1,30 @@
 import { OptionModel, SelectOptionModel } from '@/@types/data';
 import { ResponseData } from '@/apis';
 import { ContractModel } from '@/apis/models/ContractModel';
-import { ContractProductModel } from '@/apis/models/ContractProductModel';
-import { getPricingCategory } from '@/apis/services/PricingCategoryService';
-import { getPricingDecision } from '@/apis/services/PricingDecisionService';
-import { getProduct } from '@/apis/services/ProductService';
+import { CustomerModel } from '@/apis/models/CustomerModel';
+import { getAdministrativeDivision, getAdministrativeDivision2 } from '@/apis/services/AdministrativeDivisionService';
+import { getContractType } from '@/apis/services/ContractTypeService';
+import { getCustomer, getCustomer1 } from '@/apis/services/CustomerService';
 import UploadFileComponent from '@/components/UploadFile/Index';
-import { findDuplicateObjects, tabContract, uuidv4 } from '@/utils/constants';
+import { contractState } from '@/store/contract-atom';
 import { ConvertOptionSelectModel } from '@/utils/convert';
-import { ArrowLeftOutlined, DeleteOutlined } from '@ant-design/icons';
-import type { ProColumns, ProFormInstance } from '@ant-design/pro-components';
+import { ArrowLeftOutlined } from '@ant-design/icons';
+import type { ProFormInstance } from '@ant-design/pro-components';
 import {
-    EditableProTable,
     ProCard,
-    ProForm,
     ProFormCheckbox,
-    ProFormDatePicker,
-    ProFormDateRangePicker,
     ProFormItem,
     ProFormSelect,
     ProFormText,
-    ProFormTextArea,
-    StepsForm,
+    StepsForm
 } from '@ant-design/pro-components';
-import { Button, Card, Col, DatePicker, Input, Row, Select, Space, Tooltip, Typography, UploadFile, message } from 'antd';
+import { Button, Col, DatePicker, Input, Row, Space, Tooltip, Typography, UploadFile } from 'antd';
 import dayjs from 'dayjs';
-import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
+import { useEffect, useReducer, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import ProductAndCom from './product-com';
-import { getCustomer, getCustomer1 } from '@/apis/services/CustomerService';
-import { getContractType } from '@/apis/services/ContractTypeService';
-import { getAdministrativeDivision, getAdministrativeDivision2 } from '@/apis/services/AdministrativeDivisionService';
-import { CustomerModel } from '@/apis/models/CustomerModel';
-import { contractState } from '@/store/contract-atom';
 import { useRecoilState } from 'recoil';
+import SalePlanning from './sale-planning-tab';
 
-const waitTime = (time: number = 0) => {
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            resolve(true);
-        }, time);
-    });
-};
 const validateMessages = {
     required: '${label} không được để trống',
     whitespace: '${label} không được để trống',
@@ -120,330 +103,7 @@ function ContractCreate() {
 
 
     const { Title, Paragraph, Text, Link } = Typography;
-    const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
-    const dataSource = useRef<readonly ContractProductModel[]>([]);
 
-    function findDuplicateObjects<T>(arr: T[], property1: keyof T, property2: keyof T): T[] {
-        const seen = new Set<string>();
-        const duplicates: T[] = [];
-
-        for (const obj of arr) {
-            const key = `${obj[property1]}-${obj[property2]}`;
-
-            if (seen.has(key)) {
-                duplicates.push(obj);
-            } else {
-                seen.add(key);
-            }
-        }
-
-        return duplicates;
-    }
-    const columns: ProColumns<ContractProductModel>[] = [
-        {
-            title: 'Sản phẩm',
-            dataIndex: 'productId',
-            key: 'productId',
-            width: '220px',
-            valueType: 'select',
-            fixed: 'left',
-            renderFormItem: (schema, config, form) => {
-                return (
-                    <Select
-                        showSearch
-                        optionFilterProp="children"
-                        filterOption={(input, option) => (option?.label ?? '').toString().toLowerCase().includes(input.toLowerCase())}
-                        filterSort={(optionA, optionB) =>
-                            (optionA?.label ?? '').toString().toLowerCase().localeCompare((optionB?.label ?? '').toString().toLowerCase())
-                        }
-                        placeholder='-Chọn bài thi-'
-                        options={state.products}
-                    />
-                )
-            },
-            formItemProps: {
-                rules: [
-                    {
-                        required: true,
-                        whitespace: true,
-                        message: 'Không được để trống',
-                    },
-                    ({ getFieldValue, getFieldsValue }: any) => ({
-                        validator(_: any, value: any) {
-                            const contractProducts: ContractProductModel[] = getFieldsValue()?.ContractProducts
-                            const checkDuplication = findDuplicateObjects(contractProducts, "productId", "pricingCategoryId")
-                            if (checkDuplication.length < 1) {
-                                return Promise.resolve();
-                            }
-                            return Promise.reject(new Error('Đã tồn tại'));
-                        },
-                    }),
-                    // {
-                    //     message: '必须包含数字',
-                    //     pattern: /[0-9]/,
-                    // },
-                    // {
-                    //     max: 16,
-                    //     whitespace: true,
-                    //     message: '最长为 16 位',
-                    // },
-                    // {
-                    //     min: 6,
-                    //     whitespace: true,
-                    //     message: '最小为 6 位',
-                    // },
-                ],
-            },
-        },
-        {
-            title: 'Quy định giá bán',
-            dataIndex: 'pricingCategoryId',
-            key: 'pricingCategoryId',
-            width: '220px',
-            valueType: 'select',
-            renderFormItem: (schema, config, form) => {
-                return (
-                    <Select
-                        showSearch
-                        optionFilterProp="children"
-                        filterOption={(input, option) => (option?.label ?? '').toString().toLowerCase().includes(input.toLowerCase())}
-                        filterSort={(optionA, optionB) =>
-                            (optionA?.label ?? '').toString().toLowerCase().localeCompare((optionB?.label ?? '').toString().toLowerCase())
-                        }
-                        placeholder='-Chọn bài thi-'
-                        options={state.pricingCategories}
-                    />
-                )
-            },
-            formItemProps: {
-                rules: [
-                    {
-                        required: true,
-                        whitespace: true,
-                        message: 'Không được để trống',
-                    },
-                    ({ getFieldValue, getFieldsValue }: any) => ({
-                        validator(_: any, value: any) {
-                            const contractProducts: ContractProductModel[] = getFieldsValue()?.ContractProducts
-                            const checkDuplication = findDuplicateObjects(contractProducts, "productId", "pricingCategoryId")
-                            if (checkDuplication.length < 1) {
-                                return Promise.resolve();
-                            }
-                            return Promise.reject(new Error('Đã tồn tại'));
-                        },
-                    }),
-                    // {
-                    //     message: '必须包含数字',
-                    //     pattern: /[0-9]/,
-                    // },
-                    // {
-                    //     max: 16,
-                    //     whitespace: true,
-                    //     message: '最长为 16 位',
-                    // },
-                    // {
-                    //     min: 6,
-                    //     whitespace: true,
-                    //     message: '最小为 6 位',
-                    // },
-                ],
-            },
-        },
-        {
-            title: 'Quyết định giá',
-            dataIndex: 'pricingDecisionId',
-            key: 'pricingDecisionId',
-            width: '220px',
-            valueType: 'select',
-            // valueEnum: {
-            //     all: { text: 'Tất cả', status: '4e7befd7-805a-4445-8c12-b7502e075986' },
-            //     open: {
-            //         text: 'Lỗi',
-            //         status: 'Error',
-            //     },
-            //     closed: {
-            //         text: 'Thành công',
-            //         status: 'Success',
-            //     },
-            // },
-            renderFormItem: (schema, config, form) => {
-                return (
-                    <Select
-                        showSearch
-                        optionFilterProp="children"
-                        filterOption={(input, option) => (option?.label ?? '').toString().toLowerCase().includes(input.toLowerCase())}
-                        filterSort={(optionA, optionB) =>
-                            (optionA?.label ?? '').toString().toLowerCase().localeCompare((optionB?.label ?? '').toString().toLowerCase())
-                        }
-                        placeholder='-Chọn bài thi-'
-                        options={state.pricingDecisions}
-                    />
-                )
-            },
-            formItemProps: {
-                rules: [
-                    {
-                        required: true,
-                        whitespace: true,
-                        message: 'Không được để trống',
-                    },
-                ],
-            },
-        },
-        {
-            title: 'Đơn giá(quy định)',
-            dataIndex: 'defaultPrice',
-            key: 'defaultPrice',
-            width: '180px',
-            valueType: 'digit',
-            fieldProps: {
-                formatter: (value: any) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, '.'),
-                parser: (value: any) => value!.replace(/(\.*)/g, '').replace('.', ','),
-                style: { width: '100%' },
-                controls: false
-            },
-            formItemProps: {
-                rules: [
-                    {
-                        required: true,
-                        message: 'Không được để trống',
-                    },
-                    ({ getFieldValue, getFieldsValue }: any) => ({
-                        validator(_: any, value: any) {
-
-                            if (true) {
-                                return Promise.resolve();
-                            }
-                            return Promise.reject(new Error('Đã tồn tại'));
-                        },
-                    }),
-                ],
-            },
-        },
-        {
-            title: 'Đơn giá(thực tế)',
-            dataIndex: 'implementationPrice',
-            key: 'implementationPrice',
-            width: '180px',
-            valueType: 'digit',
-            fieldProps: {
-                formatter: (value: any) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, '.'),
-                parser: (value: any) => value!.replace(/(\.*)/g, '').replace('.', ','),
-                style: { width: '100%' },
-                controls: false
-            },
-            formItemProps: {
-                rules: [
-                    {
-                        required: true,
-                        message: 'Không được để trống',
-                    },
-                    ({ getFieldValue, getFieldsValue, setFieldValue, setFieldsValue }: any) => ({
-                        validator(_: any, value: any) {
-                            const idxChange = _.field.split('.')[1]
-                            const contractProducts: ContractProductModel[] = getFieldsValue()?.ContractProducts
-                            const contractIndex = contractProducts[idxChange]
-                            const objReplce = {
-                                ...contractIndex,
-                                totalPrice: (value ?? 0) * (contractIndex.amount ?? 0)
-                            }
-
-                            contractProducts.splice(idxChange, 1, objReplce)
-                            setFieldValue('ContractProducts', [...contractProducts])
-                            if (true) {
-                                return Promise.resolve();
-                            }
-                            return Promise.reject(new Error('Đã tồn tại'));
-                        },
-                    }),
-                ],
-            },
-        },
-        {
-            title: 'Số lượng',
-            dataIndex: 'amount',
-            key: 'amount',
-            width: '120px',
-            valueType: 'digit',
-            fieldProps: {
-                formatter: (value: any) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, '.'),
-                parser: (value: any) => value!.replace(/(\.*)/g, '').replace('.', ','),
-                style: { width: '100%' },
-                controls: false
-            },
-            formItemProps: {
-                rules: [
-                    {
-                        required: true,
-                        message: 'Không được để trống',
-                    },
-                    ({ getFieldValue, getFieldsValue, setFieldValue, setFieldsValue }: any) => ({
-                        validator(_: any, value: any) {
-                            const idxChange = _.field.split('.')[1]
-                            const contractProducts: ContractProductModel[] = getFieldsValue()?.ContractProducts
-                            const contractIndex = contractProducts[idxChange]
-                            const objReplce = {
-                                ...contractIndex,
-                                totalPrice: (value ?? 0) * (contractIndex.implementationPrice ?? 0)
-                            }
-
-                            contractProducts.splice(idxChange, 1, objReplce)
-                            setFieldValue('ContractProducts', [...contractProducts])
-                            if (true) {
-                                return Promise.resolve();
-                            }
-                            return Promise.reject(new Error('Đã tồn tại'));
-                        },
-                    }),
-                ],
-            },
-        },
-        {
-            title: 'Thành tiền',
-            dataIndex: 'totalPrice',
-            key: 'totalPrice',
-            width: '180px',
-            // disable: true,
-            readonly: true,
-            valueType: 'digit',
-            fieldProps: {
-                formatter: (value: any) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, '.'),
-                parser: (value: any) => value!.replace(/(\.*)/g, '').replace('.', ','),
-                style: { width: '100%' },
-                controls: false
-            },
-        },
-        {
-            title: 'Ghi chú',
-            dataIndex: 'description',
-            key: 'description',
-            width: '260px',
-            valueType: 'text',
-            // fieldProps: {
-            //     formatter: (value: any) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, '.'),
-            //     parser: (value: any) => value!.replace(/(\.*)/g, '').replace('.', ','),
-            //     style: { width: '100%' },
-            //     controls: false
-            // },
-        },
-        {
-            title: 'Hành động',
-            key: 'Action',
-            valueType: 'option',
-            fixed: 'right',
-            align: 'center',
-            width: 100,
-            render: () => {
-                return (
-                    <Tooltip title="Xóa">
-                        <Button type="text" shape='circle'>
-                            <DeleteOutlined />
-                        </Button>
-                    </Tooltip>
-                )
-            },
-        },
-    ];
     const handleOk = async (values: any) => {
         // const fieldsValue = await formRef?.current?.validateFields();
         // setButtonOkText('Đang xử lý...');
@@ -466,71 +126,6 @@ function ContractCreate() {
         // else {
         //     message.error(response.message || "Thất bại")
         // }
-    };
-    const tabList = [
-        {
-            key: 'tab1',
-            tab: 'Sản phẩm và Com',
-        },
-        {
-            key: 'tab2',
-            tab: 'Chi phí phát sinh',
-        },
-        {
-            key: "Chia Com và doanh thu",
-            tab: 'Đã duyệt',
-        },
-
-    ];
-    const [activeTabKey, setActiveTabKey] = useState<string>('tab1');
-
-    const onTabChange = (key: string) => {
-        setActiveTabKey(key);
-    };
-    const contentList: Record<string, React.ReactNode> = {
-        tab1: <ProFormItem>
-            <EditableProTable<ContractProductModel>
-                // headerTitle="可编辑表格"
-                columns={columns}
-                name="Com"
-                rowKey="id"
-                scroll={{ x: '100vw', y: '400px' }}
-                // onChange={onHandleChangeSource}
-                recordCreatorProps={{
-                    newRecordType: 'dataSource',
-                    record: () => ({
-                        id: uuidv4(),
-                    }),
-                }}
-                editable={{
-                    type: 'multiple',
-                    deleteText: <Tooltip title="Xóa">
-                        <Button type="text" shape='circle'>
-                            <DeleteOutlined />
-                        </Button>
-                    </Tooltip>,
-                    deletePopconfirmMessage: <>Đồng ý xóa?</>,
-                    editableKeys,
-                    actionRender: (row: any, config: any, defaultDoms: any) => {
-                        return [defaultDoms.delete];
-                    },
-                    onValuesChange: (record, recordList) => {
-                        // setDataSource(recordList)
-                        dataSource.current = recordList
-                    },
-                    onChange: setEditableRowKeys,
-                    onDelete: (key: any, row: any) => {
-                        return new Promise((resolve) => {
-                            console.log(key, row)
-                            setTimeout(() => {
-                                resolve(true);
-                            }, 0);
-                        });
-                    }
-                }}
-            />
-        </ProFormItem>,
-        tab2: <p>content2</p>,
     };
 
     const onChangeProvince = async (value: string) => {
@@ -561,7 +156,7 @@ function ContractCreate() {
         };
         dispatch(stateDispatcher);
     }
-    const [contractAtom, setContractAtom] = useRecoilState(contractState);
+    // const [contractAtom, setContractAtom] = useRecoilState(contractState);
     const onChangeCustomer = async (value: string) => {
         console.log(value);
 
@@ -657,17 +252,17 @@ function ContractCreate() {
                     }}
                     onFinish={async () => {
                         const fields = formMapRef.current[0].current?.getFieldsValue()
-                        const newValue: ContractModel = {
-                            ...contractAtom,
-                            ...fields
-                        }
-                        setContractAtom(newValue)
-                        // console.log(newValue)
+                        // const newValue: ContractModel = {
+                        //     ...contractAtom,
+                        //     ...fields
+                        // }
+                        // setContractAtom(newValue)
                         return true;
                     }}
                     initialValues={{
                         'contractDate': [dayjs(new Date()), dayjs(new Date())]
                     }}
+                    style={{ width: '100%' }}
 
                 >
                     <Row gutter={16}>
@@ -680,7 +275,7 @@ function ContractCreate() {
                                 tooltip="Số hiệu hợp đồng"
                                 placeholder="Nhập số hiệu hợp đồng"
                             /> */}
-                            <ProFormItem style={{ width: '100%' }}
+                            <ProFormItem
                                 name="contractNumber"
                                 label="Số hiệu hợp đồng"
                                 // width="lg"
@@ -692,7 +287,6 @@ function ContractCreate() {
                             <ProFormText
                                 name="description"
                                 label="Ghi chú"
-                                style={{ width: '100%' }}
                                 tooltip="Ghi chú"
                                 placeholder="Nhập ghi chú"
                                 rules={[{ required: true }]}
@@ -702,6 +296,7 @@ function ContractCreate() {
                             <ProFormSelect
                                 label="Loại hợp đồng"
                                 name="contractTypeId"
+                                style={{ width: '100%' }}
                                 rules={[
                                     {
                                         required: true,
@@ -714,6 +309,7 @@ function ContractCreate() {
                             <ProFormSelect
                                 label="Khách hàng"
                                 name="customerId"
+                                style={{ width: '100%' }}
                                 rules={[
                                     {
                                         required: true,
@@ -753,6 +349,7 @@ function ContractCreate() {
                         </Col>
                         <Col span={12}>
                             <ProFormText
+                                disabled
                                 name="contractValue"
                                 label="Giá trị hợp đồng"
                                 style={{ width: '100%' }}
@@ -847,12 +444,14 @@ function ContractCreate() {
                         description: 'Thông tin kế hoạch bán hàng',
                     }}
                     onFinish={async () => {
-                        const fields = formMapRef.current[1].current?.getFieldsValue()
-                        console.log(contractAtom);
+                        const contracts = formMapRef.current[0].current?.getFieldsValue()
+                        const salePlannings = formMapRef.current[1].current?.getFieldsValue()
+                        console.log(contracts);
+                        console.log(salePlannings);
                         return true;
                     }}
                 >
-                    <ProductAndCom formMapRef={formMapRef} />
+                    <SalePlanning formMapRef={formMapRef} />
                 </StepsForm.StepForm>
                 <StepsForm.StepForm
                     name="step-4"

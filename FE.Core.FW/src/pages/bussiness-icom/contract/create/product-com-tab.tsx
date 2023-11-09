@@ -2,6 +2,7 @@ import { OptionModel, SelectOptionModel } from '@/@types/data';
 import { ResponseData } from '@/apis';
 import { ContractModel } from '@/apis/models/ContractModel';
 import { PricingDecisionModel } from '@/apis/models/PricingDecisionModel';
+import { SalesPlaningCommisionModel } from '@/apis/models/SalesPlaningCommisionModel';
 import { SalesPlaningProductModel } from '@/apis/models/SalesPlaningProductModel';
 import { TaxCategoryModel } from '@/apis/models/TaxCategoryModel';
 import { getCustomerCategory } from '@/apis/services/CustomerCategoryService';
@@ -27,27 +28,16 @@ import { Button, Card, Checkbox, Col, InputNumber, Row, Select, Tooltip, Typogra
 import { useCallback, useEffect, useReducer, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
-import ComAndRevenue from './com-revenue-tab';
-import { SalesPlaningCommisionModel } from '@/apis/models/SalesPlaningCommisionModel';
 
 
-const validateMessages = {
-    required: '${label} không được để trống',
-    whitespace: '${label} không được để trống',
-    types: {
-        email: '${label} không đúng định dạng email',
-        number: '${label} không đúng định dạng số',
-    },
-    number: {
-        range: '${label} must be between ${min} and ${max}',
-    },
-};
+
 interface props {
     formMapRef?: React.MutableRefObject<React.MutableRefObject<FormInstance<any> | undefined>[]>;
 }
 function ProductAndCom({ formMapRef }: props) {
-    // console.log(formMapRef)
-    const [contractAtom, setContractAtom] = useRecoilState(contractState);
+    // const formRef = useRef<ProFormInstance>();
+    // const [contractAtom, setContractAtom] = useRecoilState(contractState);
+    console.log('re-render')
     const initState = {
         products: [],
         pricingCategories: [],
@@ -139,29 +129,7 @@ function ProductAndCom({ formMapRef }: props) {
         dispatch(stateDispatcher);
     }, [])
 
-    const { Title, Paragraph, Text, Link } = Typography;
-    // const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
     const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
-    const [editableKeyTab3s, setEditableRowKeyTab3s] = useState<React.Key[]>([]);
-    const dataSource = useRef<readonly SalesPlaningProductModel[]>([]);
-
-    function findDuplicateObjects<T>(arr: T[], property1: keyof T, property2: keyof T): T[] {
-        const seen = new Set<string>();
-        const duplicates: T[] = [];
-
-        for (const obj of arr) {
-            const key = `${obj[property1]}-${obj[property2]}`;
-
-            if (seen.has(key)) {
-                duplicates.push(obj);
-            } else {
-                seen.add(key);
-            }
-        }
-
-        return duplicates;
-    }
-
     const onChangeTable = (getFieldsValue: any, _: any): SalesPlaningProductModel[] => {
         const idxChange = _.field.split('.')[1]
         // console.log(formMapRef?.current[1].current?.getFieldsValue())
@@ -319,19 +287,39 @@ function ProductAndCom({ formMapRef }: props) {
         }
         contractProducts.splice(idxChange, 1, objReplce)
 
-        const newValue: ContractModel = {
-            ...contractAtom,
-            salesPlaning: {
-                ...contractAtom.salesPlaning,
-                salesPlaningProducts: {
-                    ...contractAtom.salesPlaning?.salesPlaningProducts,
-                    ...contractProducts
-                }
-            }
-        }
-        setContractAtom(newValue)
+        // const newValue: ContractModel = {
+        //     ...contractAtom,
+        //     salesPlaning: {
+        //         ...contractAtom.salesPlaning,
+        //         salesPlaningProducts: {
+        //             ...contractAtom.salesPlaning?.salesPlaningProducts,
+        //             ...contractProducts
+        //         }
+        //     }
+        // }
+        // setContractAtom(newValue)
         return contractProducts
     }
+
+    const dataSource = useRef<readonly SalesPlaningCommisionModel[]>([]);
+
+    function findDuplicateObjects<T>(arr: T[], property1: keyof T, property2: keyof T): T[] {
+        const seen = new Set<string>();
+        const duplicates: T[] = [];
+
+        for (const obj of arr) {
+            const key = `${obj[property1]}-${obj[property2]}`;
+
+            if (seen.has(key)) {
+                duplicates.push(obj);
+            } else {
+                seen.add(key);
+            }
+        }
+
+        return duplicates;
+    }
+
     const columns: ProColumns<SalesPlaningProductModel>[] = [
         {
             title: 'Sản phẩm',
@@ -363,7 +351,6 @@ function ProductAndCom({ formMapRef }: props) {
                     },
                     ({ getFieldValue, getFieldsValue }: any) => ({
                         validator(_: any, value: any) {
-                            console.log(getFieldsValue())
                             const contractProducts: SalesPlaningProductModel[] = getFieldsValue()?.salesPlaningProducts
                             const checkDuplication = findDuplicateObjects(contractProducts, "productId", "pricingCategoryId")
                             if (checkDuplication.length < 1) {
@@ -500,12 +487,12 @@ function ProductAndCom({ formMapRef }: props) {
                 parser: (value: any) => value!.replace(/(\.*)/g, '').replace('.', ','),
                 style: { width: '100%' },
                 controls: false,
-                onBlur: (value: any) => {
-                    const contractProducts = onChangeTable("abc", { field: "1.0.implementationPrice" })
-                    const currentForm = formMapRef?.current[1].current
-                    currentForm?.setFieldValue('salesPlaningProducts', [...contractProducts])
-                    // setFieldValue('salesPlaningProducts', [...contractProducts])
-                },
+                // onBlur: debounce((value) => {
+                //     console.log(value)
+                //     const contractProducts = onChangeTable("abc", { field: "1.0.implementationPrice" })
+                //     const currentForm = formMapRef?.current[1].current
+                //     currentForm?.setFieldValue('salesPlaningProducts', [...contractProducts])
+                // }, 800)
             },
             formItemProps: {
                 rules: [
@@ -515,8 +502,8 @@ function ProductAndCom({ formMapRef }: props) {
                     },
                     ({ getFieldValue, getFieldsValue, setFieldValue, setFieldsValue }: any) => ({
                         validator(_: any, value: any) {
-                            // const contractProducts = onChangeTable(getFieldsValue, _)
-                            // setFieldValue('salesPlaningProducts', [...contractProducts])
+                            const contractProducts = onChangeTable(getFieldsValue, _)
+                            setFieldValue('salesPlaningProducts', [...contractProducts])
                             if (true) {
                                 return Promise.resolve();
                             }
@@ -1380,325 +1367,8 @@ function ProductAndCom({ formMapRef }: props) {
         },
     ];
 
-    const columnTab3s: ProColumns<SalesPlaningCommisionModel>[] = [
-        {
-            title: 'Sản phẩm',
-            dataIndex: 'productId',
-            key: 'productId',
-            width: '220px',
-            valueType: 'select',
-            fixed: 'left',
-            renderFormItem: (schema, config, form) => {
-                return (
-                    <Select
-                        showSearch
-                        optionFilterProp="children"
-                        filterOption={(input, option) => (option?.label ?? '').toString().toLowerCase().includes(input.toLowerCase())}
-                        filterSort={(optionA, optionB) =>
-                            (optionA?.label ?? '').toString().toLowerCase().localeCompare((optionB?.label ?? '').toString().toLowerCase())
-                        }
-                        placeholder='-Chọn bài thi-'
-                        options={state.products}
-                    />
-                )
-            },
-            formItemProps: {
-                rules: [
-                    // {
-                    //     required: true,
-                    //     whitespace: true,
-                    //     message: 'Không được để trống',
-                    // },
-                    ({ getFieldValue, getFieldsValue }: any) => ({
-                        validator(_: any, value: any) {
-                            return Promise.resolve();
-                            console.log(getFieldsValue())
-                            const contractProducts: SalesPlaningProductModel[] = getFieldsValue()?.salesPlaningProducts
-                            const checkDuplication = findDuplicateObjects(contractProducts, "productId", "pricingCategoryId")
-                            if (checkDuplication.length < 1) {
-                                return Promise.resolve();
-                            }
-                            return Promise.reject(new Error('Đã tồn tại'));
-                        },
-                    }),
-                ],
-            },
-        },
-        {
-            title: 'Quy định giá bán',
-            dataIndex: 'pricingCategoryId',
-            key: 'pricingCategoryId',
-            width: '220px',
-            valueType: 'select',
-            renderFormItem: (schema, config, form) => {
-                return (
-                    <Select
-                        showSearch
-                        optionFilterProp="children"
-                        filterOption={(input, option) => (option?.label ?? '').toString().toLowerCase().includes(input.toLowerCase())}
-                        filterSort={(optionA, optionB) =>
-                            (optionA?.label ?? '').toString().toLowerCase().localeCompare((optionB?.label ?? '').toString().toLowerCase())
-                        }
-                        placeholder='-Chọn bài thi-'
-                        options={state.pricingCategories}
-                    />
-                )
-            },
-            formItemProps: {
-                rules: [
-                    // {
-                    //     required: true,
-                    //     whitespace: true,
-                    //     message: 'Không được để trống',
-                    // },
-                    ({ getFieldValue, getFieldsValue }: any) => ({
-                        validator(_: any, value: any) {
-                            return Promise.resolve();
-                            const contractProducts: SalesPlaningProductModel[] = getFieldsValue()?.salesPlaningProducts
-                            const checkDuplication = findDuplicateObjects(contractProducts, "productId", "pricingCategoryId")
-                            if (checkDuplication.length < 1) {
-                                return Promise.resolve();
-                            }
-                            return Promise.reject(new Error('Đã tồn tại'));
-                        },
-                    }),
-
-                ],
-            },
-        },
-        {
-            title: 'Tỷ lệ hoa hồng(%)',
-            dataIndex: 'staffComRate',
-            key: 'staffComRate',
-            width: '180px',
-            // disable: true,
-            valueType: 'digit',
-            fieldProps: {
-                formatter: (value: any) => `${value.replace('.', ',')}`,
-                parser: (value: any) => Number.parseFloat(value!.replace(',', '.')).toFixed(6),
-                style: { width: '100%' },
-                addonAfter: "%",
-                controls: false
-            },
-            formItemProps: {
-                rules: [
-                    // {
-                    //     max: 100
-                    // },
-                    ({ getFieldValue, getFieldsValue, setFieldValue, setFieldsValue }: any) => ({
-                        validator(_: any, value: any) {
-                            if (value > 100) {
-                                return Promise.reject(new Error('Tỷ lệ không hợp lệ'));
-                            }
-                            // const contractProducts = onChangeTable(getFieldsValue, _)
-                            // setFieldValue('salesPlaningProducts', [...contractProducts])
-                            if (true) {
-                                return Promise.resolve();
-                            }
-                            return Promise.reject(new Error('Đã tồn tại'));
-                        },
-                    }),
-                ],
-            },
-        },
-        {
-            title: 'Tỷ lệ hoa hồng Com chênh lệch giá(%)',
-            dataIndex: 'staffCompareComRate',
-            key: 'staffCompareComRate',
-            width: '180px',
-            valueType: 'digit',
-            fieldProps: {
-                formatter: (value: any) => `${value.replace('.', ',')}`,
-                parser: (value: any) => Number.parseFloat(value!.replace(',', '.')).toFixed(6),
-                style: { width: '100%' },
-                // value: 0,
-                addonAfter: "%",
-                controls: false
-            },
-            formItemProps: {
-                rules: [
-                    // {
-                    //     max: 100
-                    // },
-                    ({ getFieldValue, getFieldsValue, setFieldValue, setFieldsValue }: any) => ({
-                        validator(_: any, value: any) {
-                            if (value > 100) {
-                                return Promise.reject(new Error('Tỷ lệ không hợp lệ'));
-                            }
-                            // const contractProducts = onChangeTable(getFieldsValue, _)
-                            // setFieldValue('salesPlaningProducts', [...contractProducts])
-
-                            if (true) {
-                                return Promise.resolve();
-                            }
-                            return Promise.reject(new Error('Đã tồn tại'));
-                        },
-                    }),
-                ],
-            },
-        },
-        //#region CP CSVC theo PABH
-        {
-            title: 'Tiền hoa hồng',
-            dataIndex: 'totalCom',
-            key: 'totalCom',
-            width: '180px',
-            valueType: 'digit',
-            fieldProps: {
-                formatter: (value: any) => `${value.replace('.', ',')}`.replace(/\B(?=(\d{3})+(?!\d))/g, '.'),
-                parser: (value: any) => Number.parseFloat(value!.replace(/(\.*)/g, '').replace(',', '.')).toFixed(0),
-                style: { width: '100%' },
-                disabled: true,
-                controls: false
-            },
-            formItemProps: {
-                rules: [
-                    // {
-                    //     max: 100
-                    // },
-                    ({ getFieldValue, getFieldsValue, setFieldValue, setFieldsValue }: any) => ({
-                        validator(_: any, value: any) {
-                            // const contractProducts = onChangeTable(getFieldsValue, _)
-                            // setFieldValue('salesPlaningProducts', [...contractProducts])
-                            if (true) {
-                                return Promise.resolve();
-                            }
-                            return Promise.reject(new Error('Đã tồn tại'));
-                        },
-                    }),
-                ],
-            },
-        },
-        {
-            title: 'Tỷ lệ doanh thu(%)',
-            dataIndex: 'staffRevenueRate',
-            key: 'staffRevenueRate',
-            width: '180px',
-            valueType: 'digit',
-            fieldProps: {
-                formatter: (value: any) => `${value.replace('.', ',')}`,
-                parser: (value: any) => Number.parseFloat(value!.replace(',', '.')).toFixed(6),
-                style: { width: '100%' },
-                addonAfter: "%",
-                controls: false
-            },
-            formItemProps: {
-                rules: [
-                    // {
-                    //     max: 100
-                    // },
-                    ({ getFieldValue, getFieldsValue, setFieldValue, setFieldsValue }: any) => ({
-                        validator(_: any, value: any) {
-                            if (value > 100) {
-                                return Promise.reject(new Error('Tỷ lệ không hợp lệ'));
-                            }
-                            // const contractProducts = onChangeTable(getFieldsValue, _)
-                            // setFieldValue('salesPlaningProducts', [...contractProducts])
-                            if (true) {
-                                return Promise.resolve();
-                            }
-                            return Promise.reject(new Error('Đã tồn tại'));
-                        },
-                    }),
-                ],
-            },
-        },
-        {
-            title: 'Tiền doanh thu',
-            dataIndex: 'totalRevenue',
-            key: 'totalRevenue',
-            width: '180px',
-            valueType: 'digit',
-            fieldProps: {
-                formatter: (value: any) => `${value.replace('.', ',')}`.replace(/\B(?=(\d{3})+(?!\d))/g, '.'),
-                parser: (value: any) => Number.parseFloat(value!.replace(/(\.*)/g, '').replace(',', '.')).toFixed(0),
-                style: { width: '100%' },
-                disabled: true,
-                controls: false
-            },
-            formItemProps: {
-                rules: [
-                    // {
-                    //     max: 100
-                    // },
-                    ({ getFieldValue, getFieldsValue, setFieldValue, setFieldsValue }: any) => ({
-                        validator(_: any, value: any) {
-                            // const contractProducts = onChangeTable(getFieldsValue, _)
-                            // setFieldValue('salesPlaningProducts', [...contractProducts])
-                            if (true) {
-                                return Promise.resolve();
-                            }
-                            return Promise.reject(new Error('Đã tồn tại'));
-                        },
-                    }),
-                ],
-            },
-        },
-        //#endregion
-        {
-            title: 'Hành động',
-            key: 'Action',
-            valueType: 'option',
-            fixed: 'right',
-            align: 'center',
-            width: 100,
-            render: () => {
-                return (
-                    <Tooltip title="Xóa">
-                        <Button type="text" shape='circle'>
-                            <DeleteOutlined />
-                        </Button>
-                    </Tooltip>
-                )
-            },
-        },
-    ];
-
-    const handleOk = async (values: any) => {
-        // const fieldsValue = await formRef?.current?.validateFields();
-        // setButtonOkText('Đang xử lý...');
-        // setButtonLoading(true);
-
-        // const objBody: ContractModel = {
-        //     ...fieldsValue,
-        //     ...values
-        // }
-        // console.log(objBody);
-
-        return Promise.resolve(true);
-        // const response = await postTarget2(params.id, "", objBody);
-        // setButtonOkText('Lưu');
-        // setButtonLoading(false);
-        // if (response.code === Code._200) {
-        //     message.success(response.message || "Cập nhật thành công")
-        //     navigate(`/icom/target`)
-        // }
-        // else {
-        //     message.error(response.message || "Thất bại")
-        // }
-    };
-    const tabList = [
-        {
-            key: 'tab1',
-            tab: 'Sản phẩm và Com',
-        },
-        {
-            key: 'tab2',
-            tab: 'Chi phí phát sinh',
-        },
-        {
-            key: "tab3",
-            tab: 'Chia Com và doanh thu',
-        },
-
-    ];
-    const [activeTabKey, setActiveTabKey] = useState<string>('tab1');
-
-    const onTabChange = (key: string) => {
-        setActiveTabKey(key);
-    };
-    const contentList: Record<string, React.ReactNode> = {
-        tab1: <ProFormItem>
+    return (
+        <ProFormItem>
             <EditableProTable<SalesPlaningProductModel>
                 // headerTitle="可编辑表格"
                 columns={columns}
@@ -1739,269 +1409,7 @@ function ProductAndCom({ formMapRef }: props) {
                     }
                 }}
             />
-        </ProFormItem>,
-        tab2: <Row gutter={16}>
-            <Col span={12}>
-                <ProFormItem label="Chi phí phát sinh" name="cost"
-                    rules={[
-                        // { required: true, whitespace: true },
-                        ({ getFieldValue, getFieldsValue, setFieldValue, setFieldsValue }: any) => ({
-                            validator(_: any, value: any) {
-                                const fields = getFieldsValue()
-                                const implementationCost = (value ?? 0) * 0.01 * (100 - (fields.costTaxRate ?? 0))
-                                fields.implementationCost = implementationCost
-                                const newValue: ContractModel = {
-                                    ...contractAtom,
-                                    salesPlaning: {
-                                        ...contractAtom.salesPlaning,
-                                        ...fields
-                                    }
-                                }
-                                setContractAtom(newValue)
-                                setFieldValue('implementationCost', implementationCost)
-                                if (true) {
-                                    return Promise.resolve();
-                                }
-                                return Promise.reject(new Error('Đã tồn tại'));
-                            },
-                        }),
-                    ]}
-                >
-                    <InputNumber
-                        style={{ width: '100%' }}
-                        formatter={(value: any) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, '.')}
-                        parser={(value: any) => value!.replace(/(\.*)/g, '').replace('.', ',')}
-                    />
-                </ProFormItem>
-            </Col>
-            <Col span={12}>
-                <ProFormItem label="Tỷ lệ thuế(%)" name="costTaxRate"
-                    rules={[
-                        // { required: true, whitespace: true },
-                        ({ getFieldValue, getFieldsValue, setFieldValue, setFieldsValue }: any) => ({
-                            validator(_: any, value: any) {
-                                const fields = getFieldsValue()
-                                const implementationCost = (100 - (value ?? 0)) * 0.01 * (fields.cost ?? 0)
-                                fields.implementationCost = implementationCost
-                                const newValue: ContractModel = {
-                                    ...contractAtom,
-                                    salesPlaning: {
-                                        ...contractAtom.salesPlaning,
-                                        ...fields
-                                    }
-                                }
-                                setContractAtom(newValue)
-                                setFieldValue('implementationCost', implementationCost)
-                                if (true) {
-                                    return Promise.resolve();
-                                }
-                                return Promise.reject(new Error('Đã tồn tại'));
-                            },
-                        }),
-                    ]}
-                >
-                    <InputNumber
-                        style={{ width: '100%' }}
-                        addonAfter="%"
-                        max='100'
-                        formatter={(value: any) => `${value.replace('.', ',')}`}
-                        parser={(value: any) => Number.parseFloat(value!.replace(',', '.')).toFixed(6)}
-                    />
-                </ProFormItem>
-            </Col>
-            <Col span={12}>
-                <ProFormItem label="Chi phí thực chi" name="implementationCost"
-                >
-                    <InputNumber
-                        style={{ width: '100%' }}
-                        disabled
-                        formatter={(value: any) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, '.')}
-                        parser={(value: any) => value!.replace(/(\.*)/g, '').replace('.', ',')}
-                    />
-                </ProFormItem>
-            </Col>
-            <Col span={12}>
-                <ProFormText
-                    style={{ width: '100%' }}
-                    name="costDescription"
-                    label="Ghi chú"
-                />
-            </Col>
-        </Row>,
-        tab3:
-            <ProFormItem>
-                <EditableProTable<SalesPlaningCommisionModel>
-                    // headerTitle="可编辑表格"
-                    columns={columnTab3s}
-                    name="salesPlaningCommisions"
-                    rowKey="id"
-                    scroll={{ x: '100vw', y: '400px' }}
-                    // onChange={onHandleChangeSource}
-                    recordCreatorProps={{
-                        newRecordType: 'dataSource',
-                        record: () => ({
-                            id: uuidv4(),
-                        }),
-                    }}
-                    editable={{
-                        type: 'multiple',
-                        deleteText: <Tooltip title="Xóa">
-                            <Button type="text" shape='circle'>
-                                <DeleteOutlined />
-                            </Button>
-                        </Tooltip>,
-                        deletePopconfirmMessage: <>Đồng ý xóa?</>,
-                        editableKeys: editableKeyTab3s,
-                        actionRender: (row: any, config: any, defaultDoms: any) => {
-                            return [defaultDoms.delete];
-                        },
-                        // onValuesChange: (record, recordList) => {
-                        //     // setDataSource(recordList)
-                        //     dataSource.current = recordList
-                        // },
-                        onChange: setEditableRowKeyTab3s,
-                        onDelete: (key: any, row: any) => {
-                            return new Promise((resolve) => {
-                                console.log(key, row)
-                                setTimeout(() => {
-                                    resolve(true);
-                                }, 0);
-                            });
-                        }
-                    }}
-                />
-            </ProFormItem>
-    };
-
-    return (
-        <>
-            <Row gutter={16}>
-                <Col span={12}>
-                    <ProFormText
-                        style={{ width: '100%' }}
-                        name="contractNumber"
-                        label="Số hiệu hợp đồng"
-                        // width="lg"
-                        disabled
-                        placeholder=""
-                        tooltip="Số hiệu hợp đồng"
-                    />
-                </Col>
-                <Col span={12}>
-                    <ProFormText
-                        name="customerName"
-                        label="Tên khách hàng"
-                        style={{ width: '100%' }}
-                        disabled
-                        rules={[{ required: true }]}
-                    />
-                </Col>
-                <Col span={12}>
-                    <ProFormSelect
-                        label="Loại khách hàng"
-                        name="customerType"
-                        rules={[
-                            {
-                                required: true,
-                            },
-                        ]}
-                        // initialValue="1"
-                        options={state.customerTypes}
-                    />
-                </Col>
-                <Col span={12}>
-                    <ProFormSelect
-                        label="Tính chất khách hàng"
-                        name="customerProperty"
-                        rules={[
-                            {
-                                required: true,
-                            },
-                        ]}
-                        initialValue="1"
-                        options={[
-                            {
-                                label: '1.KH do NVKD tự tìm kiếm',
-                                options: [
-                                    { label: 'Mới - Lần đầu', value: '0' },
-                                    { label: 'Cũ - Lần sau', value: '1' },
-                                ],
-                            },
-                            {
-                                label: '2. KH cũ mua lại sản phẩm',
-                                options: [
-                                    { label: 'Do NVKD thuyết phục', value: '2' },
-                                    { label: 'Do KH tự tìm đến', value: '3' },
-                                ],
-                            },
-                            {
-                                label: '3. KH tự đến công ty - NVKD tư vấn',
-                                options: [
-                                    { label: 'Mới - Lần sau', value: '4' },
-                                    { label: 'Cũ - Lần sau', value: '5' },
-                                ],
-                            },
-                        ]}
-                    />
-                </Col>
-                <Col span={12}>
-                    <ProFormSelect
-                        label="Tình trạng khách hàng"
-                        name="customerStatus"
-                        rules={[
-                            {
-                                required: true,
-                            },
-                        ]}
-                        initialValue="0"
-                        options={[
-                            {
-                                value: '0',
-                                label: 'Cũ',
-                            },
-                            { value: '1', label: 'Mới' },
-                        ]}
-                    />
-                </Col>
-                <Col span={12}>
-                    <ProFormSelect
-                        label="Đối tượng khách hàng"
-                        name="customerCategory"
-                        rules={[
-                            {
-                                required: true,
-                            },
-                        ]}
-                        // initialValue="1"
-                        options={state.customerCategories}
-                    />
-                </Col>
-                <Col span={12}>
-                    <ProFormItem labelCol={{ span: 0 }} wrapperCol={{ span: 24 }} name='isMOU' valuePropName="checked">
-                        <Checkbox>Tính chất MOU</Checkbox>
-                    </ProFormItem>
-                </Col>
-
-            </Row>
-            <Card
-                style={{ width: '100%', padding: '0' }}
-                title={
-                    <>
-                    </>
-                }
-                // extra={<a href="#">More</a>}
-                tabList={tabList}
-                activeTabKey={activeTabKey}
-                onTabChange={onTabChange}
-                tabProps={{
-                    size: 'middle',
-                    type: 'card'
-                }}
-            >
-                {contentList[activeTabKey]}
-
-            </Card>
-        </>
+        </ProFormItem>
     );
 };
 
