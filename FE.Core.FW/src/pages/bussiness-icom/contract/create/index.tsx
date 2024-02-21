@@ -446,7 +446,7 @@ function ContractCreate() {
                     onFinish={async () => {
                         const contracts = formMapRef.current[0].current?.getFieldsValue()
                         const salePlannings = formMapRef.current[1].current?.getFieldsValue()
-                        console.log(contracts);
+                        // console.log(contracts);
                         console.log(salePlannings);
                         return true;
                     }}

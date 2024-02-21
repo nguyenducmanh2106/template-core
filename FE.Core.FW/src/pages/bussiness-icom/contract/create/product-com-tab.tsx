@@ -11,7 +11,7 @@ import { getPricingCategory } from '@/apis/services/PricingCategoryService';
 import { getPricingDecision } from '@/apis/services/PricingDecisionService';
 import { getProduct } from '@/apis/services/ProductService';
 import { getTaxCategory } from '@/apis/services/TaxCategoryService';
-import { contractState } from '@/store/contract-atom';
+import { contractState, salePlanningProductState } from '@/store/contract-atom';
 import { uuidv4 } from '@/utils/constants';
 import { ConvertOptionSelectModel } from '@/utils/convert';
 import { DeleteOutlined } from '@ant-design/icons';
@@ -36,15 +36,13 @@ interface props {
 }
 function ProductAndCom({ formMapRef }: props) {
     // const formRef = useRef<ProFormInstance>();
-    // const [contractAtom, setContractAtom] = useRecoilState(contractState);
-    console.log('re-render')
+    const [salePlanningProductAtom, setSalePlanningProductAtom] = useRecoilState(salePlanningProductState);
+    console.log('re-render Sản phẩm và Com')
     const initState = {
         products: [],
         pricingCategories: [],
         pricingDecisions: [],
         vats: [],
-        customerCategories: [],
-        customerTypes: []
     };
     const [loading, setLoading] = useState<boolean>(false);
     const [state, dispatch] = useReducer<(prevState: any, updatedProperty: any) => any>(
@@ -89,11 +87,6 @@ function ProductAndCom({ formMapRef }: props) {
         const responseVAT: ResponseData<TaxCategoryModel[]> = await getTaxCategory() as ResponseData<TaxCategoryModel[]>;
         const VATOptions = ConvertOptionSelectModel(responseVAT.data as OptionModel[], 'value');
 
-        const responseCustomerCategory: ResponseData = await getCustomerCategory();
-        const customerCategoryOptions = ConvertOptionSelectModel(responseCustomerCategory.data as OptionModel[]);
-
-        const responseCustomerType: ResponseData = await getCustomerType();
-        const customerTypeOptions = ConvertOptionSelectModel(responseCustomerType.data as OptionModel[]);
         const stateDispatcher = {
             products: [{
                 key: 'Default',
@@ -115,16 +108,6 @@ function ProductAndCom({ formMapRef }: props) {
                 label: '-Chọn-',
                 value: '',
             } as SelectOptionModel].concat(VATOptions),
-            customerCategories: [{
-                key: 'Default',
-                label: '-Chọn-',
-                value: '',
-            } as SelectOptionModel].concat(customerCategoryOptions),
-            customerTypes: [{
-                key: 'Default',
-                label: '-Chọn-',
-                value: '',
-            } as SelectOptionModel].concat(customerTypeOptions),
         };
         dispatch(stateDispatcher);
     }, [])
@@ -1394,10 +1377,12 @@ function ProductAndCom({ formMapRef }: props) {
                     actionRender: (row: any, config: any, defaultDoms: any) => {
                         return [defaultDoms.delete];
                     },
-                    // onValuesChange: (record, recordList) => {
-                    //     // setDataSource(recordList)
-                    //     dataSource.current = recordList
-                    // },
+                    onValuesChange: (record, recordList) => {
+                        // setDataSource(recordList)
+                        // setSalePlanningProductAtom(recordList)
+                        dataSource.current = recordList
+                        // console.log(recordList)
+                    },
                     onChange: setEditableRowKeys,
                     onDelete: (key: any, row: any) => {
                         return new Promise((resolve) => {

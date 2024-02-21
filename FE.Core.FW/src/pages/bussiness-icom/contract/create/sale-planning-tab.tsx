@@ -10,7 +10,7 @@ import { getPricingCategory } from '@/apis/services/PricingCategoryService';
 import { getPricingDecision } from '@/apis/services/PricingDecisionService';
 import { getProduct } from '@/apis/services/ProductService';
 import { getTaxCategory } from '@/apis/services/TaxCategoryService';
-import { contractState } from '@/store/contract-atom';
+import { contractState, productSelectedState, salePlanningProductState } from '@/store/contract-atom';
 import { uuidv4 } from '@/utils/constants';
 import { ConvertOptionSelectModel } from '@/utils/convert';
 import { DeleteOutlined } from '@ant-design/icons';
@@ -48,7 +48,7 @@ interface props {
     formMapRef?: React.MutableRefObject<React.MutableRefObject<FormInstance<any> | undefined>[]>;
 }
 function SalePlanning({ formMapRef }: props) {
-    console.log("re-render")
+    console.log("re-render Kế hoạch bán hàng")
     // const [contractAtom, setContractAtom] = useRecoilState(contractState);
     const initState = {
         products: [],
@@ -142,28 +142,9 @@ function SalePlanning({ formMapRef }: props) {
     }, [])
 
     const { Title, Paragraph, Text, Link } = Typography;
-    const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
 
-    function findDuplicateObjects<T>(arr: T[], property1: keyof T, property2: keyof T): T[] {
-        const seen = new Set<string>();
-        const duplicates: T[] = [];
-
-        for (const obj of arr) {
-            const key = `${obj[property1]}-${obj[property2]}`;
-
-            if (seen.has(key)) {
-                duplicates.push(obj);
-            } else {
-                seen.add(key);
-            }
-        }
-
-        return duplicates;
-    }
-
-
-
-
+    const [salePlanningProductAtom, setSalePlanningProductAtom] = useRecoilState(salePlanningProductState);
+    const [productSelectedAtom, setProductSelectedAtom] = useRecoilState(productSelectedState);
     const handleOk = async (values: any) => {
         // const fieldsValue = await formRef?.current?.validateFields();
         // setButtonOkText('Đang xử lý...');
@@ -289,10 +270,26 @@ function SalePlanning({ formMapRef }: props) {
         {
             key: '3',
             label: 'Chia Com và doanh thu',
-            children: <ComAndRevenue />,
+            children: <ComAndRevenue formMapRef={formMapRef} />,
         },
 
     ];
+
+    const onChange = (key: string) => {
+        // console.log(key);
+        if (key !== 'tab3')
+            return
+
+        const products: SelectOptionModel[] = state.products
+        const salePlannings = formMapRef?.current[1].current?.getFieldsValue()
+        const salesPlaningProducts: SalesPlaningProductModel[] = salePlannings?.salesPlaningProducts ?? []
+
+        const productOption: SelectOptionModel[] = products.filter((option: SelectOptionModel) => {
+            return salesPlaningProducts.some((ele: SalesPlaningProductModel) => ele.productId === option.value)
+        })
+        setProductSelectedAtom(productOption)
+        setSalePlanningProductAtom(salesPlaningProducts)
+    };
 
     return (
         <>
@@ -404,7 +401,9 @@ function SalePlanning({ formMapRef }: props) {
                 </Col>
 
             </Row>
-            <Tabs defaultActiveKey="tab1" type='card' items={item} />
+            <Tabs defaultActiveKey="tab1" type='card' items={item}
+                onChange={onChange}
+            />
         </>
     );
 };

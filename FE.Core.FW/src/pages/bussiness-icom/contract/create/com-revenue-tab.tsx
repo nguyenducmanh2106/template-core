@@ -11,11 +11,11 @@ import { getPricingCategory } from '@/apis/services/PricingCategoryService';
 import { getPricingDecision } from '@/apis/services/PricingDecisionService';
 import { getProduct } from '@/apis/services/ProductService';
 import { getTaxCategory } from '@/apis/services/TaxCategoryService';
-import { contractState } from '@/store/contract-atom';
+import { contractState, productSelectedState, salePlanningProductState } from '@/store/contract-atom';
 import { uuidv4 } from '@/utils/constants';
 import { ConvertOptionSelectModel } from '@/utils/convert';
 import { DeleteOutlined } from '@ant-design/icons';
-import type { ProColumns, ProFormInstance } from '@ant-design/pro-components';
+import type { FormInstance, ProColumns, ProFormInstance } from '@ant-design/pro-components';
 import {
     EditableProTable,
     ProFormCheckbox,
@@ -42,17 +42,18 @@ const validateMessages = {
     },
 };
 
-function ComAndRevenue() {
-    // const formRef = useRef<ProFormInstance>();
-    const [contractAtom, setContractAtom] = useRecoilState(contractState);
-    console.log('re-render')
+interface props {
+    formMapRef?: React.MutableRefObject<React.MutableRefObject<FormInstance<any> | undefined>[]>;
+}
+function ComAndRevenue({ formMapRef }: props) {
+    const [salePlanningProductAtom, setSalePlanningProductAtom] = useRecoilState(salePlanningProductState);
+    const [productSelectedAtom, setProductSelectedAtom] = useRecoilState(productSelectedState);
+    console.log(productSelectedAtom)
+    console.log('re-render Chia com và doanh thu')
     const initState = {
         products: [],
         pricingCategories: [],
         pricingDecisions: [],
-        vats: [],
-        customerCategories: [],
-        customerTypes: []
     };
     const [loading, setLoading] = useState<boolean>(false);
     const [state, dispatch] = useReducer<(prevState: any, updatedProperty: any) => any>(
@@ -75,14 +76,17 @@ function ComAndRevenue() {
 
 
     const getInitDataStep2 = useCallback(async () => {
+        const salePlannings = formMapRef?.current[1].current?.getFieldsValue()
+        const salesPlaningProducts: SalesPlaningProductModel[] = salePlannings?.salesPlaningProducts ?? []
+
         const responseProduct: ResponseData = await getProduct();
         const productOptions = ConvertOptionSelectModel(responseProduct.data as OptionModel[]);
 
+
+        console.log(salesPlaningProducts)
         const responsePricingCategories: ResponseData = await getPricingCategory();
         const pricingCategoryOptions = ConvertOptionSelectModel(responsePricingCategories.data as OptionModel[]);
 
-        const responsePricingDecisions: ResponseData<PricingDecisionModel[]> = await getPricingDecision() as ResponseData<PricingDecisionModel[]>;
-        const pricingDecisionOptions = ConvertOptionSelectModel(responsePricingDecisions.data as OptionModel[]);
         // const pricingDecisionOptions: SelectOptionModel[] | any = responsePricingDecisions.data?.map((item, idx) => ({
         //     ...item,
         //     label2: item.name,
@@ -94,14 +98,6 @@ function ComAndRevenue() {
         //     ),
         // }));
 
-        const responseVAT: ResponseData<TaxCategoryModel[]> = await getTaxCategory() as ResponseData<TaxCategoryModel[]>;
-        const VATOptions = ConvertOptionSelectModel(responseVAT.data as OptionModel[], 'value');
-
-        const responseCustomerCategory: ResponseData = await getCustomerCategory();
-        const customerCategoryOptions = ConvertOptionSelectModel(responseCustomerCategory.data as OptionModel[]);
-
-        const responseCustomerType: ResponseData = await getCustomerType();
-        const customerTypeOptions = ConvertOptionSelectModel(responseCustomerType.data as OptionModel[]);
         const stateDispatcher = {
             products: [{
                 key: 'Default',
@@ -113,26 +109,6 @@ function ComAndRevenue() {
                 label: '-Chọn-',
                 value: '',
             } as SelectOptionModel].concat(pricingCategoryOptions),
-            pricingDecisions: [{
-                key: 'Default',
-                label: '-Chọn-',
-                value: '',
-            } as SelectOptionModel].concat(pricingDecisionOptions as SelectOptionModel[]),
-            vats: [{
-                key: 'Default',
-                label: '-Chọn-',
-                value: '',
-            } as SelectOptionModel].concat(VATOptions),
-            customerCategories: [{
-                key: 'Default',
-                label: '-Chọn-',
-                value: '',
-            } as SelectOptionModel].concat(customerCategoryOptions),
-            customerTypes: [{
-                key: 'Default',
-                label: '-Chọn-',
-                value: '',
-            } as SelectOptionModel].concat(customerTypeOptions),
         };
         dispatch(stateDispatcher);
     }, [])
@@ -181,7 +157,7 @@ function ComAndRevenue() {
                             (optionA?.label ?? '').toString().toLowerCase().localeCompare((optionB?.label ?? '').toString().toLowerCase())
                         }
                         placeholder='-Chọn bài thi-'
-                        options={state.products}
+                        options={productSelectedAtom}
                     />
                 )
             },
